@@ -24,8 +24,8 @@ export default function DateDisplay({ dateString, includeTime = false }: DateDis
     }
 
     const formatted = new Intl.DateTimeFormat('en-US', options).format(date);
-    return <span className="text-gray-700 text-sm">{formatted}</span>;
+    return <span className="text-text-sub text-xs">{formatted}</span>;
   } catch (e) {
-    return <span className="text-gray-400">—</span>;
+    return <span className="text-text-sub/50">—</span>;
   }
 }

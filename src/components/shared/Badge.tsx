@@ -7,26 +7,26 @@ interface BadgeProps {
 export function StatusBadge({ label }: BadgeProps) {
   const norm = label.toLowerCase();
   
-  let bg = 'bg-gray-100 text-gray-800 border-gray-200';
+  let bg = 'bg-gray-800 text-gray-300 border-gray-700';
   
   if (['new', 'todo', 'backlog'].includes(norm)) {
-    bg = 'bg-gray-100 text-gray-700 border-gray-200';
+    bg = 'bg-gray-800 text-gray-300 border-gray-700';
   } else if (['in progress', 'active', 'planning', 'ui design', 'development'].includes(norm)) {
-    bg = 'bg-blue-50 text-blue-700 border-blue-200';
+    bg = 'bg-primary/10 text-primary border-primary/25';
   } else if (['review', 'sent', 'in review', 'proposal sent', 'negotiation'].includes(norm)) {
-    bg = 'bg-purple-50 text-purple-700 border-purple-200';
+    bg = 'bg-purple-950/40 text-purple-300 border-purple-500/25';
   } else if (['completed', 'won', 'paid', 'done', 'valid'].includes(norm)) {
-    bg = 'bg-green-50 text-green-700 border-green-200';
+    bg = 'bg-success/15 text-success border-success/25';
   } else if (['overdue', 'lost', 'failed', 'blocked', 'critical', 'hot', 'delayed'].includes(norm)) {
-    bg = 'bg-red-50 text-red-700 border-red-200';
+    bg = 'bg-danger/15 text-danger border-danger/25';
   } else if (['on hold', 'paused', 'contacted', 'meeting scheduled', 'pending'].includes(norm)) {
-    bg = 'bg-yellow-50 text-yellow-700 border-yellow-200';
+    bg = 'bg-warning/15 text-warning border-warning/25';
   } else if (['cancelled', 'inactive', 'churned', 'discontinued'].includes(norm)) {
-    bg = 'bg-slate-100 text-slate-600 border-slate-200';
+    bg = 'bg-slate-800 text-slate-400 border-slate-700';
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${bg}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-4xs font-bold uppercase tracking-wider border ${bg}`}>
       {label}
     </span>
   );
@@ -35,21 +35,22 @@ export function StatusBadge({ label }: BadgeProps) {
 export function PriorityBadge({ label }: BadgeProps) {
   const norm = label.toLowerCase();
   
-  let bg = 'bg-gray-100 text-gray-800 border-gray-200';
+  let bg = 'bg-gray-800 text-gray-300 border-gray-700';
   
   if (norm === 'low') {
-    bg = 'bg-gray-50 text-gray-600 border-gray-200';
+    bg = 'bg-gray-800/80 text-gray-400 border-gray-700';
   } else if (norm === 'medium') {
-    bg = 'bg-blue-50 text-blue-700 border-blue-200';
+    bg = 'bg-primary/10 text-primary border-primary/25';
   } else if (norm === 'high' || norm === 'hot') {
-    bg = 'bg-amber-50 text-amber-700 border-amber-200';
+    bg = 'bg-warning/15 text-warning border-warning/25';
   } else if (norm === 'critical' || norm === 'blocker') {
-    bg = 'bg-red-50 text-red-700 border-red-200';
+    bg = 'bg-danger/15 text-danger border-danger/25';
   }
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold border ${bg}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-4xs font-bold uppercase tracking-wider border ${bg}`}>
       {label}
     </span>
   );
 }
+

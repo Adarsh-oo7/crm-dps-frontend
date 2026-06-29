@@ -5,16 +5,14 @@ import { useAuthStore } from '../../store/authStore';
 import { StatusBadge } from '../../components/shared/Badge';
 import ConfirmModal from '../../components/shared/ConfirmModal';
 import { 
-  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  LineChart, Line
+  BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer
 } from 'recharts';
 import { 
-  DollarSign, FileText, Plus, Check, X, Printer, TrendingUp, TrendingDown, 
-  Layers, Users, Calendar, AlertCircle, ShoppingBag
+  DollarSign, FileText, Plus, Check, Printer, TrendingUp, TrendingDown, 
+  Layers, AlertCircle, ShoppingBag, X
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
-// Interfaces
 interface Invoice {
   id: number;
   invoice_number: string;
@@ -61,7 +59,9 @@ export default function Finance() {
   const isAdminOrFinance = ['superadmin', 'admin', 'finance'].includes(user?.role || '');
   const [activeTab, setActiveTab] = useState<'overview' | 'invoices' | 'proposals' | 'expenses'>('overview');
 
-  // Modals & forms
+  const base_url = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+
+  // Modals
   const [createInvoiceOpen, setCreateInvoiceOpen] = useState(false);
   const [createProposalOpen, setCreateProposalOpen] = useState(false);
   const [createExpenseOpen, setCreateExpenseOpen] = useState(false);
@@ -220,44 +220,44 @@ export default function Finance() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Finance & Billing</h1>
-          <p className="text-sm text-gray-500">Track and manage agency P&L, invoicing, proposals, and team expenses.</p>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">Finance & Billing</h1>
+          <p className="text-xs sm:text-sm text-text-sub">Track and manage agency P&L, invoicing, proposals, and team expenses.</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
-        <nav className="flex space-x-6">
+      <div className="border-b border-border-card">
+        <nav className="flex space-x-6 overflow-x-auto">
           <button
             onClick={() => setActiveTab('overview')}
-            className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
-              ${activeTab === 'overview' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+            className={`pb-4 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap
+              ${activeTab === 'overview' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
           >
-            <DollarSign size={16} />
+            <DollarSign size={14} />
             P&L Overview
           </button>
           <button
             onClick={() => setActiveTab('invoices')}
-            className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
-              ${activeTab === 'invoices' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+            className={`pb-4 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap
+              ${activeTab === 'invoices' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
           >
-            <FileText size={16} />
+            <FileText size={14} />
             Invoices
           </button>
           <button
             onClick={() => setActiveTab('proposals')}
-            className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
-              ${activeTab === 'proposals' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+            className={`pb-4 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap
+              ${activeTab === 'proposals' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
           >
-            <Layers size={16} />
+            <Layers size={14} />
             Proposals
           </button>
           <button
             onClick={() => setActiveTab('expenses')}
-            className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
-              ${activeTab === 'expenses' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+            className={`pb-4 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap
+              ${activeTab === 'expenses' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
           >
-            <ShoppingBag size={16} />
+            <ShoppingBag size={14} />
             Expenses
           </button>
         </nav>
@@ -268,49 +268,52 @@ export default function Finance() {
         {activeTab === 'overview' && (
           <div className="space-y-6">
             {/* Stat Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 flex items-center justify-between">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
-                  <span className="text-2xs text-gray-400 font-bold uppercase tracking-wider">Invoiced This Month</span>
-                  <h3 className="text-2xl font-extrabold text-gray-900 mt-1">${parseFloat(summary.total_invoiced_this_month || '0').toLocaleString()}</h3>
+                  <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Invoiced This Month</span>
+                  <h3 className="text-xl font-extrabold text-white mt-1.5">${parseFloat(summary.total_invoiced_this_month || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-3 rounded-lg bg-indigo-50 text-indigo-600"><FileText size={20} /></div>
+                <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"><FileText size={18} /></div>
               </div>
-              <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 flex items-center justify-between">
+              <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
-                  <span className="text-2xs text-gray-400 font-bold uppercase tracking-wider">Collected This Month</span>
-                  <h3 className="text-2xl font-extrabold text-green-600 mt-1">${parseFloat(summary.total_collected_this_month || '0').toLocaleString()}</h3>
+                  <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Collected This Month</span>
+                  <h3 className="text-xl font-extrabold text-success mt-1.5">${parseFloat(summary.total_collected_this_month || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-3 rounded-lg bg-green-50 text-green-600"><TrendingUp size={20} /></div>
+                <div className="p-2.5 rounded-xl bg-success/10 text-success border border-success/20"><TrendingUp size={18} /></div>
               </div>
-              <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 flex items-center justify-between">
+              <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
-                  <span className="text-2xs text-gray-400 font-bold uppercase tracking-wider">Expenses This Month</span>
-                  <h3 className="text-2xl font-extrabold text-red-600 mt-1">${parseFloat(summary.expenses_this_month || '0').toLocaleString()}</h3>
+                  <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Expenses This Month</span>
+                  <h3 className="text-xl font-extrabold text-danger mt-1.5">${parseFloat(summary.expenses_this_month || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-3 rounded-lg bg-red-50 text-red-600"><TrendingDown size={20} /></div>
+                <div className="p-2.5 rounded-xl bg-danger/10 text-danger border border-danger/20"><TrendingDown size={18} /></div>
               </div>
-              <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 flex items-center justify-between">
+              <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
-                  <span className="text-2xs text-gray-400 font-bold uppercase tracking-wider">Outstanding Invoices</span>
-                  <h3 className="text-2xl font-extrabold text-amber-600 mt-1">${parseFloat(summary.outstanding_payments || '0').toLocaleString()}</h3>
+                  <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Outstanding Invoices</span>
+                  <h3 className="text-xl font-extrabold text-warning mt-1.5">${parseFloat(summary.outstanding_payments || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-3 rounded-lg bg-amber-50 text-amber-600"><AlertCircle size={20} /></div>
+                <div className="p-2.5 rounded-xl bg-warning/10 text-warning border border-warning/20"><AlertCircle size={18} /></div>
               </div>
             </div>
 
             {/* P&L Chart */}
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-4">
-              <h3 className="font-bold text-gray-900 text-lg">P&L Performance (Last 6 Months)</h3>
-              <div className="h-80">
+            <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-6 space-y-4">
+              <h3 className="font-bold text-white text-sm uppercase tracking-wider">P&L Performance (Last 6 Months)</h3>
+              <div className="h-80 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="month" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="revenue" fill="#4F46E5" name="Revenue / Invoiced" radius={[4, 4, 0, 0]} />
+                  <BarChart data={chartData} margin={{ top: 20, right: 10, left: -10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                    <XAxis dataKey="month" stroke="#9CA3AF" fontSize={11} />
+                    <YAxis stroke="#9CA3AF" fontSize={11} />
+                    <Tooltip 
+                      contentStyle={{ backgroundColor: '#111827', borderColor: 'rgba(255,255,255,0.08)', borderRadius: '8px' }} 
+                      itemStyle={{ color: '#FFFFFF' }}
+                    />
+                    <Legend wrapperStyle={{ fontSize: '11px' }} />
+                    <Bar dataKey="revenue" fill="#6366F1" name="Revenue / Invoiced" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="expenses" fill="#EF4444" name="Expenses Logged" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -321,23 +324,23 @@ export default function Finance() {
 
         {activeTab === 'invoices' && (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <span className="text-sm font-semibold text-gray-600">Create, track, and record payments for invoices.</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-md gap-3">
+              <span className="text-xs font-semibold text-text-sub">Create, track, and record payments for invoices.</span>
               <button
                 onClick={() => setCreateInvoiceOpen(true)}
-                className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-all active:scale-95 shrink-0"
               >
-                <Plus size={16} className="mr-1.5" />
+                <Plus size={14} className="mr-1" />
                 Create Invoice
               </button>
             </div>
 
             {/* List */}
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
+            <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm border-collapse">
+                <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200 text-gray-400 font-semibold bg-gray-50/50">
+                    <tr className="border-b border-border-card text-text-sub font-bold uppercase tracking-wider bg-bg-main/40">
                       <th className="p-4">Invoice #</th>
                       <th className="p-4">Client</th>
                       <th className="p-4">Invoice Date</th>
@@ -347,23 +350,23 @@ export default function Finance() {
                       <th className="p-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border-card/40">
                     {invoices.length === 0 ? (
-                      <tr><td colSpan={7} className="p-8 text-center text-gray-400">No invoices generated yet.</td></tr>
+                      <tr><td colSpan={7} className="p-8 text-center text-text-sub">No invoices generated yet.</td></tr>
                     ) : (
                       invoices.map((inv) => (
-                        <tr key={inv.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                          <td className="p-4 font-semibold text-gray-900">{inv.invoice_number}</td>
-                          <td className="p-4">{inv.client_detail?.company_name}</td>
-                          <td className="p-4">{inv.invoice_date}</td>
-                          <td className="p-4">{inv.due_date}</td>
-                          <td className="p-4 font-bold text-gray-900">${parseFloat(inv.total_amount).toLocaleString()}</td>
+                        <tr key={inv.id} className="hover:bg-bg-main/30 transition-colors">
+                          <td className="p-4 font-bold text-white">{inv.invoice_number}</td>
+                          <td className="p-4 text-text-sub">{inv.client_detail?.company_name}</td>
+                          <td className="p-4 text-text-sub">{inv.invoice_date}</td>
+                          <td className="p-4 text-text-sub">{inv.due_date}</td>
+                          <td className="p-4 font-bold text-white">${parseFloat(inv.total_amount).toLocaleString()}</td>
                           <td className="p-4"><StatusBadge label={inv.status} /></td>
                           <td className="p-4 text-right space-x-2">
                             {inv.status === 'Draft' && (
                               <button
                                 onClick={() => sendInvoiceMutation.mutate(inv.id)}
-                                className="px-2.5 py-1 text-2xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded transition-all"
+                                className="px-2.5 py-1 text-4xs font-bold text-white bg-primary hover:bg-primary-dark rounded-lg transition-all"
                               >
                                 Send
                               </button>
@@ -371,19 +374,19 @@ export default function Finance() {
                             {inv.status !== 'Paid' && inv.status !== 'Draft' && (
                               <button
                                 onClick={() => setPayInvoiceId(inv.id)}
-                                className="px-2.5 py-1 text-2xs font-bold text-white bg-green-600 hover:bg-green-700 rounded transition-all"
+                                className="px-2.5 py-1 text-4xs font-bold text-white bg-success hover:bg-success/80 rounded-lg transition-all"
                               >
                                 Record Pay
                               </button>
                             )}
                             {inv.pdf_file && (
                               <a
-                                href={`${apiClient('')}${inv.pdf_file}`}
+                                href={`${base_url}${inv.pdf_file}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex p-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded text-gray-500"
+                                className="inline-flex p-1.5 bg-bg-main border border-border-card rounded-lg text-text-sub hover:text-white transition-colors"
                               >
-                                <Printer size={14} />
+                                <Printer size={12} />
                               </a>
                             )}
                           </td>
@@ -399,23 +402,23 @@ export default function Finance() {
 
         {activeTab === 'proposals' && (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <span className="text-sm font-semibold text-gray-600">Draft proposals and scopes of work.</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-md gap-3">
+              <span className="text-xs font-semibold text-text-sub">Draft proposals and scopes of work.</span>
               <button
                 onClick={() => setCreateProposalOpen(true)}
-                className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-all active:scale-95 shrink-0"
               >
-                <Plus size={16} className="mr-1.5" />
+                <Plus size={14} className="mr-1" />
                 Create Proposal
               </button>
             </div>
 
             {/* List */}
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
+            <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm border-collapse">
+                <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200 text-gray-400 font-semibold bg-gray-50/50">
+                    <tr className="border-b border-border-card text-text-sub font-bold uppercase tracking-wider bg-bg-main/40">
                       <th className="p-4">Proposal #</th>
                       <th className="p-4">Client</th>
                       <th className="p-4">Project Name</th>
@@ -424,34 +427,34 @@ export default function Finance() {
                       <th className="p-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border-card/40">
                     {proposals.length === 0 ? (
-                      <tr><td colSpan={6} className="p-8 text-center text-gray-400">No proposals drafted.</td></tr>
+                      <tr><td colSpan={6} className="p-8 text-center text-text-sub">No proposals drafted.</td></tr>
                     ) : (
                       proposals.map((prop) => (
-                        <tr key={prop.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                          <td className="p-4 font-semibold text-gray-900">{prop.proposal_number}</td>
-                          <td className="p-4">{prop.client_detail?.company_name}</td>
-                          <td className="p-4">{prop.project_name}</td>
-                          <td className="p-4">{prop.valid_until}</td>
+                        <tr key={prop.id} className="hover:bg-bg-main/30 transition-colors">
+                          <td className="p-4 font-bold text-white">{prop.proposal_number}</td>
+                          <td className="p-4 text-text-sub">{prop.client_detail?.company_name}</td>
+                          <td className="p-4 text-text-sub">{prop.project_name}</td>
+                          <td className="p-4 text-text-sub">{prop.valid_until}</td>
                           <td className="p-4"><StatusBadge label={prop.status} /></td>
                           <td className="p-4 text-right space-x-2">
                             {prop.status === 'Draft' && (
                               <button
                                 onClick={() => sendProposalMutation.mutate(prop.id)}
-                                className="px-2.5 py-1 text-2xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 rounded transition-all"
+                                className="px-2.5 py-1 text-4xs font-bold text-white bg-primary hover:bg-primary-dark rounded-lg transition-all"
                               >
                                 Send
                               </button>
                             )}
                             {prop.pdf_file && (
                               <a
-                                href={`${apiClient('')}${prop.pdf_file}`}
+                                href={`${base_url}${prop.pdf_file}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex p-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 rounded text-gray-500"
+                                className="inline-flex p-1.5 bg-bg-main border border-border-card rounded-lg text-text-sub hover:text-white transition-colors"
                               >
-                                <Printer size={14} />
+                                <Printer size={12} />
                               </a>
                             )}
                           </td>
@@ -467,23 +470,23 @@ export default function Finance() {
 
         {activeTab === 'expenses' && (
           <div className="space-y-4">
-            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <span className="text-sm font-semibold text-gray-600">Track and reimburse internal expenses.</span>
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-md gap-3">
+              <span className="text-xs font-semibold text-text-sub">Track and reimburse internal expenses.</span>
               <button
                 onClick={() => setCreateExpenseOpen(true)}
-                className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-all active:scale-95 shrink-0"
               >
-                <Plus size={16} className="mr-1.5" />
+                <Plus size={14} className="mr-1" />
                 Log Expense
               </button>
             </div>
 
             {/* List */}
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
+            <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-sm border-collapse">
+                <table className="w-full text-left text-xs border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200 text-gray-400 font-semibold bg-gray-50/50">
+                    <tr className="border-b border-border-card text-text-sub font-bold uppercase tracking-wider bg-bg-main/40">
                       <th className="p-4">Category</th>
                       <th className="p-4">Description</th>
                       <th className="p-4">Amount</th>
@@ -492,24 +495,24 @@ export default function Finance() {
                       <th className="p-4 text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody>
+                  <tbody className="divide-y divide-border-card/40">
                     {expenses.length === 0 ? (
-                      <tr><td colSpan={6} className="p-8 text-center text-gray-400">No expenses logged.</td></tr>
+                      <tr><td colSpan={6} className="p-8 text-center text-text-sub">No expenses logged.</td></tr>
                     ) : (
                       expenses.map((exp) => (
-                        <tr key={exp.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                          <td className="p-4 font-semibold text-gray-900">{exp.category}</td>
-                          <td className="p-4 max-w-xs truncate">{exp.description}</td>
-                          <td className="p-4 font-bold text-gray-900">${parseFloat(exp.amount).toLocaleString()}</td>
-                          <td className="p-4">{exp.expense_date}</td>
+                        <tr key={exp.id} className="hover:bg-bg-main/30 transition-colors">
+                          <td className="p-4 font-bold text-white">{exp.category}</td>
+                          <td className="p-4 max-w-xs truncate text-text-sub">{exp.description}</td>
+                          <td className="p-4 font-bold text-white">${parseFloat(exp.amount).toLocaleString()}</td>
+                          <td className="p-4 text-text-sub">{exp.expense_date}</td>
                           <td className="p-4"><StatusBadge label={exp.status} /></td>
                           <td className="p-4 text-right">
                             {isAdminOrFinance && exp.status === 'Pending' && (
                               <button
                                 onClick={() => approveExpenseMutation.mutate(exp.id)}
-                                className="inline-flex p-1 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded"
+                                className="inline-flex p-1 bg-success/15 text-success hover:bg-success/20 border border-success/30 rounded-lg"
                               >
-                                <Check size={14} />
+                                <Check size={12} />
                               </button>
                             )}
                           </td>
@@ -527,10 +530,10 @@ export default function Finance() {
       {/* Create Invoice Modal */}
       {createInvoiceOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCreateInvoiceOpen(false)}></div>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setCreateInvoiceOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Create Invoice</h2>
+            <div className="relative w-full max-w-2xl rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Create Invoice</h2>
               
               <form 
                 onSubmit={(e) => {
@@ -541,23 +544,23 @@ export default function Finance() {
               >
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Client *</label>
+                    <label className="text-3xs font-bold text-text-sub uppercase">Client *</label>
                     <select
                       required
                       value={invoiceForm.client}
                       onChange={(e) => setInvoiceForm({...invoiceForm, client: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                       <option value="">Select Client</option>
                       {clients.map((c: any) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Project (Optional)</label>
+                    <label className="text-3xs font-bold text-text-sub uppercase">Project (Optional)</label>
                     <select
                       value={invoiceForm.project}
                       onChange={(e) => setInvoiceForm({...invoiceForm, project: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                       <option value="">Select Project</option>
                       {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -567,34 +570,34 @@ export default function Finance() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Invoice Date *</label>
+                    <label className="text-3xs font-bold text-text-sub uppercase">Invoice Date *</label>
                     <input
                       type="date"
                       required
                       value={invoiceForm.invoice_date}
                       onChange={(e) => setInvoiceForm({...invoiceForm, invoice_date: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Due Date *</label>
+                    <label className="text-3xs font-bold text-text-sub uppercase">Due Date *</label>
                     <input
                       type="date"
                       required
                       value={invoiceForm.due_date}
                       onChange={(e) => setInvoiceForm({...invoiceForm, due_date: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 {/* Line Items Builder */}
-                <div className="space-y-2 border-t pt-4">
-                  <h4 className="font-bold text-sm text-gray-800">Line Items</h4>
+                <div className="space-y-2 border-t border-border-card pt-4">
+                  <h4 className="font-bold text-xs text-white uppercase tracking-wider">Line Items</h4>
                   {invoiceForm.line_items.map((item, idx) => (
                     <div key={idx} className="grid grid-cols-12 gap-3 items-end">
                       <div className="col-span-5 space-y-1">
-                        <label className="text-3xs text-gray-400 font-bold uppercase">Description</label>
+                        <label className="text-4xs text-text-sub font-bold uppercase">Description</label>
                         <input
                           type="text"
                           required
@@ -604,11 +607,11 @@ export default function Finance() {
                             newItems[idx].description = e.target.value;
                             setInvoiceForm({...invoiceForm, line_items: newItems});
                           }}
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
+                          className="w-full px-2 py-1.5 text-xs bg-bg-main border border-border-card rounded-lg text-white"
                         />
                       </div>
                       <div className="col-span-2 space-y-1">
-                        <label className="text-3xs text-gray-400 font-bold uppercase">Qty</label>
+                        <label className="text-4xs text-text-sub font-bold uppercase">Qty</label>
                         <input
                           type="number"
                           required
@@ -618,11 +621,11 @@ export default function Finance() {
                             newItems[idx].quantity = parseFloat(e.target.value);
                             setInvoiceForm({...invoiceForm, line_items: newItems});
                           }}
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
+                          className="w-full px-2 py-1.5 text-xs bg-bg-main border border-border-card rounded-lg text-white"
                         />
                       </div>
                       <div className="col-span-3 space-y-1">
-                        <label className="text-3xs text-gray-400 font-bold uppercase">Unit Price ($)</label>
+                        <label className="text-4xs text-text-sub font-bold uppercase">Unit Price ($)</label>
                         <input
                           type="number"
                           required
@@ -632,7 +635,7 @@ export default function Finance() {
                             newItems[idx].unit_price = parseFloat(e.target.value);
                             setInvoiceForm({...invoiceForm, line_items: newItems});
                           }}
-                          className="w-full px-2 py-1.5 text-sm border border-gray-300 rounded"
+                          className="w-full px-2 py-1.5 text-xs bg-bg-main border border-border-card rounded-lg text-white"
                         />
                       </div>
                       <div className="col-span-2 text-right">
@@ -642,7 +645,7 @@ export default function Finance() {
                             const newItems = invoiceForm.line_items.filter((_, i) => i !== idx);
                             setInvoiceForm({...invoiceForm, line_items: newItems});
                           }}
-                          className="text-red-500 hover:text-red-700 text-sm mb-2"
+                          className="text-danger hover:underline text-xs mb-2 block"
                         >
                           Delete
                         </button>
@@ -656,23 +659,23 @@ export default function Finance() {
                       ...invoiceForm,
                       line_items: [...invoiceForm.line_items, { description: '', quantity: 1, unit_price: 0, tax_percent: 0, discount_percent: 0 }]
                     })}
-                    className="text-xs font-semibold text-primary hover:underline"
+                    className="text-2xs font-bold text-primary hover:underline"
                   >
                     + Add Line Item
                   </button>
                 </div>
 
-                <div className="flex justify-end space-x-3 border-t pt-4">
+                <div className="flex justify-end space-x-3 border-t border-border-card pt-4">
                   <button
                     type="button"
                     onClick={() => setCreateInvoiceOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-colors"
                   >
                     Create Invoice
                   </button>
@@ -686,10 +689,10 @@ export default function Finance() {
       {/* Record Payment Modal */}
       {payInvoiceId !== null && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setPayInvoiceId(null)}></div>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setPayInvoiceId(null)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Record Payment</h2>
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Record Payment</h2>
               
               <form 
                 onSubmit={(e) => {
@@ -701,55 +704,63 @@ export default function Finance() {
                 className="space-y-4"
               >
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Amount Paid ($) *</label>
+                  <label className="text-3xs font-bold text-text-sub uppercase">Payment Amount ($) *</label>
                   <input
                     type="number"
                     step="0.01"
                     required
                     value={paymentForm.amount}
                     onChange={(e) => setPaymentForm({...paymentForm, amount: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Payment Method *</label>
+                  <label className="text-3xs font-bold text-text-sub uppercase">Payment Method *</label>
                   <select
-                    required
                     value={paymentForm.payment_method}
                     onChange={(e) => setPaymentForm({...paymentForm, payment_method: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
                   >
                     <option value="Bank Transfer">Bank Transfer</option>
-                    <option value="UPI">UPI</option>
-                    <option value="Cheque">Cheque</option>
-                    <option value="Cash">Cash</option>
-                    <option value="PayPal">PayPal</option>
+                    <option value="Cash">Cash / Cheque</option>
+                    <option value="Stripe">Stripe / Online</option>
                     <option value="Other">Other</option>
                   </select>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Reference / Txn Number</label>
+                  <label className="text-3xs font-bold text-text-sub uppercase">Reference Number</label>
                   <input
                     type="text"
+                    placeholder="e.g. TXN987654321"
                     value={paymentForm.reference_number}
                     onChange={(e) => setPaymentForm({...paymentForm, reference_number: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-2">
+                <div className="space-y-1">
+                  <label className="text-3xs font-bold text-text-sub uppercase">Internal Notes</label>
+                  <textarea
+                    rows={2}
+                    value={paymentForm.notes}
+                    onChange={(e) => setPaymentForm({...paymentForm, notes: e.target.value})}
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                  />
+                </div>
+
+                <div className="flex justify-end space-x-3 border-t border-border-card pt-4">
                   <button
                     type="button"
                     onClick={() => setPayInvoiceId(null)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-success hover:bg-success/80 rounded-xl shadow-md transition-colors"
                   >
                     Record Payment
                   </button>
@@ -763,10 +774,10 @@ export default function Finance() {
       {/* Log Expense Modal */}
       {createExpenseOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCreateExpenseOpen(false)}></div>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setCreateExpenseOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Log Expense</h2>
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Log Expense</h2>
               
               <form 
                 onSubmit={(e) => {
@@ -775,71 +786,68 @@ export default function Finance() {
                 }} 
                 className="space-y-4"
               >
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Category *</label>
-                    <select
-                      value={expenseForm.category}
-                      onChange={(e) => setExpenseForm({...expenseForm, category: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
-                    >
-                      <option value="Salary">Salary</option>
-                      <option value="Software">Software</option>
-                      <option value="Hosting">Hosting</option>
-                      <option value="Marketing">Marketing</option>
-                      <option value="Office">Office</option>
-                      <option value="Travel">Travel</option>
-                      <option value="Legal">Legal</option>
-                      <option value="Equipment">Equipment</option>
-                      <option value="Other">Other</option>
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Amount ($) *</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      required
-                      value={expenseForm.amount}
-                      onChange={(e) => setExpenseForm({...expenseForm, amount: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
-                    />
-                  </div>
+                <div className="space-y-1">
+                  <label className="text-3xs font-bold text-text-sub uppercase">Category *</label>
+                  <select
+                    value={expenseForm.category}
+                    onChange={(e) => setExpenseForm({...expenseForm, category: e.target.value})}
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                  >
+                    <option value="Software">SaaS Subscription</option>
+                    <option value="Hardware">Hardware / Assets</option>
+                    <option value="Marketing">Marketing / Ad Spend</option>
+                    <option value="Salary">Developer Payroll / Contractor</option>
+                    <option value="Office">Office Rent & Utilities</option>
+                    <option value="Other">Other Expenses</option>
+                  </select>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Expense Date *</label>
+                  <label className="text-3xs font-bold text-text-sub uppercase">Amount ($) *</label>
+                  <input
+                    type="number"
+                    step="0.01"
+                    required
+                    value={expenseForm.amount}
+                    onChange={(e) => setExpenseForm({...expenseForm, amount: e.target.value})}
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="text-3xs font-bold text-text-sub uppercase">Expense Date *</label>
                   <input
                     type="date"
                     required
                     value={expenseForm.expense_date}
                     onChange={(e) => setExpenseForm({...expenseForm, expense_date: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Description *</label>
+                  <label className="text-3xs font-bold text-text-sub uppercase">Description / Details *</label>
                   <textarea
                     required
-                    rows={3}
+                    rows={2}
+                    placeholder="e.g. AWS server hosting costs for client portal"
                     value={expenseForm.description}
                     onChange={(e) => setExpenseForm({...expenseForm, description: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-2">
+                <div className="flex justify-end space-x-3 border-t border-border-card pt-4">
                   <button
                     type="button"
                     onClick={() => setCreateExpenseOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-colors"
                   >
                     Log Expense
                   </button>
@@ -850,13 +858,13 @@ export default function Finance() {
         </div>
       )}
 
-      {/* Proposal Create Modal */}
+      {/* Create Proposal Modal */}
       {createProposalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto">
-          <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCreateProposalOpen(false)}></div>
+          <div className="fixed inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setCreateProposalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-2xl rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Create Proposal</h2>
+            <div className="relative w-full max-w-xl rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-sm font-bold text-white uppercase tracking-wider mb-4">Create Proposal</h2>
               
               <form 
                 onSubmit={(e) => {
@@ -865,64 +873,126 @@ export default function Finance() {
                 }} 
                 className="space-y-4"
               >
+                <div className="space-y-1">
+                  <label className="text-3xs font-bold text-text-sub uppercase">Client *</label>
+                  <select
+                    required
+                    value={proposalForm.client}
+                    onChange={(e) => setProposalForm({...proposalForm, client: e.target.value})}
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                  >
+                    <option value="">Select Client</option>
+                    {clients.map((c: any) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
+                  </select>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Client *</label>
-                    <select
-                      required
-                      value={proposalForm.client}
-                      onChange={(e) => setProposalForm({...proposalForm, client: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
-                    >
-                      <option value="">Select Client</option>
-                      {clients.map((c: any) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
-                    </select>
-                  </div>
-                  <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Project Name *</label>
+                    <label className="text-3xs font-bold text-text-sub uppercase">Project Name *</label>
                     <input
                       type="text"
                       required
+                      placeholder="e.g. Mobile Application V2"
                       value={proposalForm.project_name}
                       onChange={(e) => setProposalForm({...proposalForm, project_name: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-3xs font-bold text-text-sub uppercase">Valid Until *</label>
+                    <input
+                      type="date"
+                      required
+                      value={proposalForm.valid_until}
+                      onChange={(e) => setProposalForm({...proposalForm, valid_until: e.target.value})}
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Valid Until *</label>
-                  <input
-                    type="date"
-                    required
-                    value={proposalForm.valid_until}
-                    onChange={(e) => setProposalForm({...proposalForm, valid_until: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
-                  />
-                </div>
-
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Scope / Description *</label>
+                  <label className="text-3xs font-bold text-text-sub uppercase">Scope / Description *</label>
                   <textarea
                     required
-                    rows={4}
+                    rows={3}
+                    placeholder="Provide overview of the project deliverables..."
                     value={proposalForm.description}
                     onChange={(e) => setProposalForm({...proposalForm, description: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
                   />
                 </div>
 
-                <div className="flex justify-end space-x-3 pt-2">
+                {/* Line Items for proposal */}
+                <div className="space-y-2 border-t border-border-card pt-4">
+                  <h4 className="font-bold text-xs text-white uppercase tracking-wider">Line Items</h4>
+                  {proposalForm.line_items.map((item, idx) => (
+                    <div key={idx} className="grid grid-cols-12 gap-3 items-end">
+                      <div className="col-span-6 space-y-1">
+                        <label className="text-4xs text-text-sub font-bold uppercase">Description</label>
+                        <input
+                          type="text"
+                          required
+                          value={item.description}
+                          onChange={(e) => {
+                            const newItems = [...proposalForm.line_items];
+                            newItems[idx].description = e.target.value;
+                            setProposalForm({...proposalForm, line_items: newItems});
+                          }}
+                          className="w-full px-2 py-1.5 text-xs bg-bg-main border border-border-card rounded-lg text-white"
+                        />
+                      </div>
+                      <div className="col-span-4 space-y-1">
+                        <label className="text-4xs text-text-sub font-bold uppercase">Estimated Cost ($)</label>
+                        <input
+                          type="number"
+                          required
+                          value={item.unit_price}
+                          onChange={(e) => {
+                            const newItems = [...proposalForm.line_items];
+                            newItems[idx].unit_price = parseFloat(e.target.value);
+                            setProposalForm({...proposalForm, line_items: newItems});
+                          }}
+                          className="w-full px-2 py-1.5 text-xs bg-bg-main border border-border-card rounded-lg text-white"
+                        />
+                      </div>
+                      <div className="col-span-2 text-right">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const newItems = proposalForm.line_items.filter((_, i) => i !== idx);
+                            setProposalForm({...proposalForm, line_items: newItems});
+                          }}
+                          className="text-danger hover:underline text-xs mb-2 block"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+
+                  <button
+                    type="button"
+                    onClick={() => setProposalForm({
+                      ...proposalForm,
+                      line_items: [...proposalForm.line_items, { description: '', quantity: 1, unit_price: 0, tax_percent: 0, discount_percent: 0 }]
+                    })}
+                    className="text-2xs font-bold text-primary hover:underline"
+                  >
+                    + Add Line Item
+                  </button>
+                </div>
+
+                <div className="flex justify-end space-x-3 border-t border-border-card pt-4">
                   <button
                     type="button"
                     onClick={() => setCreateProposalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-colors"
                   >
                     Create Proposal
                   </button>
@@ -932,6 +1002,7 @@ export default function Finance() {
           </div>
         </div>
       )}
+
     </div>
   );
 }
