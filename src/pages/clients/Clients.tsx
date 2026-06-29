@@ -315,7 +315,7 @@ export default function Clients() {
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-10 h-10 font-bold text-sm text-primary bg-primary-light border border-indigo-100 rounded-2xl">
+                  <div className="flex items-center justify-center w-10 h-10 font-bold text-sm text-primary bg-primary-light border border-primary/10 rounded-2xl">
                     {client.company_name[0].toUpperCase()}
                   </div>
                   <div>
@@ -494,7 +494,7 @@ export default function Clients() {
                         <p className="text-xs text-text-sub text-center py-4">No contact profiles created yet.</p>
                       ) : (
                         contacts.map((contact: any) => (
-                          <div key={contact.id} className="p-3 bg-bg-main border border-gray-150 rounded-lg flex items-center justify-between">
+                          <div key={contact.id} className="p-3 bg-bg-main border border-border-card/50 rounded-lg flex items-center justify-between">
                             <div>
                               <p className="text-sm font-semibold text-white flex items-center">
                                 {contact.name}
@@ -593,7 +593,7 @@ export default function Clients() {
                         <p className="text-xs text-text-sub text-center py-4">No documents uploaded yet.</p>
                       ) : (
                         documents.map((doc: any) => (
-                          <div key={doc.id} className="p-3 bg-bg-main border border-gray-150 rounded-lg flex items-center justify-between">
+                          <div key={doc.id} className="p-3 bg-bg-main border border-border-card/50 rounded-lg flex items-center justify-between">
                             <div className="flex items-center space-x-2">
                               <FileText size={16} className="text-text-sub/70" />
                               <div>

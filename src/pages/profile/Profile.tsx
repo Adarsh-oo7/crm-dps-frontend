@@ -147,16 +147,16 @@ export default function Profile() {
       
       {/* Title */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">My Profile</h1>
-        <p className="text-sm text-gray-500">Manage your account details, photo, and security password.</p>
+        <h1 className="text-2xl font-bold text-white">My Profile</h1>
+        <p className="text-sm text-text-sub">Manage your account details, photo, and security password.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         {/* Left Card: Summary & Avatar */}
-        <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6 flex flex-col items-center text-center space-y-4 h-fit">
+        <div className="bg-bg-card border border-border-card rounded-2xl shadow-lg p-6 flex flex-col items-center text-center space-y-4 h-fit">
           <div className="relative group cursor-pointer" onClick={triggerFileInput}>
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-indigo-100 flex items-center justify-center bg-indigo-50 text-indigo-700 font-bold text-3xl transition-transform hover:scale-105 duration-200">
+            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-primary/10 flex items-center justify-center bg-primary-light text-primary font-bold text-3xl transition-transform hover:scale-105 duration-200">
               {getAvatarUrl() ? (
                 <img src={getAvatarUrl()} alt="User Profile Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -176,37 +176,37 @@ export default function Profile() {
           />
           
           <div>
-            <h2 className="text-lg font-bold text-gray-900">{user?.full_name || 'User Profile'}</h2>
-            <p className="text-sm text-gray-500 font-mono">{user?.email}</p>
+            <h2 className="text-lg font-bold text-white">{user?.full_name || 'User Profile'}</h2>
+            <p className="text-sm text-text-sub font-mono">{user?.email}</p>
             <div className="mt-2 flex flex-wrap gap-1.5 justify-center">
-              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-indigo-50 text-primary border border-indigo-100 capitalize">
+              <span className="px-2.5 py-0.5 rounded-full text-xs font-bold bg-primary-light text-primary border border-primary/10 capitalize">
                 {user?.role}
               </span>
               {user?.department && (
-                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-gray-50 text-gray-600 border border-gray-200">
+                <span className="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-bg-main text-text-sub border border-border-card">
                   {user.department}
                 </span>
               )}
             </div>
           </div>
 
-          <div className="w-full border-t border-gray-100 pt-4 text-left space-y-3">
-            <div className="flex items-center text-sm text-gray-600">
-              <Briefcase size={16} className="text-gray-400 mr-2 shrink-0" />
-              <span className="truncate">Department: <strong className="text-gray-900">{user?.department || '—'}</strong></span>
+          <div className="w-full border-t border-border-card/40 pt-4 text-left space-y-3">
+            <div className="flex items-center text-sm text-text-sub">
+              <Briefcase size={16} className="text-text-sub/70 mr-2 shrink-0" />
+              <span className="truncate">Department: <strong className="text-white">{user?.department || '—'}</strong></span>
             </div>
-            <div className="flex items-center text-sm text-gray-600">
-              <Shield size={16} className="text-gray-400 mr-2 shrink-0" />
-              <span>Custom Permissions: <strong className="text-gray-900">{user?.custom_permissions?.length || 0} active</strong></span>
+            <div className="flex items-center text-sm text-text-sub">
+              <Shield size={16} className="text-text-sub/70 mr-2 shrink-0" />
+              <span>Custom Permissions: <strong className="text-white">{user?.custom_permissions?.length || 0} active</strong></span>
             </div>
           </div>
           
           {user?.custom_permissions && user.custom_permissions.length > 0 && (
-            <div className="w-full text-left bg-gray-50 border border-gray-200 rounded-lg p-3">
-              <span className="text-2xs font-bold text-gray-400 uppercase tracking-wider block mb-1">Overridden Module Access</span>
+            <div className="w-full text-left bg-bg-main border border-border-card rounded-lg p-3">
+              <span className="text-2xs font-bold text-text-sub/70 uppercase tracking-wider block mb-1">Overridden Module Access</span>
               <div className="flex flex-wrap gap-1">
                 {user.custom_permissions.map((perm) => (
-                  <span key={perm} className="px-1.5 py-0.5 bg-white border border-gray-200 rounded text-3xs font-mono font-bold text-indigo-700 capitalize">
+                  <span key={perm} className="px-1.5 py-0.5 bg-bg-card border border-border-card rounded text-3xs font-mono font-bold text-primary capitalize">
                     {perm}
                   </span>
                 ))}
@@ -219,8 +219,8 @@ export default function Profile() {
         <div className="lg:col-span-2 space-y-6">
           
           {/* Profile Details Form */}
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-            <h3 className="font-bold text-gray-900 text-lg border-b pb-3 mb-4 flex items-center gap-2">
+          <div className="bg-bg-card border border-border-card rounded-2xl shadow-lg p-6">
+            <h3 className="font-bold text-white text-lg border-b pb-3 mb-4 flex items-center gap-2">
               <User size={18} className="text-indigo-500" />
               General Details
             </h3>
@@ -228,29 +228,29 @@ export default function Profile() {
             <form onSubmit={handleProfileSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Full Name *</label>
+                  <label className="text-xs font-semibold text-text-sub">Full Name *</label>
                   <input 
                     type="text" 
                     required 
                     value={formData.full_name} 
                     onChange={(e) => setFormData({ ...formData, full_name: e.target.value })} 
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Email Address (Read Only)</label>
+                  <label className="text-xs font-semibold text-text-sub">Email Address (Read Only)</label>
                   <input 
                     type="email" 
                     readOnly 
                     value={user?.email || ''} 
-                    className="w-full px-3 py-2 text-sm border border-gray-200 bg-gray-50 rounded-lg cursor-not-allowed text-gray-500" 
+                    className="w-full px-3 py-2 text-sm border border-border-card bg-bg-main rounded-lg cursor-not-allowed text-text-sub" 
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 flex items-center gap-1">
+                  <label className="text-xs font-semibold text-text-sub flex items-center gap-1">
                     <Phone size={12} /> Contact Phone
                   </label>
                   <input 
@@ -258,11 +258,11 @@ export default function Profile() {
                     value={formData.phone} 
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })} 
                     placeholder="+91 98765 43210"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500 flex items-center gap-1">
+                  <label className="text-xs font-semibold text-text-sub flex items-center gap-1">
                     <MessageSquare size={12} /> WhatsApp Number
                   </label>
                   <input 
@@ -270,28 +270,28 @@ export default function Profile() {
                     value={formData.whatsapp_number} 
                     onChange={(e) => setFormData({ ...formData, whatsapp_number: e.target.value })} 
                     placeholder="919876543210"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
                   />
                 </div>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Department</label>
+                  <label className="text-xs font-semibold text-text-sub">Department</label>
                   <input 
                     type="text" 
                     value={formData.department} 
                     onChange={(e) => setFormData({ ...formData, department: e.target.value })} 
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
                   />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Base Role (Elevate via Admin)</label>
+                  <label className="text-xs font-semibold text-text-sub">Base Role (Elevate via Admin)</label>
                   <input 
                     type="text" 
                     readOnly 
                     value={user?.role || ''} 
-                    className="w-full px-3 py-2 text-sm border border-gray-200 bg-gray-50 rounded-lg cursor-not-allowed text-gray-500 capitalize" 
+                    className="w-full px-3 py-2 text-sm border border-border-card bg-bg-main rounded-lg cursor-not-allowed text-text-sub capitalize" 
                   />
                 </div>
               </div>
@@ -300,7 +300,7 @@ export default function Profile() {
                 <button
                   type="submit"
                   disabled={isSavingProfile}
-                  className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
+                  className="px-4 py-2 bg-primary hover:bg-primary-dark text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-lg transition-colors disabled:opacity-50"
                 >
                   <Save size={16} />
                   {isSavingProfile ? 'Saving...' : 'Save Changes'}
@@ -310,18 +310,18 @@ export default function Profile() {
           </div>
 
           {/* Change Password Card with OTP */}
-          <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
-            <h3 className="font-bold text-gray-900 text-lg border-b pb-3 mb-4 flex items-center gap-2">
+          <div className="bg-bg-card border border-border-card rounded-2xl shadow-lg p-6">
+            <h3 className="font-bold text-white text-lg border-b pb-3 mb-4 flex items-center gap-2">
               <Key size={18} className="text-amber-500" />
               Reset Profile Password
             </h3>
             
             {!otpSent ? (
               <div className="space-y-4">
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 space-y-2">
+                <div className="p-4 bg-warning/10 border border-amber-200 rounded-2xl text-sm text-amber-800 space-y-2">
                   <p className="font-semibold">Need to change your profile password?</p>
-                  <p className="text-xs text-amber-700">
-                    To secure your account, click the button below to generate a 6-digit access token delivered directly to your registered email <strong className="font-mono text-gray-900">{user?.email}</strong>.
+                  <p className="text-xs text-warning">
+                    To secure your account, click the button below to generate a 6-digit access token delivered directly to your registered email <strong className="font-mono text-white">{user?.email}</strong>.
                   </p>
                 </div>
                 
@@ -330,7 +330,7 @@ export default function Profile() {
                     type="button"
                     onClick={handleRequestOtp}
                     disabled={isRequestingOtp}
-                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-lg transition-colors disabled:opacity-50"
                   >
                     {isRequestingOtp ? (
                       <>
@@ -348,18 +348,18 @@ export default function Profile() {
               </div>
             ) : (
               <form onSubmit={handleOtpPasswordSubmit} className="space-y-4">
-                <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-sm text-indigo-800 flex items-start gap-3">
-                  <ShieldCheck className="text-indigo-600 shrink-0 mt-0.5" size={18} />
+                <div className="p-4 bg-primary-light border border-primary/10 rounded-2xl text-sm text-indigo-800 flex items-start gap-3">
+                  <ShieldCheck className="text-primary shrink-0 mt-0.5" size={18} />
                   <div>
                     <p className="font-semibold">Access Verification Code Sent</p>
-                    <p className="text-xs text-indigo-600">
+                    <p className="text-xs text-primary">
                       Enter the 6-digit verification code sent to your email along with your new password to verify identity and update password.
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">6-Digit Verification Code</label>
+                  <label className="text-xs font-semibold text-text-sub">6-Digit Verification Code</label>
                   <input 
                     type="text" 
                     required 
@@ -367,31 +367,31 @@ export default function Profile() {
                     placeholder="000000"
                     value={otp} 
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} 
-                    className="w-full px-3 py-2 text-center text-lg font-bold tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                    className="w-full px-3 py-2 text-center text-lg font-bold tracking-widest border border-border-card rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
                   />
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">New Password</label>
+                    <label className="text-xs font-semibold text-text-sub">New Password</label>
                     <input 
                       type="password" 
                       required 
                       placeholder="••••••••"
                       value={newPassword} 
                       onChange={(e) => setNewPassword(e.target.value)} 
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Confirm New Password</label>
+                    <label className="text-xs font-semibold text-text-sub">Confirm New Password</label>
                     <input 
                       type="password" 
                       required 
                       placeholder="••••••••"
                       value={confirmPassword} 
                       onChange={(e) => setConfirmPassword(e.target.value)} 
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
                     />
                   </div>
                 </div>
@@ -400,7 +400,7 @@ export default function Profile() {
                   <button
                     type="button"
                     onClick={() => setOtpSent(false)}
-                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1"
+                    className="text-xs text-text-sub hover:text-white flex items-center gap-1"
                   >
                     <ArrowLeft size={14} />
                     Back
@@ -409,7 +409,7 @@ export default function Profile() {
                   <button
                     type="submit"
                     disabled={isResettingPassword}
-                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-lg transition-colors disabled:opacity-50"
                   >
                     {isResettingPassword ? (
                       <>

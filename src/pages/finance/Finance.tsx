@@ -274,28 +274,28 @@ export default function Finance() {
                   <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Invoiced This Month</span>
                   <h3 className="text-xl font-extrabold text-white mt-1.5">${parseFloat(summary.total_invoiced_this_month || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-2.5 rounded-xl bg-indigo-500/10 text-indigo-400 border border-indigo-500/20"><FileText size={18} /></div>
+                <div className="p-2.5 rounded-2xl bg-primary-light0/10 text-primary-light border border-indigo-500/20"><FileText size={18} /></div>
               </div>
               <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
                   <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Collected This Month</span>
                   <h3 className="text-xl font-extrabold text-success mt-1.5">${parseFloat(summary.total_collected_this_month || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-2.5 rounded-xl bg-success/10 text-success border border-success/20"><TrendingUp size={18} /></div>
+                <div className="p-2.5 rounded-2xl bg-success/10 text-success border border-success/20"><TrendingUp size={18} /></div>
               </div>
               <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
                   <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Expenses This Month</span>
                   <h3 className="text-xl font-extrabold text-danger mt-1.5">${parseFloat(summary.expenses_this_month || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-2.5 rounded-xl bg-danger/10 text-danger border border-danger/20"><TrendingDown size={18} /></div>
+                <div className="p-2.5 rounded-2xl bg-danger/10 text-danger border border-danger/20"><TrendingDown size={18} /></div>
               </div>
               <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
                   <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Outstanding Invoices</span>
                   <h3 className="text-xl font-extrabold text-warning mt-1.5">${parseFloat(summary.outstanding_payments || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-2.5 rounded-xl bg-warning/10 text-warning border border-warning/20"><AlertCircle size={18} /></div>
+                <div className="p-2.5 rounded-2xl bg-warning/10 text-warning border border-warning/20"><AlertCircle size={18} /></div>
               </div>
             </div>
 
@@ -328,7 +328,7 @@ export default function Finance() {
               <span className="text-xs font-semibold text-text-sub">Create, track, and record payments for invoices.</span>
               <button
                 onClick={() => setCreateInvoiceOpen(true)}
-                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-all active:scale-95 shrink-0"
+                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-2xl shadow-md transition-all active:scale-95 shrink-0"
               >
                 <Plus size={14} className="mr-1" />
                 Create Invoice
@@ -406,7 +406,7 @@ export default function Finance() {
               <span className="text-xs font-semibold text-text-sub">Draft proposals and scopes of work.</span>
               <button
                 onClick={() => setCreateProposalOpen(true)}
-                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-all active:scale-95 shrink-0"
+                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-2xl shadow-md transition-all active:scale-95 shrink-0"
               >
                 <Plus size={14} className="mr-1" />
                 Create Proposal
@@ -474,7 +474,7 @@ export default function Finance() {
               <span className="text-xs font-semibold text-text-sub">Track and reimburse internal expenses.</span>
               <button
                 onClick={() => setCreateExpenseOpen(true)}
-                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-all active:scale-95 shrink-0"
+                className="flex items-center justify-center px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-2xl shadow-md transition-all active:scale-95 shrink-0"
               >
                 <Plus size={14} className="mr-1" />
                 Log Expense
@@ -549,7 +549,7 @@ export default function Finance() {
                       required
                       value={invoiceForm.client}
                       onChange={(e) => setInvoiceForm({...invoiceForm, client: e.target.value})}
-                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                       <option value="">Select Client</option>
                       {clients.map((c: any) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
@@ -560,7 +560,7 @@ export default function Finance() {
                     <select
                       value={invoiceForm.project}
                       onChange={(e) => setInvoiceForm({...invoiceForm, project: e.target.value})}
-                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     >
                       <option value="">Select Project</option>
                       {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -576,7 +576,7 @@ export default function Finance() {
                       required
                       value={invoiceForm.invoice_date}
                       onChange={(e) => setInvoiceForm({...invoiceForm, invoice_date: e.target.value})}
-                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
@@ -586,7 +586,7 @@ export default function Finance() {
                       required
                       value={invoiceForm.due_date}
                       onChange={(e) => setInvoiceForm({...invoiceForm, due_date: e.target.value})}
-                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none focus:ring-1 focus:ring-primary"
                     />
                   </div>
                 </div>
@@ -669,13 +669,13 @@ export default function Finance() {
                   <button
                     type="button"
                     onClick={() => setCreateInvoiceOpen(false)}
-                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-2xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-2xl shadow-md transition-colors"
                   >
                     Create Invoice
                   </button>
@@ -711,7 +711,7 @@ export default function Finance() {
                     required
                     value={paymentForm.amount}
                     onChange={(e) => setPaymentForm({...paymentForm, amount: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   />
                 </div>
 
@@ -720,7 +720,7 @@ export default function Finance() {
                   <select
                     value={paymentForm.payment_method}
                     onChange={(e) => setPaymentForm({...paymentForm, payment_method: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   >
                     <option value="Bank Transfer">Bank Transfer</option>
                     <option value="Cash">Cash / Cheque</option>
@@ -736,7 +736,7 @@ export default function Finance() {
                     placeholder="e.g. TXN987654321"
                     value={paymentForm.reference_number}
                     onChange={(e) => setPaymentForm({...paymentForm, reference_number: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   />
                 </div>
 
@@ -746,7 +746,7 @@ export default function Finance() {
                     rows={2}
                     value={paymentForm.notes}
                     onChange={(e) => setPaymentForm({...paymentForm, notes: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   />
                 </div>
 
@@ -754,13 +754,13 @@ export default function Finance() {
                   <button
                     type="button"
                     onClick={() => setPayInvoiceId(null)}
-                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-2xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-xs font-bold text-white bg-success hover:bg-success/80 rounded-xl shadow-md transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-success hover:bg-success/80 rounded-2xl shadow-md transition-colors"
                   >
                     Record Payment
                   </button>
@@ -791,7 +791,7 @@ export default function Finance() {
                   <select
                     value={expenseForm.category}
                     onChange={(e) => setExpenseForm({...expenseForm, category: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   >
                     <option value="Software">SaaS Subscription</option>
                     <option value="Hardware">Hardware / Assets</option>
@@ -810,7 +810,7 @@ export default function Finance() {
                     required
                     value={expenseForm.amount}
                     onChange={(e) => setExpenseForm({...expenseForm, amount: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   />
                 </div>
 
@@ -821,7 +821,7 @@ export default function Finance() {
                     required
                     value={expenseForm.expense_date}
                     onChange={(e) => setExpenseForm({...expenseForm, expense_date: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   />
                 </div>
 
@@ -833,7 +833,7 @@ export default function Finance() {
                     placeholder="e.g. AWS server hosting costs for client portal"
                     value={expenseForm.description}
                     onChange={(e) => setExpenseForm({...expenseForm, description: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   />
                 </div>
 
@@ -841,13 +841,13 @@ export default function Finance() {
                   <button
                     type="button"
                     onClick={() => setCreateExpenseOpen(false)}
-                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-2xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-2xl shadow-md transition-colors"
                   >
                     Log Expense
                   </button>
@@ -879,7 +879,7 @@ export default function Finance() {
                     required
                     value={proposalForm.client}
                     onChange={(e) => setProposalForm({...proposalForm, client: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   >
                     <option value="">Select Client</option>
                     {clients.map((c: any) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
@@ -895,7 +895,7 @@ export default function Finance() {
                       placeholder="e.g. Mobile Application V2"
                       value={proposalForm.project_name}
                       onChange={(e) => setProposalForm({...proposalForm, project_name: e.target.value})}
-                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                     />
                   </div>
                   <div className="space-y-1">
@@ -905,7 +905,7 @@ export default function Finance() {
                       required
                       value={proposalForm.valid_until}
                       onChange={(e) => setProposalForm({...proposalForm, valid_until: e.target.value})}
-                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                      className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                     />
                   </div>
                 </div>
@@ -918,7 +918,7 @@ export default function Finance() {
                     placeholder="Provide overview of the project deliverables..."
                     value={proposalForm.description}
                     onChange={(e) => setProposalForm({...proposalForm, description: e.target.value})}
-                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-xl text-white focus:outline-none"
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
                   />
                 </div>
 
@@ -986,13 +986,13 @@ export default function Finance() {
                   <button
                     type="button"
                     onClick={() => setCreateProposalOpen(false)}
-                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
+                    className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-2xl transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-xl shadow-md transition-colors"
+                    className="px-4 py-2 text-xs font-bold text-white bg-primary hover:bg-primary-dark rounded-2xl shadow-md transition-colors"
                   >
                     Create Proposal
                   </button>

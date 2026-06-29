@@ -52,7 +52,7 @@ export default function Topbar({ toggleSidebar }: { toggleSidebar: () => void })
   };
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-16 px-4 sm:px-6 bg-bg-card border-b border-border-card backdrop-blur-md shadow-sm">
+    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-16 px-4 sm:px-6 bg-bg-card border-b border-border-card backdrop-blur-md shadow-lg">
       {/* Mobile Toggle Button */}
       <button 
         onClick={toggleSidebar}
@@ -80,7 +80,7 @@ export default function Topbar({ toggleSidebar }: { toggleSidebar: () => void })
         {/* Quick Add Button */}
         <button 
           onClick={() => navigate('/tasks?action=create')}
-          className="flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all duration-205"
+          className="flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all duration-205"
         >
           <Plus size={14} className="mr-1" />
           Quick Add

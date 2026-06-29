@@ -79,14 +79,14 @@ export default function Login() {
     <div className="flex items-center justify-center min-h-screen bg-bg-main relative overflow-hidden">
       {/* Decorative background glow blobs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary rounded-full filter blur-3xl opacity-10 animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500 rounded-full filter blur-3xl opacity-10 animate-pulse delay-700"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-light0 rounded-full filter blur-3xl opacity-10 animate-pulse delay-700"></div>
 
       <div className="relative w-full max-w-md p-8 bg-bg-card border border-border-card rounded-2xl shadow-2xl mx-4">
         <Toaster position="top-right" />
         
         {/* Logo and Header */}
         <div className="flex flex-col items-center mb-8">
-          <img src="/logo.png" alt="Digital Product Kerala Logo" className="h-10 w-auto mb-3.5 rounded-xl border border-border-card bg-white p-1" />
+          <img src="/logo.png" alt="Digital Product Kerala Logo" className="h-10 w-auto mb-3.5 rounded-2xl border border-border-card bg-bg-card p-1" />
           <h1 className="text-xl font-extrabold text-white tracking-tight">DPS Agency OS</h1>
           <p className="text-xs text-text-sub mt-1">Sign in to manage your digital agency</p>
         </div>
@@ -113,7 +113,7 @@ export default function Login() {
                 <input
                   type="email"
                   {...register('email')}
-                  className="w-full py-2.5 pl-10 pr-4 text-sm text-white bg-indigo-950/50 border border-indigo-700/50 rounded-lg placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                  className="w-full py-2.5 pl-10 pr-4 text-sm text-white bg-bg-main/50 border border-indigo-700/50 rounded-lg placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                   placeholder="admin@digitalprod.com"
                   disabled={isSubmitting}
                 />
@@ -137,7 +137,7 @@ export default function Login() {
                 <input
                   type={showPassword ? 'text' : 'password'}
                   {...register('password')}
-                  className="w-full py-2.5 pl-10 pr-10 text-sm text-white bg-indigo-950/50 border border-indigo-700/50 rounded-lg placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                  className="w-full py-2.5 pl-10 pr-10 text-sm text-white bg-bg-main/50 border border-indigo-700/50 rounded-lg placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                   placeholder="••••••••"
                   disabled={isSubmitting}
                 />
@@ -158,7 +158,7 @@ export default function Login() {
             {/* Submit button */}
             <button
               type="submit"
-              className="w-full py-2.5 mt-2 flex items-center justify-center font-semibold text-white bg-primary hover:bg-primary-dark active:bg-indigo-700 rounded-lg shadow-md shadow-indigo-600/20 focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full py-2.5 mt-2 flex items-center justify-center font-semibold text-white bg-primary hover:bg-primary-dark active:bg-primary-dark rounded-lg shadow-md shadow-indigo-600/20 focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isSubmitting}
             >
               {isSubmitting ? (
@@ -174,7 +174,7 @@ export default function Login() {
         ) : (
           /* OTP Verification Form */
           <form onSubmit={handleVerifyOtp} className="space-y-6">
-            <div className="text-center bg-indigo-950/30 border border-indigo-500/20 p-4 rounded-xl space-y-1">
+            <div className="text-center bg-bg-main/30 border border-indigo-500/20 p-4 rounded-2xl space-y-1">
               <KeyRound className="mx-auto text-primary" size={28} />
               <h2 className="text-sm font-semibold text-white">Security Verification</h2>
               <p className="text-xs text-indigo-200">
@@ -192,7 +192,7 @@ export default function Login() {
                 maxLength={6}
                 value={otpValue}
                 onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
-                className="w-full py-3 text-center text-xl font-bold tracking-widest text-white bg-indigo-950/50 border border-indigo-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
+                className="w-full py-3 text-center text-xl font-bold tracking-widest text-white bg-bg-main/50 border border-indigo-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
                 placeholder="000000"
                 disabled={isVerifyingOtp}
               />
@@ -200,7 +200,7 @@ export default function Login() {
 
             <button
               type="submit"
-              className="w-full py-2.5 flex items-center justify-center font-semibold text-white bg-primary hover:bg-primary-dark active:bg-indigo-700 rounded-lg shadow-md focus:outline-none transition-all duration-200 disabled:opacity-50"
+              className="w-full py-2.5 flex items-center justify-center font-semibold text-white bg-primary hover:bg-primary-dark active:bg-primary-dark rounded-lg shadow-md focus:outline-none transition-all duration-200 disabled:opacity-50"
               disabled={isVerifyingOtp || otpValue.length !== 6}
             >
               {isVerifyingOtp ? (

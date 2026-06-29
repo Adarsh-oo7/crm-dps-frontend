@@ -6,11 +6,11 @@ interface DateDisplayProps {
 }
 
 export default function DateDisplay({ dateString, includeTime = false }: DateDisplayProps) {
-  if (!dateString) return <span className="text-gray-400">—</span>;
+  if (!dateString) return <span className="text-text-sub/70">—</span>;
 
   try {
     const date = new Date(dateString);
-    if (isNaN(date.getTime())) return <span className="text-gray-400">—</span>;
+    if (isNaN(date.getTime())) return <span className="text-text-sub/70">—</span>;
 
     const options: Intl.DateTimeFormatOptions = {
       year: 'numeric',

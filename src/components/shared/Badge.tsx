@@ -7,10 +7,10 @@ interface BadgeProps {
 export function StatusBadge({ label }: BadgeProps) {
   const norm = label.toLowerCase();
   
-  let bg = 'bg-gray-800 text-gray-300 border-gray-700';
+  let bg = 'bg-gray-800 text-text-sub/55 border-gray-700';
   
   if (['new', 'todo', 'backlog'].includes(norm)) {
-    bg = 'bg-gray-800 text-gray-300 border-gray-700';
+    bg = 'bg-gray-800 text-text-sub/55 border-gray-700';
   } else if (['in progress', 'active', 'planning', 'ui design', 'development'].includes(norm)) {
     bg = 'bg-primary/10 text-primary border-primary/25';
   } else if (['review', 'sent', 'in review', 'proposal sent', 'negotiation'].includes(norm)) {
@@ -35,10 +35,10 @@ export function StatusBadge({ label }: BadgeProps) {
 export function PriorityBadge({ label }: BadgeProps) {
   const norm = label.toLowerCase();
   
-  let bg = 'bg-gray-800 text-gray-300 border-gray-700';
+  let bg = 'bg-gray-800 text-text-sub/55 border-gray-700';
   
   if (norm === 'low') {
-    bg = 'bg-gray-800/80 text-gray-400 border-gray-700';
+    bg = 'bg-gray-800/80 text-text-sub/70 border-gray-700';
   } else if (norm === 'medium') {
     bg = 'bg-primary/10 text-primary border-primary/25';
   } else if (norm === 'high' || norm === 'hot') {

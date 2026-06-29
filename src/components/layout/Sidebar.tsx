@@ -86,7 +86,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
         <div>
           <div className="flex items-center justify-between h-16 px-4 border-b border-border-card bg-bg-main/30">
             <div className="flex items-center space-x-2 overflow-hidden">
-              <div className="flex items-center justify-center w-8 h-8 bg-white rounded-lg shrink-0 shadow-md border border-border-card p-0.5">
+              <div className="flex items-center justify-center w-8 h-8 bg-bg-card rounded-lg shrink-0 shadow-md border border-border-card p-0.5">
                 <img src="/logo.png" alt="DPS Logo" className="w-full h-full object-contain" />
               </div>
               {isOpen && (

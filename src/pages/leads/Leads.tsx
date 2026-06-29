@@ -452,7 +452,7 @@ export default function Leads() {
                   )}
 
                   {selectedLead.project_detail && (
-                    <div className="flex items-center space-x-2 text-sm bg-primary-light/50 p-2.5 rounded-lg border border-indigo-100">
+                    <div className="flex items-center space-x-2 text-sm bg-primary-light/50 p-2.5 rounded-lg border border-primary/10">
                       <span className="text-2xs font-bold text-primary uppercase">Project Source:</span>
                       <span className="font-semibold text-white">{selectedLead.project_detail.name}</span>
                     </div>

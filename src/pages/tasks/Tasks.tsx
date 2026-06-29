@@ -368,7 +368,7 @@ export default function Tasks() {
                 className="flex-1 min-w-[280px] max-w-[320px] bg-bg-main border border-border-card rounded-2xl p-3 flex flex-col h-full"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-gray-950 text-sm">
+                  <h3 className="font-semibold text-white text-sm">
                     {stage}
                     <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-bg-main text-white rounded-full">
                       {stageTasks.length}
@@ -580,7 +580,7 @@ export default function Tasks() {
                       <p className="text-3xs text-text-sub/70 text-center py-2">No comments posted yet.</p>
                     ) : (
                       comments.map((c: any) => (
-                        <div key={c.id} className="p-2.5 bg-bg-main border border-gray-150 rounded-lg space-y-1">
+                        <div key={c.id} className="p-2.5 bg-bg-main border border-border-card/50 rounded-lg space-y-1">
                           <div className="flex items-center justify-between">
                             <span className="text-xs font-semibold text-white">{c.user_detail?.full_name || 'System User'}</span>
                             <span className="text-3xs text-text-sub/70"><DateDisplay dateString={c.created_at} includeTime /></span>

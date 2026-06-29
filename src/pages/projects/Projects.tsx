@@ -317,7 +317,7 @@ export default function Projects() {
                 className="flex-1 min-w-[280px] max-w-[320px] bg-bg-main border border-border-card rounded-2xl p-3 flex flex-col h-full"
               >
                 <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-gray-950 text-sm">
+                  <h3 className="font-semibold text-white text-sm">
                     {stage}
                     <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-bg-main text-white rounded-full">
                       {stageProjects.length}
@@ -347,7 +347,7 @@ export default function Projects() {
                           <span className="text-xs font-bold text-white">{proj.completion_percentage}%</span>
                         </div>
 
-                        <div className="w-full bg-gray-150 h-1.5 rounded-full overflow-hidden">
+                        <div className="w-full bg-bg-main h-1.5 rounded-full overflow-hidden">
                           <div className="bg-primary h-full" style={{ width: `${proj.completion_percentage}%` }}></div>
                         </div>
 
@@ -424,7 +424,7 @@ export default function Projects() {
                       <h3 className="font-bold text-sm text-white border-b pb-2">Financials & Timeline</h3>
                       <div className="flex items-center space-x-2 text-sm text-text-sub">
                         <DollarSign size={16} className="text-text-sub/70" />
-                        <span>Budget: <span className="font-bold text-gray-950">${parseFloat(selectedProject.budget).toLocaleString()}</span></span>
+                        <span>Budget: <span className="font-bold text-white">${parseFloat(selectedProject.budget).toLocaleString()}</span></span>
                       </div>
                       <div className="flex items-center space-x-2 text-sm text-text-sub">
                         <Calendar size={16} className="text-text-sub/70" />
@@ -495,7 +495,7 @@ export default function Projects() {
                         <p className="text-xs text-text-sub text-center py-4">No milestones scheduled.</p>
                       ) : (
                         milestones.map((m: any) => (
-                          <div key={m.id} className="p-3 bg-bg-main border border-gray-150 rounded-lg flex items-center justify-between">
+                          <div key={m.id} className="p-3 bg-bg-main border border-border-card/50 rounded-lg flex items-center justify-between">
                             <div>
                               <p className="text-sm font-semibold text-white">{m.title}</p>
                               <div className="flex items-center space-x-2 mt-1">
@@ -519,7 +519,7 @@ export default function Projects() {
                         <p className="text-xs text-text-sub text-center py-4">No tasks found in project backlog.</p>
                       ) : (
                         tasks.map((t: any) => (
-                          <div key={t.id} className="p-3 bg-bg-main border border-gray-150 rounded-lg flex items-center justify-between">
+                          <div key={t.id} className="p-3 bg-bg-main border border-border-card/50 rounded-lg flex items-center justify-between">
                             <div>
                               <p className="text-xs font-semibold text-white">{t.title}</p>
                               <span className="text-3xs text-text-sub">Priority: {t.priority}</span>

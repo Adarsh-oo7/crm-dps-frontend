@@ -45,14 +45,14 @@ export default function ConfirmModal({
             <button
               onClick={onCancel}
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-xl transition-colors"
+              className="px-4 py-2 text-xs font-semibold text-text-sub bg-bg-main hover:bg-bg-main/70 border border-border-card rounded-2xl transition-colors"
             >
               {cancelLabel}
             </button>
             <button
               onClick={onConfirm}
               disabled={isSubmitting}
-              className="flex items-center px-4 py-2 text-xs font-bold text-white bg-danger hover:bg-danger/80 active:scale-95 rounded-xl shadow-md transition-all disabled:opacity-50"
+              className="flex items-center px-4 py-2 text-xs font-bold text-white bg-danger hover:bg-danger/80 active:scale-95 rounded-2xl shadow-md transition-all disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

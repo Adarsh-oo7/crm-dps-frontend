@@ -64,7 +64,7 @@ interface AttendanceRecord {
 }
 
 const COLORS_BY_STATUS: Record<string, string> = {
-  'New': 'bg-gray-800 text-gray-400 border-gray-700',
+  'New': 'bg-gray-800 text-text-sub/70 border-gray-700',
   'Planning': 'bg-indigo-900/40 text-indigo-300 border-indigo-500/20',
   'UI Design': 'bg-purple-900/40 text-purple-300 border-purple-500/20',
   'Development': 'bg-blue-900/40 text-blue-300 border-blue-500/20',
@@ -72,7 +72,7 @@ const COLORS_BY_STATUS: Record<string, string> = {
   'Deployment': 'bg-orange-950/40 text-orange-300 border-orange-500/20',
   'Completed': 'bg-green-950/40 text-green-300 border-green-500/20',
   'On Hold': 'bg-red-950/40 text-red-300 border-red-500/20',
-  'Cancelled': 'bg-gray-900/40 text-gray-500 border-gray-800',
+  'Cancelled': 'bg-gray-900/40 text-text-sub border-gray-800',
   'Backlog': 'bg-slate-900/40 text-slate-400 border-slate-800',
 };
 
@@ -159,7 +159,7 @@ export default function Dashboard() {
       sub: `${summary?.hot_leads_count ?? 0} hot leads`,
       positive: (summary?.leads_count ?? 0) > 0,
       icon: Users,
-      color: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20',
+      color: 'bg-primary-light0/10 text-primary-light border-indigo-500/20',
       onClick: () => navigate('/leads'),
     },
     {
@@ -177,7 +177,7 @@ export default function Dashboard() {
       sub: `${formatCurrency(summary?.profit_this_month ?? 0)} profit`,
       positive: (summary?.profit_this_month ?? 0) >= 0,
       icon: DollarSign,
-      color: 'bg-green-500/10 text-green-400 border-green-500/20',
+      color: 'bg-success/100/10 text-green-400 border-green-500/20',
       onClick: () => navigate('/finance'),
     },
     {
@@ -186,7 +186,7 @@ export default function Dashboard() {
       sub: `${todayFollowups.filter(f => f.status === 'Pending').length} pending`,
       positive: (summary?.today_followups_count ?? 0) === 0,
       icon: Clock,
-      color: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
+      color: 'bg-warning/100/10 text-amber-400 border-amber-500/20',
       onClick: () => navigate('/followups'),
     },
   ];
@@ -213,7 +213,7 @@ export default function Dashboard() {
         
         <div className="flex flex-wrap items-center gap-3">
           {/* Real-time Punch card inside header */}
-          <div className="flex items-center bg-bg-card border border-border-card px-3.5 py-1.5 rounded-xl shadow-md space-x-3.5">
+          <div className="flex items-center bg-bg-card border border-border-card px-3.5 py-1.5 rounded-2xl shadow-md space-x-3.5">
             <div className="flex flex-col text-left">
               <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Attendance Status</span>
               <span className="text-2xs font-semibold">
@@ -253,12 +253,12 @@ export default function Dashboard() {
           </div>
 
           {summary?.hot_leads_count ? (
-            <div className="flex items-center px-3 py-1.5 bg-danger/10 border border-danger/20 rounded-xl text-2xs font-bold text-danger shadow-sm">
+            <div className="flex items-center px-3 py-1.5 bg-danger/10 border border-danger/20 rounded-2xl text-2xs font-bold text-danger shadow-lg">
               <Zap size={12} className="mr-1" />
               {summary.hot_leads_count} Hot Lead{summary.hot_leads_count > 1 ? 's' : ''} Alert
             </div>
           ) : null}
-          <div className="text-2xs font-semibold text-text-sub bg-bg-card border border-border-card px-3 py-1.5 rounded-xl shadow-sm capitalize">
+          <div className="text-2xs font-semibold text-text-sub bg-bg-card border border-border-card px-3 py-1.5 rounded-2xl shadow-lg capitalize">
             {user?.role}
           </div>
         </div>
@@ -279,7 +279,7 @@ export default function Dashboard() {
                   <p className="text-xs font-semibold text-text-sub truncate uppercase tracking-wider">{stat.name}</p>
                   <p className="mt-1.5 text-2xl font-bold text-white tracking-tight">{String(stat.value)}</p>
                 </div>
-                <div className={`p-2.5 rounded-xl border ${stat.color}`}>
+                <div className={`p-2.5 rounded-2xl border ${stat.color}`}>
                   <Icon className="w-5 h-5" />
                 </div>
               </div>
@@ -367,7 +367,7 @@ export default function Dashboard() {
                 )}
               </div>
               {projectsReport?.overdue_milestones_count ? (
-                <div className="mt-4 p-2 bg-warning/10 border border-warning/20 rounded-xl flex items-center space-x-1.5 text-3xs text-warning font-bold uppercase tracking-wider">
+                <div className="mt-4 p-2 bg-warning/10 border border-warning/20 rounded-2xl flex items-center space-x-1.5 text-3xs text-warning font-bold uppercase tracking-wider">
                   <AlertCircle size={12} className="shrink-0" />
                   <span>{projectsReport.overdue_milestones_count} Overdue Milestone{projectsReport.overdue_milestones_count > 1 ? 's' : ''}</span>
                 </div>
@@ -429,7 +429,7 @@ export default function Dashboard() {
             ) : (
               <div className="space-y-3">
                 {todayFollowups.slice(0, 5).map((f) => (
-                  <div key={f.id} className="p-3 bg-bg-main/60 rounded-xl border border-border-card">
+                  <div key={f.id} className="p-3 bg-bg-main/60 rounded-2xl border border-border-card">
                     <div className="flex items-start justify-between">
                       <p className="text-xs font-semibold text-white leading-snug">{f.title}</p>
                       <span className={`shrink-0 ml-2 px-1.5 py-0.5 rounded text-4xs font-bold uppercase tracking-wider ${

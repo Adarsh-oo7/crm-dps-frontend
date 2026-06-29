@@ -105,29 +105,29 @@ export default function GlobalSearch() {
     <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-gray-900/40 backdrop-blur-xs">
       <div 
         ref={modalRef}
-        className="w-full max-w-2xl bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden flex flex-col max-h-[500px]"
+        className="w-full max-w-2xl bg-bg-card rounded-2xl shadow-2xl border border-border-card overflow-hidden flex flex-col max-h-[500px]"
       >
         {/* Search Input */}
-        <div className="flex items-center border-b border-gray-200 px-4 py-3 bg-gray-50">
-          <Search className="text-gray-400 mr-3" size={20} />
+        <div className="flex items-center border-b border-border-card px-4 py-3 bg-bg-main">
+          <Search className="text-text-sub/70 mr-3" size={20} />
           <input
             ref={inputRef}
             type="text"
             placeholder="Type to search leads, projects, tasks, invoices..."
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="flex-1 bg-transparent text-gray-900 placeholder-gray-400 focus:outline-none text-sm font-medium"
+            className="flex-1 bg-transparent text-white placeholder-gray-400 focus:outline-none text-sm font-medium"
           />
           {loading ? (
             <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary border-t-transparent mr-3" />
           ) : (
             query && (
-              <button onClick={() => setQuery('')} className="text-gray-400 hover:text-gray-600 mr-3">
+              <button onClick={() => setQuery('')} className="text-text-sub/70 hover:text-text-sub mr-3">
                 <X size={16} />
               </button>
             )
           )}
-          <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-2xs font-bold text-gray-400 bg-white border border-gray-200 rounded">
+          <kbd className="hidden sm:inline-flex items-center px-1.5 py-0.5 text-2xs font-bold text-text-sub/70 bg-bg-card border border-border-card rounded">
             ESC
           </kbd>
         </div>
@@ -135,17 +135,17 @@ export default function GlobalSearch() {
         {/* Search Results */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {query.trim() === '' ? (
-            <div className="text-center py-12 text-gray-500">
-              <Search className="mx-auto text-gray-300 mb-3" size={32} />
+            <div className="text-center py-12 text-text-sub">
+              <Search className="mx-auto text-text-sub/55 mb-3" size={32} />
               <p className="text-sm font-medium">Search for anything in DPS OS</p>
-              <p className="text-xs text-gray-400 mt-1">Press Ctrl+K or Cmd+K anytime to open search</p>
+              <p className="text-xs text-text-sub/70 mt-1">Press Ctrl+K or Cmd+K anytime to open search</p>
             </div>
           ) : results && totalResults > 0 ? (
             <div className="space-y-4">
               {/* Leads */}
               {results.leads.length > 0 && (
                 <div>
-                  <h4 className="text-2xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center">
+                  <h4 className="text-2xs font-bold text-text-sub/70 uppercase tracking-wider mb-2 flex items-center">
                     <Users size={12} className="mr-1" /> Leads
                   </h4>
                   <div className="space-y-1.5">
@@ -153,13 +153,13 @@ export default function GlobalSearch() {
                       <button
                         key={lead.id}
                         onClick={() => handleResultClick('leads', lead.id)}
-                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all flex justify-between items-center"
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-main border border-transparent hover:border-border-card/40 transition-all flex justify-between items-center"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{lead.company_name}</p>
-                          <p className="text-xs text-gray-500">Contact: {lead.contact_person}</p>
+                          <p className="text-sm font-semibold text-white">{lead.company_name}</p>
+                          <p className="text-xs text-text-sub">Contact: {lead.contact_person}</p>
                         </div>
-                        <span className="text-2xs font-semibold text-gray-400">Score: {lead.lead_score}</span>
+                        <span className="text-2xs font-semibold text-text-sub/70">Score: {lead.lead_score}</span>
                       </button>
                     ))}
                   </div>
@@ -169,7 +169,7 @@ export default function GlobalSearch() {
               {/* Clients */}
               {results.clients.length > 0 && (
                 <div>
-                  <h4 className="text-2xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center">
+                  <h4 className="text-2xs font-bold text-text-sub/70 uppercase tracking-wider mb-2 flex items-center">
                     <Users size={12} className="mr-1" /> Clients
                   </h4>
                   <div className="space-y-1.5">
@@ -177,13 +177,13 @@ export default function GlobalSearch() {
                       <button
                         key={client.id}
                         onClick={() => handleResultClick('clients', client.id)}
-                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all flex justify-between items-center"
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-main border border-transparent hover:border-border-card/40 transition-all flex justify-between items-center"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{client.company_name}</p>
-                          <p className="text-xs text-gray-500">{client.website || 'No website'}</p>
+                          <p className="text-sm font-semibold text-white">{client.company_name}</p>
+                          <p className="text-xs text-text-sub">{client.website || 'No website'}</p>
                         </div>
-                        <span className="text-2xs font-bold text-green-600 bg-green-50 px-1.5 py-0.5 rounded">Active</span>
+                        <span className="text-2xs font-bold text-success bg-success/10 px-1.5 py-0.5 rounded">Active</span>
                       </button>
                     ))}
                   </div>
@@ -193,7 +193,7 @@ export default function GlobalSearch() {
               {/* Projects */}
               {results.projects.length > 0 && (
                 <div>
-                  <h4 className="text-2xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center">
+                  <h4 className="text-2xs font-bold text-text-sub/70 uppercase tracking-wider mb-2 flex items-center">
                     <FolderGit size={12} className="mr-1" /> Projects
                   </h4>
                   <div className="space-y-1.5">
@@ -201,13 +201,13 @@ export default function GlobalSearch() {
                       <button
                         key={project.id}
                         onClick={() => handleResultClick('projects', project.id)}
-                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all flex justify-between items-center"
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-main border border-transparent hover:border-border-card/40 transition-all flex justify-between items-center"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{project.name}</p>
-                          <p className="text-xs text-gray-500 truncate max-w-md">{project.project_type}</p>
+                          <p className="text-sm font-semibold text-white">{project.name}</p>
+                          <p className="text-xs text-text-sub truncate max-w-md">{project.project_type}</p>
                         </div>
-                        <span className="text-2xs font-semibold text-indigo-600">{project.completion_percentage}% Done</span>
+                        <span className="text-2xs font-semibold text-primary">{project.completion_percentage}% Done</span>
                       </button>
                     ))}
                   </div>
@@ -217,7 +217,7 @@ export default function GlobalSearch() {
               {/* Tasks */}
               {results.tasks.length > 0 && (
                 <div>
-                  <h4 className="text-2xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center">
+                  <h4 className="text-2xs font-bold text-text-sub/70 uppercase tracking-wider mb-2 flex items-center">
                     <CheckSquare size={12} className="mr-1" /> Tasks
                   </h4>
                   <div className="space-y-1.5">
@@ -225,11 +225,11 @@ export default function GlobalSearch() {
                       <button
                         key={task.id}
                         onClick={() => handleResultClick('tasks', task.id)}
-                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all flex justify-between items-center"
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-main border border-transparent hover:border-border-card/40 transition-all flex justify-between items-center"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{task.title}</p>
-                          <p className="text-xs text-gray-500">Status: {task.status} | Priority: {task.priority}</p>
+                          <p className="text-sm font-semibold text-white">{task.title}</p>
+                          <p className="text-xs text-text-sub">Status: {task.status} | Priority: {task.priority}</p>
                         </div>
                       </button>
                     ))}
@@ -240,7 +240,7 @@ export default function GlobalSearch() {
               {/* Invoices */}
               {results.invoices.length > 0 && (
                 <div>
-                  <h4 className="text-2xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center">
+                  <h4 className="text-2xs font-bold text-text-sub/70 uppercase tracking-wider mb-2 flex items-center">
                     <FileText size={12} className="mr-1" /> Invoices
                   </h4>
                   <div className="space-y-1.5">
@@ -248,11 +248,11 @@ export default function GlobalSearch() {
                       <button
                         key={inv.id}
                         onClick={() => handleResultClick('invoices', inv.id)}
-                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all flex justify-between items-center"
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-main border border-transparent hover:border-border-card/40 transition-all flex justify-between items-center"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{inv.invoice_number}</p>
-                          <p className="text-xs text-gray-500">Amount: ${inv.total_amount}</p>
+                          <p className="text-sm font-semibold text-white">{inv.invoice_number}</p>
+                          <p className="text-xs text-text-sub">Amount: ${inv.total_amount}</p>
                         </div>
                       </button>
                     ))}
@@ -263,7 +263,7 @@ export default function GlobalSearch() {
               {/* Articles */}
               {results.articles.length > 0 && (
                 <div>
-                  <h4 className="text-2xs font-bold text-gray-400 uppercase tracking-wider mb-2 flex items-center">
+                  <h4 className="text-2xs font-bold text-text-sub/70 uppercase tracking-wider mb-2 flex items-center">
                     <FileText size={12} className="mr-1" /> Knowledge Wiki
                   </h4>
                   <div className="space-y-1.5">
@@ -271,11 +271,11 @@ export default function GlobalSearch() {
                       <button
                         key={art.id}
                         onClick={() => handleResultClick('articles', art.id)}
-                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all flex justify-between items-center"
+                        className="w-full text-left px-3 py-2 rounded-lg hover:bg-bg-main border border-transparent hover:border-border-card/40 transition-all flex justify-between items-center"
                       >
                         <div>
-                          <p className="text-sm font-semibold text-gray-900">{art.title}</p>
-                          <p className="text-xs text-gray-500">{art.category}</p>
+                          <p className="text-sm font-semibold text-white">{art.title}</p>
+                          <p className="text-xs text-text-sub">{art.category}</p>
                         </div>
                       </button>
                     ))}
@@ -284,10 +284,10 @@ export default function GlobalSearch() {
               )}
             </div>
           ) : (
-            <div className="text-center py-12 text-gray-500">
-              <ShieldAlert className="mx-auto text-gray-300 mb-3" size={32} />
+            <div className="text-center py-12 text-text-sub">
+              <ShieldAlert className="mx-auto text-text-sub/55 mb-3" size={32} />
               <p className="text-sm font-medium">No results found for "{query}"</p>
-              <p className="text-xs text-gray-400 mt-1">Try searching with other terms</p>
+              <p className="text-xs text-text-sub/70 mt-1">Try searching with other terms</p>
             </div>
           )}
         </div>
