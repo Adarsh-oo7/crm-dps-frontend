@@ -1,6 +1,6 @@
 # DPS Agency OS — Team User Manual
 
-Welcome to the **DPS Agency OS** portal. This document details how to navigate the platform, manage attendance, log daily tasks, update sales pipelines, track financial actions, and secure your credentials.
+Welcome to the **DPS Agency OS** portal. This document details how to navigate the platform, manage attendance, log daily tasks, update sales pipelines, track financial actions, and secure your credentials based on your team role.
 
 ---
 
@@ -63,7 +63,30 @@ Under the **Finance** tab:
 
 ---
 
-## 📧 6. Troubleshooting & Notifications
+## 👥 6. Role & Permission Matrix (Who Can Access What)
+
+Below is the authorization grid detailing menu visibility and actions available per role:
+
+| Feature/Module | Admin / Superadmin | Manager | Developer / Designer | Marketer | Support | Finance |
+| :--- | :---: | :---: | :---: | :---: | :---: | :---: |
+| **Dashboard** | View | View | View | View | View | View |
+| **Tasks & SOPs** | Full Access | Full Access | Full Access | Full Access | Full Access | Full Access |
+| **Attendance Log** | View/Manage | Log Hours | Log Hours | Log Hours | Log Hours | Log Hours |
+| **Leads CRM** | Full Access | Full Access | No | Full Access | No | No |
+| **Clients Hub** | Full Access | Full Access | No | No | Full Access | Full Access |
+| **Projects & Products**| Full Access | Full Access | Full Access | No | No | No |
+| **Follow-ups** | Full Access | Full Access | No | No | Full Access | No |
+| **Finance & Invoicing**| Full Access | No | No | No | No | Full Access |
+| **Marketing & SEO** | Full Access | No | No | Full Access | No | No |
+| **Servers / Infra** | Full Access | No | No | No | No | No |
+| **Settings & Reports** | Full Access | View Reports | No | No | No | View Reports |
+
+> [!NOTE]
+> If you need access to a module outside your default role permissions, the Administrator can grant you custom overrides inside the **Team Control** panel.
+
+---
+
+## 📧 7. Troubleshooting & Notifications
 
 * **Notification Bell**: Located in the top bar. You will receive alerts whenever tasks are assigned to you, follow-ups are due, or when invoices are updated.
 * **Global Search**: Type `Cmd + K` (or `Ctrl + K`) to quickly look up clients, leads, tasks, or projects from anywhere in the platform.
