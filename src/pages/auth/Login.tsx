@@ -76,21 +76,19 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-tr from-indigo-950 via-indigo-900 to-slate-900 relative overflow-hidden">
+    <div className="flex items-center justify-center min-h-screen bg-bg-main relative overflow-hidden">
       {/* Decorative background glow blobs */}
       <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary rounded-full filter blur-3xl opacity-10 animate-pulse"></div>
       <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-indigo-500 rounded-full filter blur-3xl opacity-10 animate-pulse delay-700"></div>
 
-      <div className="relative w-full max-w-md p-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl shadow-2xl mx-4">
+      <div className="relative w-full max-w-md p-8 bg-bg-card border border-border-card rounded-2xl shadow-2xl mx-4">
         <Toaster position="top-right" />
         
         {/* Logo and Header */}
         <div className="flex flex-col items-center mb-8">
-          <div className="flex items-center justify-center w-14 h-14 bg-primary text-white rounded-xl shadow-lg shadow-indigo-600/30 mb-4">
-            <ShieldCheck size={32} />
-          </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">DPS Agency OS</h1>
-          <p className="text-sm text-indigo-200 mt-1">Sign in to manage your digital agency</p>
+          <img src="/logo.png" alt="Digital Product Kerala Logo" className="h-10 w-auto mb-3.5 rounded-xl border border-border-card bg-white p-1" />
+          <h1 className="text-xl font-extrabold text-white tracking-tight">DPS Agency OS</h1>
+          <p className="text-xs text-text-sub mt-1">Sign in to manage your digital agency</p>
         </div>
 
         {/* Auth Error Display */}
