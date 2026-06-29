@@ -1,12 +1,11 @@
 import { useState, useRef, useEffect } from 'react';
-import { Bell, Search, Plus, User, Settings, LogOut, ChevronDown } from 'lucide-react';
+import { Bell, Search, Plus, User, Settings, LogOut, ChevronDown, Menu } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { useNavigate } from 'react-router-dom';
-
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '../../api/client';
 
-export default function Topbar() {
+export default function Topbar({ toggleSidebar }: { toggleSidebar: () => void }) {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -15,11 +14,10 @@ export default function Topbar() {
   const { data: unreadData } = useQuery<{ unread_count: number }>({
     queryKey: ['unread-notifications-count'],
     queryFn: () => apiClient('/api/notifications/unread-count/').catch(() => ({ unread_count: 0 })),
-    refetchInterval: 30000, // Poll every 30s
+    refetchInterval: 30000,
   });
   const unreadCount = unreadData?.unread_count || 0;
 
-  // Close dropdown on click outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
@@ -44,48 +42,65 @@ export default function Topbar() {
     ? user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
     : 'U';
 
+  const base_url = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  const getAvatarUrl = () => {
+    if (user?.avatar) {
+      if (user.avatar.startsWith('http')) return user.avatar;
+      return `${base_url}${user.avatar}`;
+    }
+    return '';
+  };
+
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-16 px-6 bg-white border-b border-gray-200 shadow-sm">
+    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-16 px-4 sm:px-6 bg-bg-card border-b border-border-card backdrop-blur-md shadow-sm">
+      {/* Mobile Toggle Button */}
+      <button 
+        onClick={toggleSidebar}
+        className="p-1.5 mr-2 rounded-lg bg-bg-main border border-border-card text-text-sub hover:text-white lg:hidden transition-colors"
+      >
+        <Menu size={20} />
+      </button>
+
       {/* Search Bar */}
-      <div className="relative w-96 max-w-lg hidden sm:block">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
-          <Search size={18} />
+      <div className="relative w-72 sm:w-96 max-w-lg hidden sm:block">
+        <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-sub">
+          <Search size={16} />
         </span>
         <input
           type="text"
           readOnly
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}
-          placeholder="Global search (Cmd/Ctrl + K)..."
-          className="w-full py-2 pl-10 pr-4 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 cursor-pointer"
+          placeholder="Global search (Cmd + K)..."
+          className="w-full py-1.5 pl-9 pr-4 text-xs text-white bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent transition-all duration-200 cursor-pointer placeholder-text-sub"
         />
       </div>
 
       {/* Right Side Actions */}
-      <div className="flex items-center space-x-4 ml-auto">
+      <div className="flex items-center space-x-3 ml-auto">
         {/* Quick Add Button */}
         <button 
           onClick={() => navigate('/tasks?action=create')}
-          className="flex items-center px-3 py-1.5 text-xs sm:text-sm font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all duration-200"
+          className="flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all duration-205"
         >
-          <Plus size={16} className="mr-1.5" />
+          <Plus size={14} className="mr-1" />
           Quick Add
         </button>
 
         {/* Notifications Bell */}
         <button 
           onClick={() => navigate('/notifications')}
-          className="relative p-2 text-gray-500 hover:text-gray-950 bg-gray-50 hover:bg-gray-100 rounded-full transition-colors duration-200"
+          className="relative p-2 text-text-sub hover:text-white bg-bg-main border border-border-card rounded-full transition-colors duration-200"
         >
-          <Bell size={20} />
+          <Bell size={18} />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-2xs font-bold text-white bg-red-500 rounded-full ring-2 ring-white">
+            <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-3xs font-bold text-white bg-danger rounded-full ring-1 ring-bg-main">
               {unreadCount}
             </span>
           )}
         </button>
 
         {/* Vertical divider */}
-        <div className="w-px h-6 bg-gray-200"></div>
+        <div className="w-px h-5 bg-border-card"></div>
 
         {/* User Dropdown */}
         <div className="relative" ref={dropdownRef}>
@@ -93,44 +108,44 @@ export default function Topbar() {
             onClick={() => setDropdownOpen(!dropdownOpen)}
             className="flex items-center space-x-2 focus:outline-none group"
           >
-            {user?.avatar ? (
+            {getAvatarUrl() ? (
               <img 
-                src={user.avatar} 
+                src={getAvatarUrl()} 
                 alt="Profile avatar" 
-                className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                className="w-8 h-8 rounded-full object-cover border border-border-card"
               />
             ) : (
-              <div className="flex items-center justify-center w-9 h-9 text-sm font-bold text-indigo-700 bg-indigo-50 border border-indigo-200 rounded-full">
+              <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-primary bg-primary-light border border-primary/20 rounded-full">
                 {initials}
               </div>
             )}
             <div className="text-left hidden md:block">
-              <p className="text-sm font-semibold text-gray-900 leading-none group-hover:text-primary transition-colors duration-200">
+              <p className="text-xs font-semibold text-white leading-none group-hover:text-primary transition-colors duration-200">
                 {user?.full_name || 'System User'}
               </p>
-              <p className="text-xs text-gray-500 capitalize leading-none mt-1">
+              <p className="text-3xs text-text-sub capitalize leading-none mt-1">
                 {user?.role || 'developer'}
               </p>
             </div>
-            <ChevronDown size={14} className="text-gray-400 group-hover:text-gray-600 transition-colors" />
+            <ChevronDown size={12} className="text-text-sub group-hover:text-white transition-colors" />
           </button>
 
           {/* Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute right-0 w-48 mt-2.5 origin-top-right bg-white border border-gray-200 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 divide-y divide-gray-100 focus:outline-none">
+            <div className="absolute right-0 w-44 mt-2 origin-top-right bg-bg-card border border-border-card rounded-lg shadow-xl divide-y divide-border-card focus:outline-none z-50">
               <div className="py-1">
                 <button
                   onClick={handleProfileClick}
-                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center w-full px-3 py-2 text-xs text-text-sub hover:bg-bg-main hover:text-white transition-colors"
                 >
-                  <User size={16} className="mr-2 text-gray-400" />
+                  <User size={14} className="mr-2 text-text-sub" />
                   My Profile
                 </button>
                 <button
                   onClick={handleSettingsClick}
-                  className="flex items-center w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center w-full px-3 py-2 text-xs text-text-sub hover:bg-bg-main hover:text-white transition-colors"
                 >
-                  <Settings size={16} className="mr-2 text-gray-400" />
+                  <Settings size={14} className="mr-2 text-text-sub" />
                   Settings
                 </button>
               </div>
@@ -140,9 +155,9 @@ export default function Topbar() {
                     setDropdownOpen(false);
                     logout();
                   }}
-                  className="flex items-center w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
+                  className="flex items-center w-full px-3 py-2 text-xs text-danger hover:bg-danger/10 transition-colors"
                 >
-                  <LogOut size={16} className="mr-2 text-red-400" />
+                  <LogOut size={14} className="mr-2 text-danger" />
                   Logout
                 </button>
               </div>

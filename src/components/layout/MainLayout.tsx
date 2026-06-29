@@ -15,10 +15,10 @@ export default function MainLayout() {
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center w-screen h-screen bg-gray-50">
+      <div className="flex items-center justify-center w-screen h-screen bg-bg-main">
         <div className="flex flex-col items-center space-y-4">
           <div className="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-          <p className="text-sm font-semibold text-gray-500">Loading DPS OS...</p>
+          <p className="text-sm font-semibold text-text-sub">Loading DPS OS...</p>
         </div>
       </div>
     );
@@ -29,7 +29,7 @@ export default function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg-main text-text-main">
       <GlobalSearch />
       
       {/* Sidebar Navigation */}
@@ -38,11 +38,11 @@ export default function MainLayout() {
       {/* Page Content Container */}
       <div 
         className={`flex flex-col min-h-screen transition-all duration-300 ease-in-out
-          ${sidebarOpen ? 'ml-64' : 'ml-20'}
+          ${sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'}
         `}
       >
-        <Topbar />
-        <main className="flex-1 p-6">
+        <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <main className="flex-1 p-4 sm:p-6 overflow-x-hidden">
           <Outlet />
         </main>
       </div>

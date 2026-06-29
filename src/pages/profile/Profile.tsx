@@ -1,13 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { useAuthStore } from '../../store/authStore';
 import { apiClient } from '../../api/client';
-import { User, Phone, MessageSquare, Briefcase, ShieldAlert, Key, Save, Upload, Shield } from 'lucide-react';
+import { User, Phone, MessageSquare, Briefcase, Key, Save, Upload, Shield, ShieldCheck, Mail, Loader2, ArrowLeft } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function Profile() {
   const { user, updateProfile } = useAuthStore();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Profile General Details
   const [formData, setFormData] = useState({
     full_name: user?.full_name || '',
     phone: user?.phone || '',
@@ -15,16 +16,17 @@ export default function Profile() {
     department: user?.department || '',
   });
 
-  const [passwordData, setPasswordData] = useState({
-    old_password: '',
-    new_password: '',
-    confirm_password: '',
-  });
-
   const [isSavingProfile, setIsSavingProfile] = useState(false);
-  const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+  // Password OTP Reset states
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isRequestingOtp, setIsRequestingOtp] = useState(false);
+  const [isResettingPassword, setIsResettingPassword] = useState(false);
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -74,32 +76,53 @@ export default function Profile() {
     }
   };
 
-  const handlePasswordSubmit = async (e: React.FormEvent) => {
+  // OTP password reset triggers
+  const handleRequestOtp = async () => {
+    setIsRequestingOtp(true);
+    try {
+      await apiClient('/api/auth/profile/request-otp/', { method: 'POST' });
+      setOtpSent(true);
+      toast.success('Verification code sent to your registered email!');
+    } catch (err: any) {
+      toast.error(err.message || 'Failed to send verification code. Please check SMTP settings.');
+    } finally {
+      setIsRequestingOtp(false);
+    }
+  };
+
+  const handleOtpPasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passwordData.old_password || !passwordData.new_password || !passwordData.confirm_password) {
+    if (!otp || !newPassword || !confirmPassword) {
       toast.error('All fields are required');
       return;
     }
-    if (passwordData.new_password !== passwordData.confirm_password) {
-      toast.error('New passwords do not match');
+    if (newPassword.length < 6) {
+      toast.error('Password must be at least 6 characters long');
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error('Passwords do not match');
       return;
     }
 
-    setIsChangingPassword(true);
+    setIsResettingPassword(true);
     try {
-      await apiClient('/api/auth/change-password/', {
+      await apiClient('/api/auth/profile/change-password-otp/', {
         method: 'POST',
         body: {
-          old_password: passwordData.old_password,
-          new_password: passwordData.new_password,
+          otp,
+          new_password: newPassword,
         },
       });
-      setPasswordData({ old_password: '', new_password: '', confirm_password: '' });
       toast.success('Password updated successfully!');
+      setOtp('');
+      setNewPassword('');
+      setConfirmPassword('');
+      setOtpSent(false);
     } catch (err: any) {
-      toast.error(err.message || 'Failed to change password. Double check your old password.');
+      toast.error(err.message || 'Failed to update password. Check your verification code.');
     } finally {
-      setIsChangingPassword(false);
+      setIsResettingPassword(false);
     }
   };
 
@@ -286,59 +309,123 @@ export default function Profile() {
             </form>
           </div>
 
-          {/* Change Password Card */}
+          {/* Change Password Card with OTP */}
           <div className="bg-white border border-gray-200 rounded-xl shadow-sm p-6">
             <h3 className="font-bold text-gray-900 text-lg border-b pb-3 mb-4 flex items-center gap-2">
               <Key size={18} className="text-amber-500" />
-              Security Password
+              Reset Profile Password
             </h3>
             
-            <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div className="space-y-1">
-                <label className="text-xs font-semibold text-gray-500">Current Password</label>
-                <input 
-                  type="password" 
-                  required 
-                  value={passwordData.old_password} 
-                  onChange={(e) => setPasswordData({ ...passwordData, old_password: e.target.value })} 
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
-                />
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">New Password</label>
-                  <input 
-                    type="password" 
-                    required 
-                    value={passwordData.new_password} 
-                    onChange={(e) => setPasswordData({ ...passwordData, new_password: e.target.value })} 
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
-                  />
+            {!otpSent ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl text-sm text-amber-800 space-y-2">
+                  <p className="font-semibold">Need to change your profile password?</p>
+                  <p className="text-xs text-amber-700">
+                    To secure your account, click the button below to generate a 6-digit access token delivered directly to your registered email <strong className="font-mono text-gray-900">{user?.email}</strong>.
+                  </p>
                 </div>
-                <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Confirm New Password</label>
-                  <input 
-                    type="password" 
-                    required 
-                    value={passwordData.confirm_password} 
-                    onChange={(e) => setPasswordData({ ...passwordData, confirm_password: e.target.value })} 
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
-                  />
+                
+                <div className="flex justify-end">
+                  <button
+                    type="button"
+                    onClick={handleRequestOtp}
+                    disabled={isRequestingOtp}
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
+                  >
+                    {isRequestingOtp ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Requesting Verification Code...
+                      </>
+                    ) : (
+                      <>
+                        <Mail size={16} />
+                        Send Password OTP Code
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
+            ) : (
+              <form onSubmit={handleOtpPasswordSubmit} className="space-y-4">
+                <div className="p-4 bg-indigo-50 border border-indigo-100 rounded-xl text-sm text-indigo-800 flex items-start gap-3">
+                  <ShieldCheck className="text-indigo-600 shrink-0 mt-0.5" size={18} />
+                  <div>
+                    <p className="font-semibold">Access Verification Code Sent</p>
+                    <p className="text-xs text-indigo-600">
+                      Enter the 6-digit verification code sent to your email along with your new password to verify identity and update password.
+                    </p>
+                  </div>
+                </div>
 
-              <div className="flex justify-end pt-2">
-                <button
-                  type="submit"
-                  disabled={isChangingPassword}
-                  className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
-                >
-                  <Key size={16} />
-                  {isChangingPassword ? 'Updating...' : 'Update Password'}
-                </button>
-              </div>
-            </form>
+                <div className="space-y-1">
+                  <label className="text-xs font-semibold text-gray-500">6-Digit Verification Code</label>
+                  <input 
+                    type="text" 
+                    required 
+                    maxLength={6}
+                    placeholder="000000"
+                    value={otp} 
+                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, ''))} 
+                    className="w-full px-3 py-2 text-center text-lg font-bold tracking-widest border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500">New Password</label>
+                    <input 
+                      type="password" 
+                      required 
+                      placeholder="••••••••"
+                      value={newPassword} 
+                      onChange={(e) => setNewPassword(e.target.value)} 
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-semibold text-gray-500">Confirm New Password</label>
+                    <input 
+                      type="password" 
+                      required 
+                      placeholder="••••••••"
+                      value={confirmPassword} 
+                      onChange={(e) => setConfirmPassword(e.target.value)} 
+                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent focus:outline-none" 
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setOtpSent(false)}
+                    className="text-xs text-gray-500 hover:text-gray-900 flex items-center gap-1"
+                  >
+                    <ArrowLeft size={14} />
+                    Back
+                  </button>
+                  
+                  <button
+                    type="submit"
+                    disabled={isResettingPassword}
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-lg text-sm font-semibold flex items-center gap-1.5 shadow-sm transition-colors disabled:opacity-50"
+                  >
+                    {isResettingPassword ? (
+                      <>
+                        <Loader2 size={16} className="animate-spin" />
+                        Updating Password...
+                      </>
+                    ) : (
+                      <>
+                        <Save size={16} />
+                        Update Password
+                      </>
+                    )}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
 
         </div>
