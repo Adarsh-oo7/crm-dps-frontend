@@ -139,18 +139,18 @@ export default function Products() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">In-house Products</h1>
-          <p className="text-sm text-gray-500">Track internal software SaaS roadmap products, features backlog, and bug reports.</p>
+          <h1 className="text-2xl font-bold text-white">In-house Products</h1>
+          <p className="text-sm text-text-sub">Track internal software SaaS roadmap products, features backlog, and bug reports.</p>
         </div>
       </div>
 
       {/* Tabs */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-border-card">
         <nav className="flex space-x-6">
           <button
             onClick={() => setActiveTab('products')}
             className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
-              ${activeTab === 'products' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+              ${activeTab === 'products' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
           >
             <Layers size={16} />
             Products Directory
@@ -158,7 +158,7 @@ export default function Products() {
           <button
             onClick={() => setActiveTab('roadmap')}
             className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
-              ${activeTab === 'roadmap' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+              ${activeTab === 'roadmap' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
           >
             <Layout size={16} />
             Roadmap Board
@@ -166,7 +166,7 @@ export default function Products() {
           <button
             onClick={() => setActiveTab('bugs')}
             className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
-              ${activeTab === 'bugs' ? 'border-primary text-primary' : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+              ${activeTab === 'bugs' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
           >
             <Bug size={16} />
             Bug Tracker
@@ -177,11 +177,11 @@ export default function Products() {
       {/* Panels */}
       {activeTab === 'products' && (
         <div className="space-y-6">
-          <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <span className="text-sm font-semibold text-gray-600">Register a new product in the dashboard.</span>
+          <div className="flex justify-between items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
+            <span className="text-sm font-semibold text-text-sub">Register a new product in the dashboard.</span>
             <button
               onClick={() => setProductModalOpen(true)}
-              className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+              className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all"
             >
               <Plus size={16} className="mr-1.5" />
               Add Product
@@ -190,32 +190,32 @@ export default function Products() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {products.length === 0 ? (
-              <div className="col-span-full text-center py-12 text-gray-400">No products launched yet.</div>
+              <div className="col-span-full text-center py-12 text-text-sub/70">No products launched yet.</div>
             ) : (
               products.map((p) => (
-                <div key={p.id} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 space-y-4 hover:shadow-md transition-all flex flex-col justify-between">
+                <div key={p.id} className="bg-bg-card rounded-2xl border border-border-card shadow-lg p-6 space-y-4 hover:shadow-md transition-all flex flex-col justify-between">
                   <div className="space-y-2">
                     <div className="flex justify-between items-start">
-                      <span className="text-2xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full uppercase">{p.product_type}</span>
+                      <span className="text-2xs font-semibold text-primary bg-primary-light px-2 py-0.5 rounded-full uppercase">{p.product_type}</span>
                       <StatusBadge label={p.status} />
                     </div>
-                    <h3 className="font-bold text-gray-900 text-lg leading-tight">{p.name}</h3>
-                    <p className="text-xs text-indigo-600 font-semibold">{p.tagline}</p>
-                    <p className="text-sm text-gray-500 line-clamp-3">{p.description}</p>
+                    <h3 className="font-bold text-white text-lg leading-tight">{p.name}</h3>
+                    <p className="text-xs text-primary font-semibold">{p.tagline}</p>
+                    <p className="text-sm text-text-sub line-clamp-3">{p.description}</p>
                   </div>
 
-                  <div className="pt-4 border-t border-gray-100 grid grid-cols-3 gap-2 text-center">
+                  <div className="pt-4 border-t border-border-card/40 grid grid-cols-3 gap-2 text-center">
                     <div>
-                      <span className="text-4xs text-gray-400 font-bold uppercase tracking-wider block">Monthly Rev</span>
-                      <span className="text-sm font-extrabold text-green-600">${parseFloat(p.monthly_revenue).toLocaleString()}</span>
+                      <span className="text-4xs text-text-sub/70 font-bold uppercase tracking-wider block">Monthly Rev</span>
+                      <span className="text-sm font-extrabold text-success">${parseFloat(p.monthly_revenue).toLocaleString()}</span>
                     </div>
                     <div>
-                      <span className="text-4xs text-gray-400 font-bold uppercase tracking-wider block">Total Users</span>
-                      <span className="text-sm font-bold text-gray-900">{p.total_users.toLocaleString()}</span>
+                      <span className="text-4xs text-text-sub/70 font-bold uppercase tracking-wider block">Total Users</span>
+                      <span className="text-sm font-bold text-white">{p.total_users.toLocaleString()}</span>
                     </div>
                     <div>
-                      <span className="text-4xs text-gray-400 font-bold uppercase tracking-wider block">Active Users</span>
-                      <span className="text-sm font-bold text-gray-900">{p.active_users.toLocaleString()}</span>
+                      <span className="text-4xs text-text-sub/70 font-bold uppercase tracking-wider block">Active Users</span>
+                      <span className="text-sm font-bold text-white">{p.active_users.toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -227,11 +227,11 @@ export default function Products() {
 
       {activeTab === 'roadmap' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <span className="text-sm font-semibold text-gray-600">Coordinate roadmap plans.</span>
+          <div className="flex justify-between items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
+            <span className="text-sm font-semibold text-text-sub">Coordinate roadmap plans.</span>
             <button
               onClick={() => setFeatureModalOpen(true)}
-              className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+              className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all"
             >
               <Plus size={16} className="mr-1.5" />
               Add Feature
@@ -242,20 +242,20 @@ export default function Products() {
             {['Backlog', 'Planned', 'In Development', 'Done'].map((col) => {
               const colFeatures = features.filter(f => f.status === col);
               return (
-                <div key={col} className="bg-gray-50 rounded-xl p-3 border border-gray-200 flex flex-col h-full min-h-[300px]">
-                  <h3 className="font-semibold text-gray-900 text-sm mb-3 border-b pb-2 flex justify-between">
+                <div key={col} className="bg-bg-main rounded-2xl p-3 border border-border-card flex flex-col h-full min-h-[300px]">
+                  <h3 className="font-semibold text-white text-sm mb-3 border-b pb-2 flex justify-between">
                     {col}
-                    <span className="bg-gray-200 text-gray-700 px-2 py-0.5 text-2xs font-bold rounded-full">{colFeatures.length}</span>
+                    <span className="bg-bg-main text-white px-2 py-0.5 text-2xs font-bold rounded-full">{colFeatures.length}</span>
                   </h3>
                   <div className="space-y-3 overflow-y-auto max-h-[400px]">
                     {colFeatures.map((f) => (
-                      <div key={f.id} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm space-y-2">
+                      <div key={f.id} className="bg-bg-card p-4 rounded-lg border border-border-card shadow-lg space-y-2">
                         <div className="flex justify-between">
                           <PriorityBadge label={f.priority} />
-                          <span className="text-3xs font-semibold text-gray-400">{f.target_version}</span>
+                          <span className="text-3xs font-semibold text-text-sub/70">{f.target_version}</span>
                         </div>
-                        <h4 className="font-bold text-gray-900 text-sm">{f.title}</h4>
-                        <p className="text-xs text-gray-500">{f.description}</p>
+                        <h4 className="font-bold text-white text-sm">{f.title}</h4>
+                        <p className="text-xs text-text-sub">{f.description}</p>
                       </div>
                     ))}
                   </div>
@@ -268,21 +268,21 @@ export default function Products() {
 
       {activeTab === 'bugs' && (
         <div className="space-y-4">
-          <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-            <span className="text-sm font-semibold text-gray-600">Submit and resolve product bug tickets.</span>
+          <div className="flex justify-between items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
+            <span className="text-sm font-semibold text-text-sub">Submit and resolve product bug tickets.</span>
             <button
               onClick={() => setBugModalOpen(true)}
-              className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+              className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all"
             >
               <Plus size={16} className="mr-1.5" />
               Report Bug
             </button>
           </div>
 
-          <div className="bg-white border border-gray-200 shadow-sm rounded-xl overflow-hidden">
+          <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl overflow-hidden">
             <table className="w-full text-left text-sm border-collapse">
               <thead>
-                <tr className="border-b border-gray-200 text-gray-400 font-semibold bg-gray-50/50">
+                <tr className="border-b border-border-card text-text-sub/70 font-semibold bg-bg-main/50">
                   <th className="p-4">Bug Title</th>
                   <th className="p-4">Environment</th>
                   <th className="p-4">Severity</th>
@@ -292,11 +292,11 @@ export default function Products() {
               </thead>
               <tbody>
                 {bugs.length === 0 ? (
-                  <tr><td colSpan={5} className="p-8 text-center text-gray-400">No bugs logged. Good job!</td></tr>
+                  <tr><td colSpan={5} className="p-8 text-center text-text-sub/70">No bugs logged. Good job!</td></tr>
                 ) : (
                   bugs.map((b) => (
-                    <tr key={b.id} className="border-b border-gray-100 hover:bg-gray-50/50">
-                      <td className="p-4 font-semibold text-gray-900">{b.title}</td>
+                    <tr key={b.id} className="border-b border-border-card/40 hover:bg-bg-main/50">
+                      <td className="p-4 font-semibold text-white">{b.title}</td>
                       <td className="p-4">{b.environment}</td>
                       <td className="p-4"><PriorityBadge label={b.severity} /></td>
                       <td className="p-4"><StatusBadge label={b.status} /></td>
@@ -304,7 +304,7 @@ export default function Products() {
                         {b.status !== 'Fixed' && (
                           <button
                             onClick={() => fixBugMutation.mutate(b.id)}
-                            className="inline-flex p-1 bg-green-50 text-green-700 hover:bg-green-100 border border-green-200 rounded"
+                            className="inline-flex p-1 bg-success/10 text-success hover:bg-green-100 border border-green-200 rounded"
                           >
                             <Check size={14} />
                           </button>
@@ -324,21 +324,21 @@ export default function Products() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setProductModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Add Product</h2>
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">Add Product</h2>
               <form onSubmit={(e) => { e.preventDefault(); createProduct.mutate(productForm); }} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Name *</label>
-                  <input type="text" required value={productForm.name} onChange={(e) => setProductForm({...productForm, name: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg" />
+                  <label className="text-xs font-semibold text-text-sub">Name *</label>
+                  <input type="text" required value={productForm.name} onChange={(e) => setProductForm({...productForm, name: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Tagline</label>
-                  <input type="text" value={productForm.tagline} onChange={(e) => setProductForm({...productForm, tagline: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg" />
+                  <label className="text-xs font-semibold text-text-sub">Tagline</label>
+                  <input type="text" value={productForm.tagline} onChange={(e) => setProductForm({...productForm, tagline: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Type</label>
-                    <select value={productForm.product_type} onChange={(e) => setProductForm({...productForm, product_type: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg">
+                    <label className="text-xs font-semibold text-text-sub">Type</label>
+                    <select value={productForm.product_type} onChange={(e) => setProductForm({...productForm, product_type: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg">
                       <option value="SaaS">SaaS</option>
                       <option value="Mobile App">Mobile App</option>
                       <option value="Web App">Web App</option>
@@ -346,8 +346,8 @@ export default function Products() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Status</label>
-                    <select value={productForm.status} onChange={(e) => setProductForm({...productForm, status: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg">
+                    <label className="text-xs font-semibold text-text-sub">Status</label>
+                    <select value={productForm.status} onChange={(e) => setProductForm({...productForm, status: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg">
                       <option value="Idea">Idea</option>
                       <option value="Planning">Planning</option>
                       <option value="Development">Development</option>
@@ -357,11 +357,11 @@ export default function Products() {
                   </div>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Description</label>
-                  <textarea rows={3} value={productForm.description} onChange={(e) => setProductForm({...productForm, description: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg" />
+                  <label className="text-xs font-semibold text-text-sub">Description</label>
+                  <textarea rows={3} value={productForm.description} onChange={(e) => setProductForm({...productForm, description: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="flex justify-end space-x-3 pt-2">
-                  <button type="button" onClick={() => setProductModalOpen(false)} className="px-4 py-2 text-sm text-gray-700 bg-gray-50 border rounded-lg">Cancel</button>
+                  <button type="button" onClick={() => setProductModalOpen(false)} className="px-4 py-2 text-sm text-white bg-bg-main border rounded-lg">Cancel</button>
                   <button type="submit" className="px-4 py-2 text-white bg-primary rounded-lg font-semibold">Launch</button>
                 </div>
               </form>
@@ -375,26 +375,26 @@ export default function Products() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setFeatureModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Add Feature</h2>
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">Add Feature</h2>
               <form onSubmit={(e) => { e.preventDefault(); createFeature.mutate(featureForm); }} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Product *</label>
-                  <select required value={featureForm.product} onChange={(e) => setFeatureForm({...featureForm, product: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg">
+                  <label className="text-xs font-semibold text-text-sub">Product *</label>
+                  <select required value={featureForm.product} onChange={(e) => setFeatureForm({...featureForm, product: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg">
                     <option value="">Select Product</option>
                     {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Title *</label>
-                  <input type="text" required value={featureForm.title} onChange={(e) => setFeatureForm({...featureForm, title: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg" />
+                  <label className="text-xs font-semibold text-text-sub">Title *</label>
+                  <input type="text" required value={featureForm.title} onChange={(e) => setFeatureForm({...featureForm, title: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Description</label>
-                  <textarea rows={3} value={featureForm.description} onChange={(e) => setFeatureForm({...featureForm, description: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg" />
+                  <label className="text-xs font-semibold text-text-sub">Description</label>
+                  <textarea rows={3} value={featureForm.description} onChange={(e) => setFeatureForm({...featureForm, description: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="flex justify-end space-x-3 pt-2">
-                  <button type="button" onClick={() => setFeatureModalOpen(false)} className="px-4 py-2 text-sm text-gray-700 bg-gray-50 border rounded-lg">Cancel</button>
+                  <button type="button" onClick={() => setFeatureModalOpen(false)} className="px-4 py-2 text-sm text-white bg-bg-main border rounded-lg">Cancel</button>
                   <button type="submit" className="px-4 py-2 text-white bg-primary rounded-lg font-semibold">Save</button>
                 </div>
               </form>
@@ -408,26 +408,26 @@ export default function Products() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setBugModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Report Bug</h2>
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">Report Bug</h2>
               <form onSubmit={(e) => { e.preventDefault(); createBug.mutate(bugForm); }} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Product *</label>
-                  <select required value={bugForm.product} onChange={(e) => setBugForm({...bugForm, product: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg">
+                  <label className="text-xs font-semibold text-text-sub">Product *</label>
+                  <select required value={bugForm.product} onChange={(e) => setBugForm({...bugForm, product: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg">
                     <option value="">Select Product</option>
                     {products.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Title *</label>
-                  <input type="text" required value={bugForm.title} onChange={(e) => setBugForm({...bugForm, title: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg" />
+                  <label className="text-xs font-semibold text-text-sub">Title *</label>
+                  <input type="text" required value={bugForm.title} onChange={(e) => setBugForm({...bugForm, title: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Description</label>
-                  <textarea rows={3} value={bugForm.description} onChange={(e) => setBugForm({...bugForm, description: e.target.value})} className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg" />
+                  <label className="text-xs font-semibold text-text-sub">Description</label>
+                  <textarea rows={3} value={bugForm.description} onChange={(e) => setBugForm({...bugForm, description: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="flex justify-end space-x-3 pt-2">
-                  <button type="button" onClick={() => setBugModalOpen(false)} className="px-4 py-2 text-sm text-gray-700 bg-gray-50 border rounded-lg">Cancel</button>
+                  <button type="button" onClick={() => setBugModalOpen(false)} className="px-4 py-2 text-sm text-white bg-bg-main border rounded-lg">Cancel</button>
                   <button type="submit" className="px-4 py-2 text-white bg-primary rounded-lg font-semibold">Report</button>
                 </div>
               </form>

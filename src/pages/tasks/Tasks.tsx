@@ -257,8 +257,8 @@ export default function Tasks() {
       header: 'Task Title', 
       accessor: (row: Task) => (
         <div>
-          <span className="font-semibold text-gray-900">{row.title}</span>
-          <div className="text-xs text-gray-500">{row.project_detail?.name || 'General Task'}</div>
+          <span className="font-semibold text-white">{row.title}</span>
+          <div className="text-xs text-text-sub">{row.project_detail?.name || 'General Task'}</div>
         </div>
       ) 
     },
@@ -270,10 +270,10 @@ export default function Tasks() {
           {row.assigned_to_detail ? (
             <>
               <UserAvatar name={row.assigned_to_detail.full_name} size="sm" />
-              <span className="text-xs text-gray-700">{row.assigned_to_detail.full_name}</span>
+              <span className="text-xs text-white">{row.assigned_to_detail.full_name}</span>
             </>
           ) : (
-            <span className="text-xs text-gray-400">Unassigned</span>
+            <span className="text-xs text-text-sub/70">Unassigned</span>
           )}
         </div>
       )
@@ -291,21 +291,21 @@ export default function Tasks() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Task Management</h1>
-          <p className="text-sm text-gray-500">Log client hours, coordinate task boards, and document notes.</p>
+          <h1 className="text-2xl font-bold text-white">Task Management</h1>
+          <p className="text-sm text-text-sub">Log client hours, coordinate task boards, and document notes.</p>
         </div>
         
         <div className="flex items-center space-x-3">
-          <div className="flex bg-gray-100 rounded-lg p-0.5 border border-gray-200">
+          <div className="flex bg-bg-main rounded-lg p-0.5 border border-border-card">
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-900'} transition-all`}
+              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-bg-card shadow-lg text-primary' : 'text-text-sub hover:text-white'} transition-all`}
             >
               <List size={18} />
             </button>
             <button
               onClick={() => setViewMode('kanban')}
-              className={`p-1.5 rounded-md ${viewMode === 'kanban' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-900'} transition-all`}
+              className={`p-1.5 rounded-md ${viewMode === 'kanban' ? 'bg-bg-card shadow-lg text-primary' : 'text-text-sub hover:text-white'} transition-all`}
             >
               <Kanban size={18} />
             </button>
@@ -313,7 +313,7 @@ export default function Tasks() {
           
           <button
             onClick={handleOpenCreate}
-            className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+            className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
           >
             <Plus size={18} className="mr-1.5" />
             New Task
@@ -322,9 +322,9 @@ export default function Tasks() {
       </div>
 
       {/* Search/Filters */}
-      <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
         <div className="relative flex-1">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-text-sub/70">
             <Search size={18} />
           </span>
           <input
@@ -332,7 +332,7 @@ export default function Tasks() {
             placeholder="Search task title, description..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full py-2 pl-10 pr-4 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+            className="w-full py-2 pl-10 pr-4 text-sm bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
           />
         </div>
 
@@ -340,7 +340,7 @@ export default function Tasks() {
           <select
             value={projectFilter}
             onChange={(e) => setProjectFilter(e.target.value)}
-            className="px-3 py-2 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 text-sm bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="">All Projects</option>
             {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
@@ -365,12 +365,12 @@ export default function Tasks() {
                 key={stage}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, stage)}
-                className="flex-1 min-w-[280px] max-w-[320px] bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col h-full"
+                className="flex-1 min-w-[280px] max-w-[320px] bg-bg-main border border-border-card rounded-2xl p-3 flex flex-col h-full"
               >
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-950 text-sm">
                     {stage}
-                    <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-gray-200 text-gray-700 rounded-full">
+                    <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-bg-main text-white rounded-full">
                       {stageTasks.length}
                     </span>
                   </h3>
@@ -378,7 +378,7 @@ export default function Tasks() {
 
                 <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-340px)] flex-1 min-h-[150px]">
                   {stageTasks.length === 0 ? (
-                    <div className="flex items-center justify-center h-24 border border-dashed border-gray-300 rounded-lg text-center text-xs text-gray-400">
+                    <div className="flex items-center justify-center h-24 border border-dashed border-border-card rounded-lg text-center text-xs text-text-sub/70">
                       Drag tasks here
                     </div>
                   ) : (
@@ -388,10 +388,10 @@ export default function Tasks() {
                         draggable
                         onDragStart={(e) => handleDragStart(e, task.id)}
                         onClick={() => handleTaskClick(task)}
-                        className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-all space-y-3"
+                        className="bg-bg-card p-4 rounded-lg border border-border-card shadow-lg hover:shadow-md cursor-grab active:cursor-grabbing transition-all space-y-3"
                       >
-                        <h4 className="font-bold text-gray-900 text-sm truncate">{task.title}</h4>
-                        <p className="text-3xs text-gray-500 font-bold uppercase tracking-wider">{task.project_detail?.name || 'General Task'}</p>
+                        <h4 className="font-bold text-white text-sm truncate">{task.title}</h4>
+                        <p className="text-3xs text-text-sub font-bold uppercase tracking-wider">{task.project_detail?.name || 'General Task'}</p>
                         
                         <div className="flex items-center justify-between">
                           <PriorityBadge label={task.priority} />
@@ -401,7 +401,7 @@ export default function Tasks() {
                         </div>
 
                         {task.due_date && (
-                          <div className="flex items-center text-3xs text-gray-400 font-semibold pt-1 border-t border-gray-100">
+                          <div className="flex items-center text-3xs text-text-sub/70 font-semibold pt-1 border-t border-border-card/40">
                             <Clock size={10} className="mr-1 shrink-0" />
                             Due: <DateDisplay dateString={task.due_date} />
                           </div>
@@ -421,15 +421,15 @@ export default function Tasks() {
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setDetailDrawerOpen(false)}></div>
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white shadow-xl flex flex-col">
+            <div className="w-screen max-w-md bg-bg-card shadow-xl flex flex-col">
               
               {/* Header */}
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div className="p-6 border-b border-border-card flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">{selectedTask.title}</h2>
-                  <p className="text-xs text-gray-500">{selectedTask.project_detail?.name || 'General Task'}</p>
+                  <h2 className="text-lg font-bold text-white">{selectedTask.title}</h2>
+                  <p className="text-xs text-text-sub">{selectedTask.project_detail?.name || 'General Task'}</p>
                 </div>
-                <button onClick={() => setDetailDrawerOpen(false)} className="p-1 rounded-full hover:bg-gray-100 text-gray-500">
+                <button onClick={() => setDetailDrawerOpen(false)} className="p-1 rounded-full hover:bg-bg-main text-text-sub">
                   <X size={20} />
                 </button>
               </div>
@@ -438,13 +438,13 @@ export default function Tasks() {
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 
                 {/* Status Priority Details */}
-                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="grid grid-cols-2 gap-4 bg-bg-main p-4 rounded-2xl border border-border-card/40">
                   <div>
-                    <span className="text-2xs text-gray-400 font-bold uppercase">Status</span>
+                    <span className="text-2xs text-text-sub/70 font-bold uppercase">Status</span>
                     <p className="mt-1"><StatusBadge label={selectedTask.status} /></p>
                   </div>
                   <div>
-                    <span className="text-2xs text-gray-400 font-bold uppercase">Priority</span>
+                    <span className="text-2xs text-text-sub/70 font-bold uppercase">Priority</span>
                     <p className="mt-1"><PriorityBadge label={selectedTask.priority} /></p>
                   </div>
                 </div>
@@ -452,31 +452,31 @@ export default function Tasks() {
                 {/* Info Fields */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500 font-semibold">Assignee:</span>
-                    <span className="font-semibold text-gray-800 flex items-center gap-1.5">
+                    <span className="text-text-sub font-semibold">Assignee:</span>
+                    <span className="font-semibold text-white flex items-center gap-1.5">
                       {selectedTask.assigned_to_detail ? (
                         <>
                           <UserAvatar name={selectedTask.assigned_to_detail.full_name} size="sm" />
                           <span>{selectedTask.assigned_to_detail.full_name}</span>
                         </>
                       ) : (
-                        <span className="text-gray-400">Unassigned</span>
+                        <span className="text-text-sub/70">Unassigned</span>
                       )}
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500 font-semibold">Hours Logged:</span>
-                    <span className="font-bold text-indigo-600">{selectedTask.logged_hours}h / {selectedTask.estimated_hours}h</span>
+                    <span className="text-text-sub font-semibold">Hours Logged:</span>
+                    <span className="font-bold text-primary">{selectedTask.logged_hours}h / {selectedTask.estimated_hours}h</span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
-                    <span className="text-gray-500 font-semibold">Due Date:</span>
+                    <span className="text-text-sub font-semibold">Due Date:</span>
                     <DateDisplay dateString={selectedTask.due_date} />
                   </div>
                 </div>
 
                 {/* Checklist Section */}
                 <div className="space-y-3">
-                  <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Checklist</h3>
+                  <h3 className="font-bold text-sm text-white border-b pb-2">Checklist</h3>
                   
                   <form onSubmit={handleAddChecklist} className="flex space-x-2">
                     <input
@@ -484,24 +484,24 @@ export default function Tasks() {
                       placeholder="Add subtask checklist item..."
                       value={newChecklistText}
                       onChange={(e) => setNewChecklistText(e.target.value)}
-                      className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 px-3 py-1.5 text-xs border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button type="submit" className="p-1.5 bg-primary text-white rounded-lg"><Plus size={16} /></button>
                   </form>
 
                   <div className="space-y-2">
                     {checklistItems.length === 0 ? (
-                      <p className="text-3xs text-gray-400 text-center py-2">No checklist items created.</p>
+                      <p className="text-3xs text-text-sub/70 text-center py-2">No checklist items created.</p>
                     ) : (
                       checklistItems.map((item: any) => (
-                        <label key={item.id} className="flex items-center text-xs text-gray-700 cursor-pointer hover:bg-gray-50 p-1.5 rounded border border-gray-100">
+                        <label key={item.id} className="flex items-center text-xs text-white cursor-pointer hover:bg-bg-main p-1.5 rounded border border-border-card/40">
                           <input
                             type="checkbox"
                             checked={item.is_completed}
                             onChange={(e) => toggleChecklistMutation.mutate({ cid: item.id, is_completed: e.target.checked })}
-                            className="mr-2 rounded border-gray-300 text-primary"
+                            className="mr-2 rounded border-border-card text-primary"
                           />
-                          <span className={item.is_completed ? 'line-through text-gray-400' : ''}>{item.text}</span>
+                          <span className={item.is_completed ? 'line-through text-text-sub/70' : ''}>{item.text}</span>
                         </label>
                       ))
                     )}
@@ -511,7 +511,7 @@ export default function Tasks() {
                 {/* Time Logging Section */}
                 <div className="space-y-3">
                   <div className="flex items-center justify-between border-b pb-2">
-                    <h3 className="font-bold text-sm text-gray-900">Work Logs</h3>
+                    <h3 className="font-bold text-sm text-white">Work Logs</h3>
                     <button 
                       onClick={() => setTimelogFormOpen(!timelogFormOpen)}
                       className="text-xs text-primary font-semibold hover:underline flex items-center"
@@ -521,26 +521,26 @@ export default function Tasks() {
                   </div>
 
                   {timelogFormOpen && (
-                    <form onSubmit={handleLogTimeSubmit} className="p-3 bg-gray-50 border border-gray-200 rounded-lg space-y-2.5">
+                    <form onSubmit={handleLogTimeSubmit} className="p-3 bg-bg-main border border-border-card rounded-lg space-y-2.5">
                       <div className="grid grid-cols-2 gap-2">
                         <div>
-                          <label className="text-3xs font-bold text-gray-500 uppercase">Started At</label>
+                          <label className="text-3xs font-bold text-text-sub uppercase">Started At</label>
                           <input
                             type="datetime-local"
                             required
                             value={timelogFormData.started_at}
                             onChange={(e) => setTimelogFormData({...timelogFormData, started_at: e.target.value})}
-                            className="w-full px-2 py-1 text-xs border border-gray-300 rounded"
+                            className="w-full px-2 py-1 text-xs border border-border-card rounded"
                           />
                         </div>
                         <div>
-                          <label className="text-3xs font-bold text-gray-500 uppercase">Ended At</label>
+                          <label className="text-3xs font-bold text-text-sub uppercase">Ended At</label>
                           <input
                             type="datetime-local"
                             required
                             value={timelogFormData.ended_at}
                             onChange={(e) => setTimelogFormData({...timelogFormData, ended_at: e.target.value})}
-                            className="w-full px-2 py-1 text-xs border border-gray-300 rounded"
+                            className="w-full px-2 py-1 text-xs border border-border-card rounded"
                           />
                         </div>
                       </div>
@@ -550,10 +550,10 @@ export default function Tasks() {
                         placeholder="Log notes (what did you work on?)"
                         value={timelogFormData.description}
                         onChange={(e) => setTimelogFormData({...timelogFormData, description: e.target.value})}
-                        className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg"
+                        className="w-full px-3 py-1.5 text-xs border border-border-card rounded-lg"
                       />
                       <div className="flex justify-end space-x-2">
-                        <button type="button" onClick={() => setTimelogFormOpen(false)} className="px-2 py-1 text-3xs border rounded bg-white">Cancel</button>
+                        <button type="button" onClick={() => setTimelogFormOpen(false)} className="px-2 py-1 text-3xs border rounded bg-bg-card">Cancel</button>
                         <button type="submit" className="px-2 py-1 text-3xs bg-primary text-white rounded font-bold">Log</button>
                       </div>
                     </form>
@@ -562,7 +562,7 @@ export default function Tasks() {
 
                 {/* Comments Section */}
                 <div className="space-y-3">
-                  <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Comments</h3>
+                  <h3 className="font-bold text-sm text-white border-b pb-2">Comments</h3>
                   
                   <form onSubmit={handleAddComment} className="flex space-x-2">
                     <input
@@ -570,22 +570,22 @@ export default function Tasks() {
                       placeholder="Write a comment..."
                       value={newCommentText}
                       onChange={(e) => setNewCommentText(e.target.value)}
-                      className="flex-1 px-3 py-1.5 text-xs border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="flex-1 px-3 py-1.5 text-xs border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                     <button type="submit" className="px-3 py-1.5 bg-primary text-white rounded-lg text-xs font-semibold">Post</button>
                   </form>
 
                   <div className="space-y-3">
                     {comments.length === 0 ? (
-                      <p className="text-3xs text-gray-400 text-center py-2">No comments posted yet.</p>
+                      <p className="text-3xs text-text-sub/70 text-center py-2">No comments posted yet.</p>
                     ) : (
                       comments.map((c: any) => (
-                        <div key={c.id} className="p-2.5 bg-gray-50 border border-gray-150 rounded-lg space-y-1">
+                        <div key={c.id} className="p-2.5 bg-bg-main border border-gray-150 rounded-lg space-y-1">
                           <div className="flex items-center justify-between">
-                            <span className="text-xs font-semibold text-gray-900">{c.user_detail?.full_name || 'System User'}</span>
-                            <span className="text-3xs text-gray-400"><DateDisplay dateString={c.created_at} includeTime /></span>
+                            <span className="text-xs font-semibold text-white">{c.user_detail?.full_name || 'System User'}</span>
+                            <span className="text-3xs text-text-sub/70"><DateDisplay dateString={c.created_at} includeTime /></span>
                           </div>
-                          <p className="text-xs text-gray-600 whitespace-pre-wrap">{c.comment}</p>
+                          <p className="text-xs text-text-sub whitespace-pre-wrap">{c.comment}</p>
                         </div>
                       ))
                     )}
@@ -595,16 +595,16 @@ export default function Tasks() {
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+              <div className="p-6 border-t border-border-card bg-bg-main flex items-center justify-between">
                 <button
                   onClick={() => setDeleteModalOpen(true)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors"
                 >
                   <Trash2 size={20} />
                 </button>
                 <button
                   onClick={() => handleOpenEdit(selectedTask)}
-                  className="flex items-center px-4 py-2 font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                  className="flex items-center px-4 py-2 font-semibold text-white bg-bg-card hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                 >
                   <Edit2 size={16} className="mr-1.5" />
                   Edit Task
@@ -621,39 +621,39 @@ export default function Tasks() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCreateModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">{isEditing ? 'Edit Task Settings' : 'Create Task'}</h2>
+            <div className="relative w-full max-w-lg rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">{isEditing ? 'Edit Task Settings' : 'Create Task'}</h2>
               
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Task Title *</label>
+                  <label className="text-xs font-semibold text-text-sub">Task Title *</label>
                   <input
                     type="text"
                     required
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Project</label>
+                    <label className="text-xs font-semibold text-text-sub">Project</label>
                     <select
                       value={formData.project || ''}
                       onChange={(e) => setFormData({...formData, project: e.target.value ? parseInt(e.target.value) : null})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="">General Task (No Project)</option>
                       {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Assign To</label>
+                    <label className="text-xs font-semibold text-text-sub">Assign To</label>
                     <select
                       value={formData.assigned_to || ''}
                       onChange={(e) => setFormData({...formData, assigned_to: e.target.value ? parseInt(e.target.value) : null})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="">Unassigned</option>
                       {members.map((m: any) => (
@@ -667,11 +667,11 @@ export default function Tasks() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Task Type</label>
+                    <label className="text-xs font-semibold text-text-sub">Task Type</label>
                     <select
                       value={formData.task_type}
                       onChange={(e) => setFormData({...formData, task_type: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="Development">Development</option>
                       <option value="Design">Design</option>
@@ -685,11 +685,11 @@ export default function Tasks() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Priority</label>
+                    <label className="text-xs font-semibold text-text-sub">Priority</label>
                     <select
                       value={formData.priority}
                       onChange={(e: any) => setFormData({...formData, priority: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="Low">Low</option>
                       <option value="Medium">Medium</option>
@@ -702,45 +702,45 @@ export default function Tasks() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Status</label>
+                    <label className="text-xs font-semibold text-text-sub">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e: any) => setFormData({...formData, status: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       {kanbanStages.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Est. Hours</label>
+                    <label className="text-xs font-semibold text-text-sub">Est. Hours</label>
                     <input
                       type="text"
                       value={formData.estimated_hours}
                       onChange={(e) => setFormData({...formData, estimated_hours: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Due Date</label>
+                    <label className="text-xs font-semibold text-text-sub">Due Date</label>
                     <input
                       type="datetime-local"
                       value={formData.due_date ? formData.due_date.slice(0, 16) : ''}
                       onChange={(e) => setFormData({...formData, due_date: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Task Details</label>
+                  <label className="text-xs font-semibold text-text-sub">Task Details</label>
                   <textarea
                     value={formData.description || ''}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
                     rows={2}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -748,13 +748,13 @@ export default function Tasks() {
                   <button
                     type="button"
                     onClick={() => setCreateModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
                   >
                     {isEditing ? 'Save Changes' : 'Create Task'}
                   </button>

@@ -208,8 +208,8 @@ export default function Projects() {
       header: 'Project Name', 
       accessor: (row: Project) => (
         <div>
-          <span className="font-semibold text-gray-900">{row.name}</span>
-          <div className="text-xs text-gray-500">{row.client_detail?.company_name || 'No Client'}</div>
+          <span className="font-semibold text-white">{row.name}</span>
+          <div className="text-xs text-text-sub">{row.client_detail?.company_name || 'No Client'}</div>
         </div>
       ) 
     },
@@ -220,10 +220,10 @@ export default function Projects() {
       header: 'Progress', 
       accessor: (row: Project) => (
         <div className="flex items-center space-x-2">
-          <div className="w-16 bg-gray-200 h-2 rounded-full overflow-hidden">
+          <div className="w-16 bg-bg-main h-2 rounded-full overflow-hidden">
             <div className="bg-primary h-full" style={{ width: `${row.completion_percentage}%` }}></div>
           </div>
-          <span className="text-xs font-bold text-gray-700">{row.completion_percentage}%</span>
+          <span className="text-xs font-bold text-white">{row.completion_percentage}%</span>
         </div>
       ) 
     },
@@ -238,21 +238,21 @@ export default function Projects() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Projects Tracking</h1>
-          <p className="text-sm text-gray-500">Coordinate client deliverables, tech stacks, active milestones, and team tasks.</p>
+          <h1 className="text-2xl font-bold text-white">Projects Tracking</h1>
+          <p className="text-sm text-text-sub">Coordinate client deliverables, tech stacks, active milestones, and team tasks.</p>
         </div>
         
         <div className="flex items-center space-x-3">
-          <div className="flex bg-gray-100 rounded-lg p-0.5 border border-gray-200">
+          <div className="flex bg-bg-main rounded-lg p-0.5 border border-border-card">
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-900'} transition-all`}
+              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-bg-card shadow-lg text-primary' : 'text-text-sub hover:text-white'} transition-all`}
             >
               <List size={18} />
             </button>
             <button
               onClick={() => setViewMode('kanban')}
-              className={`p-1.5 rounded-md ${viewMode === 'kanban' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-900'} transition-all`}
+              className={`p-1.5 rounded-md ${viewMode === 'kanban' ? 'bg-bg-card shadow-lg text-primary' : 'text-text-sub hover:text-white'} transition-all`}
             >
               <Kanban size={18} />
             </button>
@@ -260,7 +260,7 @@ export default function Projects() {
           
           <button
             onClick={handleOpenCreate}
-            className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+            className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
           >
             <Plus size={18} className="mr-1.5" />
             New Project
@@ -269,9 +269,9 @@ export default function Projects() {
       </div>
 
       {/* Search/Filters */}
-      <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
         <div className="relative flex-1">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-text-sub/70">
             <Search size={18} />
           </span>
           <input
@@ -279,7 +279,7 @@ export default function Projects() {
             placeholder="Search project name, type..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full py-2 pl-10 pr-4 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+            className="w-full py-2 pl-10 pr-4 text-sm bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
           />
         </div>
 
@@ -287,7 +287,7 @@ export default function Projects() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 text-sm bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="">All Statuses</option>
             {kanbanStages.map(s => <option key={s} value={s}>{s}</option>)}
@@ -314,12 +314,12 @@ export default function Projects() {
                 key={stage}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, stage)}
-                className="flex-1 min-w-[280px] max-w-[320px] bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col h-full"
+                className="flex-1 min-w-[280px] max-w-[320px] bg-bg-main border border-border-card rounded-2xl p-3 flex flex-col h-full"
               >
                 <div className="flex items-center justify-between mb-3">
                   <h3 className="font-semibold text-gray-950 text-sm">
                     {stage}
-                    <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-gray-200 text-gray-700 rounded-full">
+                    <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-bg-main text-white rounded-full">
                       {stageProjects.length}
                     </span>
                   </h3>
@@ -327,7 +327,7 @@ export default function Projects() {
 
                 <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-340px)] flex-1 min-h-[150px]">
                   {stageProjects.length === 0 ? (
-                    <div className="flex items-center justify-center h-24 border border-dashed border-gray-300 rounded-lg text-center text-xs text-gray-400">
+                    <div className="flex items-center justify-center h-24 border border-dashed border-border-card rounded-lg text-center text-xs text-text-sub/70">
                       Drag projects here
                     </div>
                   ) : (
@@ -337,14 +337,14 @@ export default function Projects() {
                         draggable
                         onDragStart={(e) => handleDragStart(e, proj.id)}
                         onClick={() => handleProjectClick(proj)}
-                        className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-all space-y-3"
+                        className="bg-bg-card p-4 rounded-lg border border-border-card shadow-lg hover:shadow-md cursor-grab active:cursor-grabbing transition-all space-y-3"
                       >
-                        <h4 className="font-bold text-gray-900 text-sm truncate">{proj.name}</h4>
-                        <p className="text-3xs text-gray-500 font-bold uppercase tracking-wider">{proj.project_type}</p>
+                        <h4 className="font-bold text-white text-sm truncate">{proj.name}</h4>
+                        <p className="text-3xs text-text-sub font-bold uppercase tracking-wider">{proj.project_type}</p>
                         
                         <div className="flex items-center justify-between">
                           <PriorityBadge label={proj.priority} />
-                          <span className="text-xs font-bold text-gray-700">{proj.completion_percentage}%</span>
+                          <span className="text-xs font-bold text-white">{proj.completion_percentage}%</span>
                         </div>
 
                         <div className="w-full bg-gray-150 h-1.5 rounded-full overflow-hidden">
@@ -352,7 +352,7 @@ export default function Projects() {
                         </div>
 
                         {proj.deadline && (
-                          <div className="flex items-center text-3xs text-gray-400 font-semibold pt-1 border-t border-gray-100">
+                          <div className="flex items-center text-3xs text-text-sub/70 font-semibold pt-1 border-t border-border-card/40">
                             <Calendar size={10} className="mr-1 shrink-0" />
                             Due: <DateDisplay dateString={proj.deadline} />
                           </div>
@@ -372,21 +372,21 @@ export default function Projects() {
         <div className="fixed inset-0 z-50 overflow-hidden">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setDetailDrawerOpen(false)}></div>
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white shadow-xl flex flex-col">
+            <div className="w-screen max-w-md bg-bg-card shadow-xl flex flex-col">
               
               {/* Header */}
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div className="p-6 border-b border-border-card flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">{selectedProject.name}</h2>
-                  <p className="text-xs text-gray-500">{selectedProject.project_type}</p>
+                  <h2 className="text-lg font-bold text-white">{selectedProject.name}</h2>
+                  <p className="text-xs text-text-sub">{selectedProject.project_type}</p>
                 </div>
-                <button onClick={() => setDetailDrawerOpen(false)} className="p-1 rounded-full hover:bg-gray-100 text-gray-500">
+                <button onClick={() => setDetailDrawerOpen(false)} className="p-1 rounded-full hover:bg-bg-main text-text-sub">
                   <X size={20} />
                 </button>
               </div>
 
               {/* Tabs */}
-              <div className="flex border-b border-gray-200 text-sm font-semibold">
+              <div className="flex border-b border-border-card text-sm font-semibold">
                 {(['overview', 'milestones', 'tasks'] as const).map(tab => (
                   <button
                     key={tab}
@@ -394,7 +394,7 @@ export default function Projects() {
                     className={`flex-1 py-3 text-center border-b-2 capitalize transition-colors
                       ${activeTab === tab 
                         ? 'border-primary text-primary' 
-                        : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+                        : 'border-transparent text-text-sub hover:text-white hover:border-border-card'
                       }
                     `}
                   >
@@ -409,33 +409,33 @@ export default function Projects() {
                 {/* Overview */}
                 {activeTab === 'overview' && (
                   <div className="space-y-6">
-                    <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="grid grid-cols-2 gap-4 bg-bg-main p-4 rounded-2xl border border-border-card/40">
                       <div>
-                        <span className="text-2xs text-gray-400 font-bold uppercase">Status</span>
+                        <span className="text-2xs text-text-sub/70 font-bold uppercase">Status</span>
                         <p className="mt-1"><StatusBadge label={selectedProject.status} /></p>
                       </div>
                       <div>
-                        <span className="text-2xs text-gray-400 font-bold uppercase">Priority</span>
+                        <span className="text-2xs text-text-sub/70 font-bold uppercase">Priority</span>
                         <p className="mt-1"><PriorityBadge label={selectedProject.priority} /></p>
                       </div>
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Financials & Timeline</h3>
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <DollarSign size={16} className="text-gray-400" />
+                      <h3 className="font-bold text-sm text-white border-b pb-2">Financials & Timeline</h3>
+                      <div className="flex items-center space-x-2 text-sm text-text-sub">
+                        <DollarSign size={16} className="text-text-sub/70" />
                         <span>Budget: <span className="font-bold text-gray-950">${parseFloat(selectedProject.budget).toLocaleString()}</span></span>
                       </div>
-                      <div className="flex items-center space-x-2 text-sm text-gray-600">
-                        <Calendar size={16} className="text-gray-400" />
+                      <div className="flex items-center space-x-2 text-sm text-text-sub">
+                        <Calendar size={16} className="text-text-sub/70" />
                         <span>Deadline: <DateDisplay dateString={selectedProject.deadline} /></span>
                       </div>
                     </div>
 
                     {selectedProject.description && (
                       <div className="space-y-2">
-                        <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Project Brief</h3>
-                        <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 whitespace-pre-wrap">{selectedProject.description}</p>
+                        <h3 className="font-bold text-sm text-white border-b pb-2">Project Brief</h3>
+                        <p className="text-sm text-text-sub bg-bg-main p-3 rounded-lg border border-border-card/40 whitespace-pre-wrap">{selectedProject.description}</p>
                       </div>
                     )}
                   </div>
@@ -445,7 +445,7 @@ export default function Projects() {
                 {activeTab === 'milestones' && (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between border-b pb-2">
-                      <h3 className="font-bold text-sm text-gray-900">Project milestones</h3>
+                      <h3 className="font-bold text-sm text-white">Project milestones</h3>
                       <button
                         onClick={() => setMilestoneFormOpen(!milestoneFormOpen)}
                         className="text-xs text-primary font-semibold hover:underline flex items-center"
@@ -456,27 +456,27 @@ export default function Projects() {
 
                     {/* Inline Form */}
                     {milestoneFormOpen && (
-                      <form onSubmit={handleAddMilestoneSubmit} className="p-4 bg-gray-50 border border-gray-200 rounded-lg space-y-3">
+                      <form onSubmit={handleAddMilestoneSubmit} className="p-4 bg-bg-main border border-border-card rounded-lg space-y-3">
                         <input
                           type="text"
                           required
                           placeholder="Milestone Title"
                           value={milestoneFormData.title}
                           onChange={(e) => setMilestoneFormData({...milestoneFormData, title: e.target.value})}
-                          className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg"
+                          className="w-full px-3 py-1.5 text-xs border border-border-card rounded-lg"
                         />
                         <input
                           type="date"
                           required
                           value={milestoneFormData.due_date}
                           onChange={(e) => setMilestoneFormData({...milestoneFormData, due_date: e.target.value})}
-                          className="w-full px-3 py-1.5 text-xs border border-gray-300 rounded-lg"
+                          className="w-full px-3 py-1.5 text-xs border border-border-card rounded-lg"
                         />
                         <div className="flex justify-end space-x-2">
                           <button
                             type="button"
                             onClick={() => setMilestoneFormOpen(false)}
-                            className="px-3 py-1 text-2xs bg-white border rounded"
+                            className="px-3 py-1 text-2xs bg-bg-card border rounded"
                           >
                             Cancel
                           </button>
@@ -492,14 +492,14 @@ export default function Projects() {
 
                     <div className="space-y-3">
                       {milestones.length === 0 ? (
-                        <p className="text-xs text-gray-500 text-center py-4">No milestones scheduled.</p>
+                        <p className="text-xs text-text-sub text-center py-4">No milestones scheduled.</p>
                       ) : (
                         milestones.map((m: any) => (
-                          <div key={m.id} className="p-3 bg-gray-50 border border-gray-150 rounded-lg flex items-center justify-between">
+                          <div key={m.id} className="p-3 bg-bg-main border border-gray-150 rounded-lg flex items-center justify-between">
                             <div>
-                              <p className="text-sm font-semibold text-gray-900">{m.title}</p>
+                              <p className="text-sm font-semibold text-white">{m.title}</p>
                               <div className="flex items-center space-x-2 mt-1">
-                                <span className="text-3xs text-gray-500">Due: <DateDisplay dateString={m.due_date} /></span>
+                                <span className="text-3xs text-text-sub">Due: <DateDisplay dateString={m.due_date} /></span>
                               </div>
                             </div>
                             <StatusBadge label={m.status} />
@@ -513,16 +513,16 @@ export default function Projects() {
                 {/* Tasks */}
                 {activeTab === 'tasks' && (
                   <div className="space-y-4">
-                    <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Assigned Tasks</h3>
+                    <h3 className="font-bold text-sm text-white border-b pb-2">Assigned Tasks</h3>
                     <div className="space-y-3">
                       {tasks.length === 0 ? (
-                        <p className="text-xs text-gray-500 text-center py-4">No tasks found in project backlog.</p>
+                        <p className="text-xs text-text-sub text-center py-4">No tasks found in project backlog.</p>
                       ) : (
                         tasks.map((t: any) => (
-                          <div key={t.id} className="p-3 bg-gray-50 border border-gray-150 rounded-lg flex items-center justify-between">
+                          <div key={t.id} className="p-3 bg-bg-main border border-gray-150 rounded-lg flex items-center justify-between">
                             <div>
-                              <p className="text-xs font-semibold text-gray-900">{t.title}</p>
-                              <span className="text-3xs text-gray-500">Priority: {t.priority}</span>
+                              <p className="text-xs font-semibold text-white">{t.title}</p>
+                              <span className="text-3xs text-text-sub">Priority: {t.priority}</span>
                             </div>
                             <StatusBadge label={t.status} />
                           </div>
@@ -535,16 +535,16 @@ export default function Projects() {
               </div>
 
               {/* Footer */}
-              <div className="p-6 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+              <div className="p-6 border-t border-border-card bg-bg-main flex items-center justify-between">
                 <button
                   onClick={() => setDeleteModalOpen(true)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors"
                 >
                   <Trash2 size={20} />
                 </button>
                 <button
                   onClick={() => handleOpenEdit(selectedProject)}
-                  className="flex items-center px-4 py-2 font-semibold text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                  className="flex items-center px-4 py-2 font-semibold text-white bg-bg-card hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                 >
                   <Edit2 size={16} className="mr-1.5" />
                   Edit Details
@@ -561,38 +561,38 @@ export default function Projects() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCreateModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">{isEditing ? 'Edit Project Settings' : 'Create Project'}</h2>
+            <div className="relative w-full max-w-lg rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">{isEditing ? 'Edit Project Settings' : 'Create Project'}</h2>
               
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Project Name *</label>
+                  <label className="text-xs font-semibold text-text-sub">Project Name *</label>
                   <input
                     type="text"
                     required
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Client *</label>
+                    <label className="text-xs font-semibold text-text-sub">Client *</label>
                     <select
                       value={formData.client}
                       onChange={(e) => setFormData({...formData, client: parseInt(e.target.value)})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       {clients.map((c: any) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Project Type</label>
+                    <label className="text-xs font-semibold text-text-sub">Project Type</label>
                     <select
                       value={formData.project_type}
                       onChange={(e) => setFormData({...formData, project_type: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="Web Development">Web Development</option>
                       <option value="Mobile App">Mobile App</option>
@@ -608,21 +608,21 @@ export default function Projects() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Status</label>
+                    <label className="text-xs font-semibold text-text-sub">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e: any) => setFormData({...formData, status: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       {kanbanStages.map(s => <option key={s} value={s}>{s}</option>)}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Priority</label>
+                    <label className="text-xs font-semibold text-text-sub">Priority</label>
                     <select
                       value={formData.priority}
                       onChange={(e: any) => setFormData({...formData, priority: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="Low">Low</option>
                       <option value="Medium">Medium</option>
@@ -634,32 +634,32 @@ export default function Projects() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Est. Budget ($)</label>
+                    <label className="text-xs font-semibold text-text-sub">Est. Budget ($)</label>
                     <input
                       type="text"
                       value={formData.budget}
                       onChange={(e) => setFormData({...formData, budget: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Project Deadline</label>
+                    <label className="text-xs font-semibold text-text-sub">Project Deadline</label>
                     <input
                       type="date"
                       value={formData.deadline || ''}
                       onChange={(e) => setFormData({...formData, deadline: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Project Details</label>
+                  <label className="text-xs font-semibold text-text-sub">Project Details</label>
                   <textarea
                     value={formData.description || ''}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
                     rows={2}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -667,13 +667,13 @@ export default function Projects() {
                   <button
                     type="button"
                     onClick={() => setCreateModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
                   >
                     {isEditing ? 'Save Changes' : 'Create Project'}
                   </button>

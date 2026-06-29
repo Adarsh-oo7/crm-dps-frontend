@@ -292,20 +292,20 @@ export default function Team() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Team & HR Hub</h1>
-          <p className="text-sm text-gray-500">Manage directory, daily attendance check-ins, leaves, and work logs.</p>
+          <h1 className="text-2xl font-bold text-white">Team & HR Hub</h1>
+          <p className="text-sm text-text-sub">Manage directory, daily attendance check-ins, leaves, and work logs.</p>
         </div>
       </div>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-border-card">
         <nav className="flex space-x-6">
           <button
             onClick={() => setActiveTab('members')}
             className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
               ${activeTab === 'members' 
                 ? 'border-primary text-primary' 
-                : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+                : 'border-transparent text-text-sub hover:text-white'}`}
           >
             <Users size={16} />
             Members Directory
@@ -315,7 +315,7 @@ export default function Team() {
             className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
               ${activeTab === 'attendance' 
                 ? 'border-primary text-primary' 
-                : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+                : 'border-transparent text-text-sub hover:text-white'}`}
           >
             <Clock size={16} />
             Daily Attendance
@@ -325,12 +325,12 @@ export default function Team() {
             className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
               ${activeTab === 'leaves' 
                 ? 'border-primary text-primary' 
-                : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+                : 'border-transparent text-text-sub hover:text-white'}`}
           >
             <CalendarDays size={16} />
             Leave Requests
             {isAdminOrManager && pendingLeaves.length > 0 && (
-              <span className="ml-1 px-1.5 py-0.5 text-3xs font-bold bg-amber-500 text-white rounded-full">
+              <span className="ml-1 px-1.5 py-0.5 text-3xs font-bold bg-warning/100 text-white rounded-full">
                 {pendingLeaves.length}
               </span>
             )}
@@ -340,7 +340,7 @@ export default function Team() {
             className={`pb-4 text-sm font-semibold border-b-2 transition-all flex items-center gap-2
               ${activeTab === 'logs' 
                 ? 'border-primary text-primary' 
-                : 'border-transparent text-gray-500 hover:text-gray-900'}`}
+                : 'border-transparent text-text-sub hover:text-white'}`}
           >
             <BookOpen size={16} />
             Daily Work Logs
@@ -353,11 +353,11 @@ export default function Team() {
         {activeTab === 'members' && (
           <div className="space-y-4">
             {user?.role === 'superadmin' && (
-              <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-                <span className="text-sm font-semibold text-gray-600">Register new team members and assign roles.</span>
+              <div className="flex justify-between items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
+                <span className="text-sm font-semibold text-text-sub">Register new team members and assign roles.</span>
                 <button
                   onClick={handleOpenCreateMember}
-                  className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+                  className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all"
                 >
                   <Plus size={16} className="mr-1.5" />
                   Add Team Member
@@ -367,36 +367,36 @@ export default function Team() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {loadingMembers ? (
-                <div className="col-span-full text-center py-12 text-gray-500">Loading directory...</div>
+                <div className="col-span-full text-center py-12 text-text-sub">Loading directory...</div>
               ) : members.length === 0 ? (
-                <div className="col-span-full text-center py-12 text-gray-500">No team members found.</div>
+                <div className="col-span-full text-center py-12 text-text-sub">No team members found.</div>
               ) : (
                 members.map((member) => (
-                  <div key={member.id} className="bg-white rounded-xl border border-gray-200 shadow-sm p-6 hover:shadow-md transition-all flex flex-col justify-between">
+                  <div key={member.id} className="bg-bg-card rounded-2xl border border-border-card shadow-lg p-6 hover:shadow-md transition-all flex flex-col justify-between">
                     <div className="flex items-start justify-between space-x-4">
                       <div className="flex items-start space-x-4">
                         <UserAvatar name={member.full_name} size="lg" />
                         <div className="space-y-1">
                           <div className="flex items-center space-x-2">
-                            <h3 className="font-bold text-gray-900 text-base leading-none">{member.full_name}</h3>
-                            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${member.is_online ? 'bg-green-500' : 'bg-gray-300'}`} />
+                            <h3 className="font-bold text-white text-base leading-none">{member.full_name}</h3>
+                            <span className={`w-2.5 h-2.5 rounded-full shrink-0 ${member.is_online ? 'bg-success/100' : 'bg-gray-300'}`} />
                           </div>
-                          <p className="text-xs text-indigo-600 font-semibold uppercase tracking-wider">{member.role}</p>
-                          <p className="text-xs text-gray-400 font-semibold">{member.department || 'General'}</p>
+                          <p className="text-xs text-primary font-semibold uppercase tracking-wider">{member.role}</p>
+                          <p className="text-xs text-text-sub/70 font-semibold">{member.department || 'General'}</p>
                         </div>
                       </div>
                       {user?.role === 'superadmin' && (
                         <div className="flex space-x-1 shrink-0">
                           <button
                             onClick={() => handleOpenEditMember(member)}
-                            className="text-indigo-600 hover:text-indigo-800 p-1.5 hover:bg-indigo-50 rounded transition-colors"
+                            className="text-primary hover:text-indigo-800 p-1.5 hover:bg-primary-light rounded transition-colors"
                           >
                             <Edit2 size={16} />
                           </button>
                           {member.id !== user.id && (
                             <button
                               onClick={() => setDeleteMemberId(member.id)}
-                              className="text-red-500 hover:text-red-700 p-1.5 hover:bg-red-50 rounded transition-colors"
+                              className="text-red-500 hover:text-danger p-1.5 hover:bg-danger/10 rounded transition-colors"
                             >
                               <Trash size={16} />
                             </button>
@@ -405,14 +405,14 @@ export default function Team() {
                       )}
                     </div>
 
-                  <div className="mt-6 pt-4 border-t border-gray-100 space-y-2 text-sm text-gray-600">
+                  <div className="mt-6 pt-4 border-t border-border-card/40 space-y-2 text-sm text-text-sub">
                     <div className="flex items-center space-x-2">
-                      <Mail size={14} className="text-gray-400" />
+                      <Mail size={14} className="text-text-sub/70" />
                       <a href={`mailto:${member.email}`} className="hover:underline hover:text-primary">{member.email}</a>
                     </div>
                     {member.phone && (
                       <div className="flex items-center space-x-2">
-                        <Phone size={14} className="text-gray-400" />
+                        <Phone size={14} className="text-text-sub/70" />
                         <span>{member.phone}</span>
                       </div>
                     )}
@@ -427,21 +427,21 @@ export default function Team() {
         {activeTab === 'attendance' && (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Check-in Widget */}
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 flex flex-col justify-between space-y-6">
+            <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-6 flex flex-col justify-between space-y-6">
               <div>
-                <h3 className="font-bold text-gray-900 text-lg">My Attendance Status</h3>
-                <p className="text-sm text-gray-500 mt-1">Track your daily shift entry and exits.</p>
+                <h3 className="font-bold text-white text-lg">My Attendance Status</h3>
+                <p className="text-sm text-text-sub mt-1">Track your daily shift entry and exits.</p>
               </div>
 
-              <div className="py-6 border-y border-gray-100 flex flex-col items-center">
-                <div className="text-4xl font-extrabold text-indigo-600 mb-2">
+              <div className="py-6 border-y border-border-card/40 flex flex-col items-center">
+                <div className="text-4xl font-extrabold text-primary mb-2">
                   {todayRecord ? (todayRecord.status) : 'Not Logged'}
                 </div>
                 {todayRecord?.check_in && (
-                  <div className="text-sm text-gray-500 mt-1">
-                    Check-in: <span className="font-semibold text-gray-900">{todayRecord.check_in}</span>
+                  <div className="text-sm text-text-sub mt-1">
+                    Check-in: <span className="font-semibold text-white">{todayRecord.check_in}</span>
                     {todayRecord.check_out && (
-                      <> | Check-out: <span className="font-semibold text-gray-900">{todayRecord.check_out}</span></>
+                      <> | Check-out: <span className="font-semibold text-white">{todayRecord.check_out}</span></>
                     )}
                   </div>
                 )}
@@ -451,7 +451,7 @@ export default function Team() {
                 <button
                   disabled={isCheckedIn || isCheckingIn}
                   onClick={() => checkInMutation.mutate()}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 font-semibold text-white bg-success hover:bg-success/80 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <LogIn size={18} />
                   Check In
@@ -459,7 +459,7 @@ export default function Team() {
                 <button
                   disabled={!isCheckedIn || isCheckedOut || isCheckingOut}
                   onClick={() => checkOutMutation.mutate()}
-                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 font-semibold text-white bg-red-600 hover:bg-red-700 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 py-3 px-4 font-semibold text-white bg-danger hover:bg-danger/80 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   <LogOut size={18} />
                   Check Out
@@ -468,12 +468,12 @@ export default function Team() {
             </div>
 
             {/* Attendance History */}
-            <div className="lg:col-span-2 bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-4">
-              <h3 className="font-bold text-gray-900 text-lg">Shift History</h3>
+            <div className="lg:col-span-2 bg-bg-card border border-border-card shadow-lg rounded-2xl p-6 space-y-4">
+              <h3 className="font-bold text-white text-lg">Shift History</h3>
               <div className="overflow-x-auto max-h-[350px]">
                 <table className="w-full text-left text-sm border-collapse">
                   <thead>
-                    <tr className="border-b border-gray-200 text-gray-400 font-semibold">
+                    <tr className="border-b border-border-card text-text-sub/70 font-semibold">
                       <th className="py-2.5">Date</th>
                       <th className="py-2.5">Check In</th>
                       <th className="py-2.5">Check Out</th>
@@ -483,14 +483,14 @@ export default function Team() {
                   </thead>
                   <tbody>
                     {myAttendance.length === 0 ? (
-                      <tr><td colSpan={5} className="py-4 text-center text-gray-400">No logs logged.</td></tr>
+                      <tr><td colSpan={5} className="py-4 text-center text-text-sub/70">No logs logged.</td></tr>
                     ) : (
                       myAttendance.map((row) => (
-                        <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="py-3 font-medium text-gray-900">{row.date}</td>
-                          <td className="py-3 text-gray-600">{row.check_in || '—'}</td>
-                          <td className="py-3 text-gray-600">{row.check_out || '—'}</td>
-                          <td className="py-3 font-semibold text-gray-900">{row.duration_hours ? `${row.duration_hours} hrs` : '—'}</td>
+                        <tr key={row.id} className="border-b border-border-card/40 hover:bg-bg-main">
+                          <td className="py-3 font-medium text-white">{row.date}</td>
+                          <td className="py-3 text-text-sub">{row.check_in || '—'}</td>
+                          <td className="py-3 text-text-sub">{row.check_out || '—'}</td>
+                          <td className="py-3 font-semibold text-white">{row.duration_hours ? `${row.duration_hours} hrs` : '—'}</td>
                           <td className="py-3"><StatusBadge label={row.status} /></td>
                         </tr>
                       ))
@@ -502,12 +502,12 @@ export default function Team() {
 
             {/* Admin: Team Today */}
             {isAdminOrManager && (
-              <div className="col-span-full bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-4">
-                <h3 className="font-bold text-gray-900 text-lg">Team Attendance Today</h3>
+              <div className="col-span-full bg-bg-card border border-border-card shadow-lg rounded-2xl p-6 space-y-4">
+                <h3 className="font-bold text-white text-lg">Team Attendance Today</h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-gray-200 text-gray-400 font-semibold">
+                      <tr className="border-b border-border-card text-text-sub/70 font-semibold">
                         <th className="py-2.5">Member</th>
                         <th className="py-2.5">Status</th>
                         <th className="py-2.5">Check In</th>
@@ -517,11 +517,11 @@ export default function Team() {
                     </thead>
                     <tbody>
                       {todayAttendance.length === 0 ? (
-                        <tr><td colSpan={5} className="py-4 text-center text-gray-400">No shifts started today.</td></tr>
+                        <tr><td colSpan={5} className="py-4 text-center text-text-sub/70">No shifts started today.</td></tr>
                       ) : (
                         todayAttendance.map((row) => (
-                          <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50">
-                            <td className="py-3 font-semibold text-gray-900">{row.user_detail?.full_name || 'System User'}</td>
+                          <tr key={row.id} className="border-b border-border-card/40 hover:bg-bg-main">
+                            <td className="py-3 font-semibold text-white">{row.user_detail?.full_name || 'System User'}</td>
                             <td className="py-3"><StatusBadge label={row.status} /></td>
                             <td className="py-3">{row.check_in || '—'}</td>
                             <td className="py-3">{row.check_out || '—'}</td>
@@ -539,11 +539,11 @@ export default function Team() {
 
         {activeTab === 'leaves' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <span className="text-sm font-semibold text-gray-600">Track and request time off.</span>
+            <div className="flex justify-between items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
+              <span className="text-sm font-semibold text-text-sub">Track and request time off.</span>
               <button
                 onClick={() => setLeaveModalOpen(true)}
-                className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+                className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all"
               >
                 <Plus size={16} className="mr-1.5" />
                 Request Time Off
@@ -552,15 +552,15 @@ export default function Team() {
 
             {/* Pending Requests for Managers */}
             {isAdminOrManager && pendingLeaves.length > 0 && (
-              <div className="bg-white border border-yellow-200 shadow-sm rounded-xl p-6 space-y-4">
-                <h3 className="font-bold text-amber-700 text-lg flex items-center">
+              <div className="bg-bg-card border border-yellow-200 shadow-lg rounded-2xl p-6 space-y-4">
+                <h3 className="font-bold text-warning text-lg flex items-center">
                   <AlertCircle className="mr-2" size={20} />
                   Pending Approvals
                 </h3>
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-sm">
                     <thead>
-                      <tr className="border-b border-gray-200 text-gray-400 font-semibold">
+                      <tr className="border-b border-border-card text-text-sub/70 font-semibold">
                         <th className="py-2.5">Member</th>
                         <th className="py-2.5">Leave Type</th>
                         <th className="py-2.5">Duration</th>
@@ -570,23 +570,23 @@ export default function Team() {
                     </thead>
                     <tbody>
                       {pendingLeaves.map((row) => (
-                        <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="py-3 font-semibold text-gray-900">{row.user_detail?.full_name}</td>
+                        <tr key={row.id} className="border-b border-border-card/40 hover:bg-bg-main">
+                          <td className="py-3 font-semibold text-white">{row.user_detail?.full_name}</td>
                           <td className="py-3 font-medium">{row.leave_type}</td>
-                          <td className="py-3 text-gray-600">
+                          <td className="py-3 text-text-sub">
                             {row.start_date} to {row.end_date} ({row.days_requested} days)
                           </td>
-                          <td className="py-3 max-w-xs truncate text-gray-500">{row.reason}</td>
+                          <td className="py-3 max-w-xs truncate text-text-sub">{row.reason}</td>
                           <td className="py-3 text-right space-x-2">
                             <button
                               onClick={() => setApproveLeaveId(row.id)}
-                              className="inline-flex p-1.5 rounded-lg bg-green-50 text-green-700 hover:bg-green-100 transition-colors"
+                              className="inline-flex p-1.5 rounded-lg bg-success/10 text-success hover:bg-green-100 transition-colors"
                             >
                               <Check size={16} />
                             </button>
                             <button
                               onClick={() => setRejectLeaveId(row.id)}
-                              className="inline-flex p-1.5 rounded-lg bg-red-50 text-red-700 hover:bg-red-100 transition-colors"
+                              className="inline-flex p-1.5 rounded-lg bg-danger/10 text-danger hover:bg-red-100 transition-colors"
                             >
                               <X size={16} />
                             </button>
@@ -600,12 +600,12 @@ export default function Team() {
             )}
 
             {/* My Leave Requests History */}
-            <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-6 space-y-4">
-              <h3 className="font-bold text-gray-900 text-lg">Leave History</h3>
+            <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-6 space-y-4">
+              <h3 className="font-bold text-white text-lg">Leave History</h3>
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm">
                   <thead>
-                    <tr className="border-b border-gray-200 text-gray-400 font-semibold">
+                    <tr className="border-b border-border-card text-text-sub/70 font-semibold">
                       <th className="py-2.5">Leave Type</th>
                       <th className="py-2.5">Dates</th>
                       <th className="py-2.5">Days</th>
@@ -615,14 +615,14 @@ export default function Team() {
                   </thead>
                   <tbody>
                     {myLeaves.length === 0 ? (
-                      <tr><td colSpan={5} className="py-4 text-center text-gray-400">No leave requests found.</td></tr>
+                      <tr><td colSpan={5} className="py-4 text-center text-text-sub/70">No leave requests found.</td></tr>
                     ) : (
                       myLeaves.map((row) => (
-                        <tr key={row.id} className="border-b border-gray-100 hover:bg-gray-50">
-                          <td className="py-3 font-semibold text-gray-900">{row.leave_type}</td>
-                          <td className="py-3 text-gray-600">{row.start_date} to {row.end_date}</td>
-                          <td className="py-3 font-semibold text-gray-900">{row.days_requested}</td>
-                          <td className="py-3 max-w-xs truncate text-gray-500">{row.reason}</td>
+                        <tr key={row.id} className="border-b border-border-card/40 hover:bg-bg-main">
+                          <td className="py-3 font-semibold text-white">{row.leave_type}</td>
+                          <td className="py-3 text-text-sub">{row.start_date} to {row.end_date}</td>
+                          <td className="py-3 font-semibold text-white">{row.days_requested}</td>
+                          <td className="py-3 max-w-xs truncate text-text-sub">{row.reason}</td>
                           <td className="py-3"><StatusBadge label={row.status} /></td>
                         </tr>
                       ))
@@ -636,11 +636,11 @@ export default function Team() {
 
         {activeTab === 'logs' && (
           <div className="space-y-6">
-            <div className="flex justify-between items-center bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
-              <span className="text-sm font-semibold text-gray-600">Submit what you worked on today.</span>
+            <div className="flex justify-between items-center bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
+              <span className="text-sm font-semibold text-text-sub">Submit what you worked on today.</span>
               <button
                 onClick={() => setLogModalOpen(true)}
-                className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all"
+                className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all"
               >
                 <Plus size={16} className="mr-1.5" />
                 Submit Work Log
@@ -649,30 +649,30 @@ export default function Team() {
 
             {/* Logs feed */}
             <div className="space-y-4">
-              <h3 className="font-bold text-gray-900 text-lg">Recent Work Logs</h3>
+              <h3 className="font-bold text-white text-lg">Recent Work Logs</h3>
               <div className="space-y-4">
                 {(isAdminOrManager ? allLogs : myLogs).length === 0 ? (
-                  <div className="bg-white border border-gray-200 shadow-sm rounded-xl p-8 text-center text-gray-400">
+                  <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-8 text-center text-text-sub/70">
                     No work logs found. Be the first to submit today!
                   </div>
                 ) : (
                   (isAdminOrManager ? allLogs : myLogs).map((log) => (
-                    <div key={log.id} className="bg-white border border-gray-200 shadow-sm rounded-xl p-5 space-y-3">
+                    <div key={log.id} className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 space-y-3">
                       <div className="flex justify-between items-start">
                         <div className="flex items-center space-x-3">
                           <UserAvatar name={log.user_detail?.full_name || 'System User'} size="sm" />
                           <div>
-                            <p className="font-bold text-gray-900 text-sm">{log.user_detail?.full_name}</p>
-                            <p className="text-3xs text-indigo-600 font-semibold uppercase tracking-wider">{log.user_detail?.role}</p>
+                            <p className="font-bold text-white text-sm">{log.user_detail?.full_name}</p>
+                            <p className="text-3xs text-primary font-semibold uppercase tracking-wider">{log.user_detail?.role}</p>
                           </div>
                         </div>
-                        <span className="text-xs font-semibold text-gray-400">{log.date}</span>
+                        <span className="text-xs font-semibold text-text-sub/70">{log.date}</span>
                       </div>
 
-                      <div className="text-sm text-gray-700 whitespace-pre-wrap pl-1">{log.log_text}</div>
+                      <div className="text-sm text-white whitespace-pre-wrap pl-1">{log.log_text}</div>
 
                       {log.blockers && (
-                        <div className="mt-3 p-3 bg-red-50 border border-red-100 rounded-lg text-xs text-red-700 flex items-start space-x-2">
+                        <div className="mt-3 p-3 bg-danger/10 border border-red-100 rounded-lg text-xs text-danger flex items-start space-x-2">
                           <AlertCircle className="shrink-0 mt-0.5" size={14} />
                           <div>
                             <span className="font-bold">Blockers:</span> {log.blockers}
@@ -693,8 +693,8 @@ export default function Team() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setLeaveModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4 font-heading">Submit Leave Request</h2>
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4 font-heading">Submit Leave Request</h2>
               
               <form 
                 onSubmit={(e) => {
@@ -704,11 +704,11 @@ export default function Team() {
                 className="space-y-4"
               >
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Leave Type</label>
+                  <label className="text-xs font-semibold text-text-sub">Leave Type</label>
                   <select
                     value={leaveFormData.leave_type}
                     onChange={(e) => setLeaveFormData({...leaveFormData, leave_type: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   >
                     <option value="Annual">Annual</option>
                     <option value="Sick">Sick</option>
@@ -720,36 +720,36 @@ export default function Team() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Start Date</label>
+                    <label className="text-xs font-semibold text-text-sub">Start Date</label>
                     <input
                       type="date"
                       required
                       value={leaveFormData.start_date}
                       onChange={(e) => setLeaveFormData({...leaveFormData, start_date: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">End Date</label>
+                    <label className="text-xs font-semibold text-text-sub">End Date</label>
                     <input
                       type="date"
                       required
                       value={leaveFormData.end_date}
                       onChange={(e) => setLeaveFormData({...leaveFormData, end_date: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Reason</label>
+                  <label className="text-xs font-semibold text-text-sub">Reason</label>
                   <textarea
                     required
                     rows={3}
                     value={leaveFormData.reason}
                     onChange={(e) => setLeaveFormData({...leaveFormData, reason: e.target.value})}
                     placeholder="Provide details for your request..."
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -757,13 +757,13 @@ export default function Team() {
                   <button
                     type="button"
                     onClick={() => setLeaveModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
                   >
                     Submit Request
                   </button>
@@ -779,8 +779,8 @@ export default function Team() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setLogModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Submit Daily Work Log</h2>
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">Submit Daily Work Log</h2>
               
               <form 
                 onSubmit={(e) => {
@@ -790,25 +790,25 @@ export default function Team() {
                 className="space-y-4"
               >
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">What did you accomplish today? *</label>
+                  <label className="text-xs font-semibold text-text-sub">What did you accomplish today? *</label>
                   <textarea
                     required
                     rows={4}
                     value={logFormData.log_text}
                     onChange={(e) => setLogFormData({...logFormData, log_text: e.target.value})}
                     placeholder="List the features built, bugs fixed, or tasks completed..."
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Blockers (if any)</label>
+                  <label className="text-xs font-semibold text-text-sub">Blockers (if any)</label>
                   <textarea
                     rows={2}
                     value={logFormData.blockers}
                     onChange={(e) => setLogFormData({...logFormData, blockers: e.target.value})}
                     placeholder="Are you blocked by anything? (Leave blank if none)"
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -816,13 +816,13 @@ export default function Team() {
                   <button
                     type="button"
                     onClick={() => setLogModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
                   >
                     Submit Log
                   </button>
@@ -857,8 +857,8 @@ export default function Team() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setMemberModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-md rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">
+            <div className="relative w-full max-w-md rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">
                 {isEditingMember ? 'Edit Team Member' : 'Add Team Member'}
               </h2>
               
@@ -878,55 +878,55 @@ export default function Team() {
                 className="space-y-4"
               >
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Full Name *</label>
+                  <label className="text-xs font-semibold text-text-sub">Full Name *</label>
                   <input
                     type="text"
                     required
                     value={memberForm.full_name}
                     onChange={(e) => setMemberForm({...memberForm, full_name: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Email Address *</label>
+                  <label className="text-xs font-semibold text-text-sub">Email Address *</label>
                   <input
                     type="email"
                     required
                     value={memberForm.email}
                     onChange={(e) => setMemberForm({...memberForm, email: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Phone</label>
+                    <label className="text-xs font-semibold text-text-sub">Phone</label>
                     <input
                       type="text"
                       value={memberForm.phone}
                       onChange={(e) => setMemberForm({...memberForm, phone: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">WhatsApp Number</label>
+                    <label className="text-xs font-semibold text-text-sub">WhatsApp Number</label>
                     <input
                       type="text"
                       value={memberForm.whatsapp_number}
                       onChange={(e) => setMemberForm({...memberForm, whatsapp_number: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Role</label>
+                    <label className="text-xs font-semibold text-text-sub">Role</label>
                     <select
                       value={memberForm.role}
                       onChange={(e) => setMemberForm({...memberForm, role: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="superadmin">Super Admin / Founder</option>
                       <option value="admin">Admin</option>
@@ -939,18 +939,18 @@ export default function Team() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Department</label>
+                    <label className="text-xs font-semibold text-text-sub">Department</label>
                     <input
                       type="text"
                       value={memberForm.department}
                       onChange={(e) => setMemberForm({...memberForm, department: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">
+                  <label className="text-xs font-semibold text-text-sub">
                     {isEditingMember ? 'Update Password (leave blank to keep current)' : 'Initial Password *'}
                   </label>
                   <input
@@ -958,16 +958,16 @@ export default function Team() {
                     required={!isEditingMember}
                     value={memberForm.password}
                     onChange={(e) => setMemberForm({...memberForm, password: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
                 {/* Custom Permissions Checklist */}
                 <div className="space-y-2 border-t pt-3">
-                  <span className="text-xs font-bold text-gray-500 uppercase tracking-wider block">Custom Access Capabilities</span>
-                  <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 bg-gray-50 rounded-lg border border-gray-200">
+                  <span className="text-xs font-bold text-text-sub uppercase tracking-wider block">Custom Access Capabilities</span>
+                  <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 bg-bg-main rounded-lg border border-border-card">
                     {['leads', 'clients', 'projects', 'finance', 'team', 'marketing', 'seo', 'infrastructure', 'products', 'reports', 'settings'].map(cap => (
-                      <label key={cap} className="flex items-center space-x-2 text-xs font-semibold text-gray-600 capitalize cursor-pointer">
+                      <label key={cap} className="flex items-center space-x-2 text-xs font-semibold text-text-sub capitalize cursor-pointer">
                         <input
                           type="checkbox"
                           checked={memberForm.custom_permissions.includes(cap)}
@@ -989,13 +989,13 @@ export default function Team() {
                   <button
                     type="button"
                     onClick={() => setMemberModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
                   >
                     {isEditingMember ? 'Update Member' : 'Add Member'}
                   </button>

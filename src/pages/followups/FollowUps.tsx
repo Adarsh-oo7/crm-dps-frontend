@@ -137,8 +137,8 @@ export default function FollowUps() {
       header: 'Follow-up Target', 
       accessor: (row: FollowUp) => (
         <div>
-          <span className="font-semibold text-gray-900">{row.title}</span>
-          <div className="text-xs text-gray-500">{row.related_to_type} #{row.related_to_id || 'General'}</div>
+          <span className="font-semibold text-white">{row.title}</span>
+          <div className="text-xs text-text-sub">{row.related_to_type} #{row.related_to_id || 'General'}</div>
         </div>
       ) 
     },
@@ -150,10 +150,10 @@ export default function FollowUps() {
           {row.assigned_to_detail ? (
             <>
               <UserAvatar name={row.assigned_to_detail.full_name} size="sm" />
-              <span className="text-xs text-gray-700">{row.assigned_to_detail.full_name}</span>
+              <span className="text-xs text-white">{row.assigned_to_detail.full_name}</span>
             </>
           ) : (
-            <span className="text-xs text-gray-400">Unassigned</span>
+            <span className="text-xs text-text-sub/70">Unassigned</span>
           )}
         </div>
       )
@@ -172,7 +172,7 @@ export default function FollowUps() {
                   setSelectedFollowup(row);
                   setCompleteModalOpen(true);
                 }}
-                className="p-1 text-green-600 hover:bg-green-50 rounded border border-green-200 transition-colors"
+                className="p-1 text-success hover:bg-success/10 rounded border border-green-200 transition-colors"
                 title="Mark Completed"
               >
                 <CheckCircle2 size={16} />
@@ -183,7 +183,7 @@ export default function FollowUps() {
                   setSelectedFollowup(row);
                   setRescheduleModalOpen(true);
                 }}
-                className="px-2 py-1 text-xs text-primary hover:bg-indigo-50 border border-indigo-200 rounded transition-colors"
+                className="px-2 py-1 text-xs text-primary hover:bg-primary-light border border-primary/20 rounded transition-colors"
               >
                 Reschedule
               </button>
@@ -201,13 +201,13 @@ export default function FollowUps() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Follow-ups Scheduler</h1>
-          <p className="text-sm text-gray-500">Ensure no clients or prospects go uncontacted. Schedule follow-ups.</p>
+          <h1 className="text-2xl font-bold text-white">Follow-ups Scheduler</h1>
+          <p className="text-sm text-text-sub">Ensure no clients or prospects go uncontacted. Schedule follow-ups.</p>
         </div>
         
         <button
           onClick={handleOpenCreate}
-          className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+          className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
         >
           <Plus size={18} className="mr-1.5" />
           Schedule Follow-up
@@ -215,7 +215,7 @@ export default function FollowUps() {
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 text-sm font-semibold">
+      <div className="flex border-b border-border-card text-sm font-semibold">
         {(['today', 'upcoming', 'overdue', 'completed'] as const).map(tab => (
           <button
             key={tab}
@@ -223,7 +223,7 @@ export default function FollowUps() {
             className={`flex-1 sm:flex-initial px-6 py-3 text-center border-b-2 capitalize transition-colors
               ${activeTab === tab 
                 ? 'border-primary text-primary' 
-                : 'border-transparent text-gray-500 hover:text-gray-900 hover:border-gray-300'
+                : 'border-transparent text-text-sub hover:text-white hover:border-border-card'
               }
             `}
           >
@@ -235,7 +235,7 @@ export default function FollowUps() {
       {/* Filter and Table */}
       <div className="space-y-4">
         <div className="relative w-full max-w-md">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-text-sub/70">
             <Search size={18} />
           </span>
           <input
@@ -243,7 +243,7 @@ export default function FollowUps() {
             placeholder="Search scheduled follow-ups..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full py-2 pl-10 pr-4 text-sm bg-white border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
+            className="w-full py-2 pl-10 pr-4 text-sm bg-bg-card border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary transition-all"
           />
         </div>
 
@@ -260,29 +260,29 @@ export default function FollowUps() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCreateModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">Schedule Follow-up</h2>
+            <div className="relative w-full max-w-lg rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">Schedule Follow-up</h2>
               
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Title / Objective *</label>
+                  <label className="text-xs font-semibold text-text-sub">Title / Objective *</label>
                   <input
                     type="text"
                     required
                     placeholder="e.g. Call Stark Industries regarding proposal"
                     value={formData.title}
                     onChange={(e) => setFormData({...formData, title: e.target.value})}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Related To Type</label>
+                    <label className="text-xs font-semibold text-text-sub">Related To Type</label>
                     <select
                       value={formData.related_to_type}
                       onChange={(e) => setFormData({...formData, related_to_type: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none"
                     >
                       <option value="General">General</option>
                       <option value="Lead">Lead Profile</option>
@@ -291,11 +291,11 @@ export default function FollowUps() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Assign To Team Member</label>
+                    <label className="text-xs font-semibold text-text-sub">Assign To Team Member</label>
                     <select
                       value={formData.assigned_to || ''}
                       onChange={(e) => setFormData({...formData, assigned_to: e.target.value ? parseInt(e.target.value) : null})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none"
                     >
                       <option value="">Unassigned</option>
                       {members.map((m: any) => (
@@ -309,11 +309,11 @@ export default function FollowUps() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Contact Type</label>
+                    <label className="text-xs font-semibold text-text-sub">Contact Type</label>
                     <select
                       value={formData.follow_up_type}
                       onChange={(e) => setFormData({...formData, follow_up_type: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none"
                     >
                       <option value="Call">Phone Call</option>
                       <option value="Email">Email Check-in</option>
@@ -324,24 +324,24 @@ export default function FollowUps() {
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Scheduled Date & Time *</label>
+                    <label className="text-xs font-semibold text-text-sub">Scheduled Date & Time *</label>
                     <input
                       type="datetime-local"
                       required
                       value={formData.scheduled_at}
                       onChange={(e) => setFormData({...formData, scheduled_at: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none"
                     />
                   </div>
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Brief Description</label>
+                  <label className="text-xs font-semibold text-text-sub">Brief Description</label>
                   <textarea
                     value={formData.description || ''}
                     onChange={(e) => setFormData({...formData, description: e.target.value})}
                     rows={2}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none"
                   />
                 </div>
 
@@ -349,13 +349,13 @@ export default function FollowUps() {
                   <button
                     type="button"
                     onClick={() => setCreateModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main hover:bg-bg-main border border-border-card rounded-lg"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg"
                   >
                     Schedule
                   </button>
@@ -371,20 +371,20 @@ export default function FollowUps() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCompleteModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-2">Mark Follow-up Completed</h2>
-              <p className="text-xs text-gray-500 mb-4">Record the outcome of: "{selectedFollowup?.title}"</p>
+            <div className="relative w-full max-w-lg rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-2">Mark Follow-up Completed</h2>
+              <p className="text-xs text-text-sub mb-4">Record the outcome of: "{selectedFollowup?.title}"</p>
               
               <form onSubmit={handleCompleteSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Outcome Details *</label>
+                  <label className="text-xs font-semibold text-text-sub">Outcome Details *</label>
                   <textarea
                     required
                     placeholder="Describe what was discussed or decided..."
                     value={outcomeText}
                     onChange={(e) => setOutcomeText(e.target.value)}
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -392,13 +392,13 @@ export default function FollowUps() {
                   <button
                     type="button"
                     onClick={() => setCompleteModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main border border-border-card rounded-lg"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-sm"
+                    className="px-4 py-2 font-semibold text-white bg-success hover:bg-success/80 rounded-lg shadow-lg"
                   >
                     Submit Outcome
                   </button>
@@ -414,19 +414,19 @@ export default function FollowUps() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setRescheduleModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-2">Reschedule Follow-up</h2>
-              <p className="text-xs text-gray-500 mb-4">Set a new date for: "{selectedFollowup?.title}"</p>
+            <div className="relative w-full max-w-lg rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-2">Reschedule Follow-up</h2>
+              <p className="text-xs text-text-sub mb-4">Set a new date for: "{selectedFollowup?.title}"</p>
               
               <form onSubmit={handleRescheduleSubmit} className="space-y-4">
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">New Date & Time *</label>
+                  <label className="text-xs font-semibold text-text-sub">New Date & Time *</label>
                   <input
                     type="datetime-local"
                     required
                     value={rescheduleDate}
                     onChange={(e) => setRescheduleDate(e.target.value)}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -434,13 +434,13 @@ export default function FollowUps() {
                   <button
                     type="button"
                     onClick={() => setRescheduleModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-lg"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main border border-border-card rounded-lg"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg"
                   >
                     Save Reschedule
                   </button>

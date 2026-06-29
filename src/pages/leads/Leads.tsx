@@ -218,15 +218,15 @@ export default function Leads() {
       header: 'Company / Contact', 
       accessor: (row: Lead) => (
         <div>
-          <div className="font-semibold text-gray-900">{row.company_name}</div>
-          <div className="text-xs text-gray-500">{row.contact_person}</div>
+          <div className="font-semibold text-white">{row.company_name}</div>
+          <div className="text-xs text-text-sub">{row.contact_person}</div>
         </div>
       ) 
     },
     { header: 'Email', accessor: (row: Lead) => row.email || '—' },
     { header: 'Status', accessor: (row: Lead) => <StatusBadge label={row.status} /> },
     { header: 'Priority', accessor: (row: Lead) => <PriorityBadge label={row.priority} /> },
-    { header: 'Score', accessor: (row: Lead) => <span className="font-bold text-indigo-600">{row.lead_score}/100</span> },
+    { header: 'Score', accessor: (row: Lead) => <span className="font-bold text-primary">{row.lead_score}/100</span> },
     { header: 'Est. Value', accessor: (row: Lead) => <span className="font-medium">${parseFloat(row.estimated_value).toLocaleString()}</span> },
     { header: 'Next Follow-up', accessor: (row: Lead) => <DateDisplay dateString={row.next_followup_date} /> },
   ];
@@ -242,22 +242,22 @@ export default function Leads() {
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-3 sm:space-y-0">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Leads CRM</h1>
-          <p className="text-sm text-gray-500">Track and manage your sales pipeline and deal closures.</p>
+          <h1 className="text-2xl font-bold text-white">Leads CRM</h1>
+          <p className="text-sm text-text-sub">Track and manage your sales pipeline and deal closures.</p>
         </div>
         
         <div className="flex items-center space-x-3">
           {/* View Toggle */}
-          <div className="flex bg-gray-100 rounded-lg p-0.5 border border-gray-200">
+          <div className="flex bg-bg-main rounded-lg p-0.5 border border-border-card">
             <button
               onClick={() => setViewMode('list')}
-              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-900'} transition-all`}
+              className={`p-1.5 rounded-md ${viewMode === 'list' ? 'bg-bg-card shadow-lg text-primary' : 'text-text-sub hover:text-white'} transition-all`}
             >
               <List size={18} />
             </button>
             <button
               onClick={() => setViewMode('kanban')}
-              className={`p-1.5 rounded-md ${viewMode === 'kanban' ? 'bg-white shadow-sm text-primary' : 'text-gray-500 hover:text-gray-900'} transition-all`}
+              className={`p-1.5 rounded-md ${viewMode === 'kanban' ? 'bg-bg-card shadow-lg text-primary' : 'text-text-sub hover:text-white'} transition-all`}
             >
               <Kanban size={18} />
             </button>
@@ -266,7 +266,7 @@ export default function Leads() {
           {/* Add button */}
           <button
             onClick={handleOpenCreate}
-            className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-all duration-200"
+            className="flex items-center px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all duration-200"
           >
             <Plus size={18} className="mr-1.5" />
             Add Lead
@@ -275,9 +275,9 @@ export default function Leads() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl border border-gray-200 shadow-sm">
+      <div className="flex flex-col md:flex-row gap-4 bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
         <div className="relative flex-1">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-gray-400">
+          <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-text-sub/70">
             <Search size={18} />
           </span>
           <input
@@ -285,7 +285,7 @@ export default function Leads() {
             placeholder="Search company, contact name, email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full py-2 pl-10 pr-4 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
+            className="w-full py-2 pl-10 pr-4 text-sm bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all"
           />
         </div>
 
@@ -293,7 +293,7 @@ export default function Leads() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-3 py-2 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 text-sm bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="">All Statuses</option>
             {kanbanStages.map(s => <option key={s} value={s}>{s}</option>)}
@@ -303,7 +303,7 @@ export default function Leads() {
           <select
             value={priorityFilter}
             onChange={(e) => setPriorityFilter(e.target.value)}
-            className="px-3 py-2 text-sm bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+            className="px-3 py-2 text-sm bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
           >
             <option value="">All Priorities</option>
             <option value="Low">Low</option>
@@ -332,13 +332,13 @@ export default function Leads() {
                 key={stage}
                 onDragOver={handleDragOver}
                 onDrop={(e) => handleDrop(e, stage)}
-                className="flex-1 min-w-[280px] max-w-[320px] bg-gray-50 border border-gray-200 rounded-xl p-3 flex flex-col h-full"
+                className="flex-1 min-w-[280px] max-w-[320px] bg-bg-main border border-border-card rounded-2xl p-3 flex flex-col h-full"
               >
                 {/* Column Header */}
                 <div className="flex items-center justify-between mb-3.5">
-                  <h3 className="font-semibold text-gray-900 text-sm flex items-center">
+                  <h3 className="font-semibold text-white text-sm flex items-center">
                     {stage}
-                    <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-gray-200 text-gray-700 rounded-full">
+                    <span className="ml-2 px-2 py-0.5 text-2xs font-bold bg-bg-main text-white rounded-full">
                       {stageLeads.length}
                     </span>
                   </h3>
@@ -347,7 +347,7 @@ export default function Leads() {
                 {/* Column Body / Cards */}
                 <div className="space-y-3 overflow-y-auto max-h-[calc(100vh-340px)] flex-1 min-h-[150px]">
                   {stageLeads.length === 0 ? (
-                    <div className="flex items-center justify-center h-24 border border-dashed border-gray-300 rounded-lg text-center text-xs text-gray-400">
+                    <div className="flex items-center justify-center h-24 border border-dashed border-border-card rounded-lg text-center text-xs text-text-sub/70">
                       Drag leads here
                     </div>
                   ) : (
@@ -357,16 +357,16 @@ export default function Leads() {
                         draggable
                         onDragStart={(e) => handleDragStart(e, lead.id)}
                         onClick={() => handleRowClick(lead)}
-                        className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm hover:shadow-md cursor-grab active:cursor-grabbing transition-all space-y-3"
+                        className="bg-bg-card p-4 rounded-lg border border-border-card shadow-lg hover:shadow-md cursor-grab active:cursor-grabbing transition-all space-y-3"
                       >
                         <div className="flex justify-between items-start">
-                          <h4 className="font-bold text-gray-900 text-sm truncate max-w-[80%]">{lead.company_name}</h4>
-                          <span className="text-2xs font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded">
+                          <h4 className="font-bold text-white text-sm truncate max-w-[80%]">{lead.company_name}</h4>
+                          <span className="text-2xs font-bold text-primary bg-primary-light px-1.5 py-0.5 rounded">
                             {lead.lead_score}
                           </span>
                         </div>
                         
-                        <p className="text-xs text-gray-500 truncate">{lead.contact_person}</p>
+                        <p className="text-xs text-text-sub truncate">{lead.contact_person}</p>
                         
                         <div className="flex items-center justify-between pt-1">
                           <PriorityBadge label={lead.priority} />
@@ -376,7 +376,7 @@ export default function Leads() {
                         </div>
 
                         {lead.next_followup_date && (
-                          <div className="flex items-center text-3xs text-yellow-600 font-semibold pt-1 border-t border-gray-100">
+                          <div className="flex items-center text-3xs text-yellow-600 font-semibold pt-1 border-t border-border-card/40">
                             <Clock size={10} className="mr-1 shrink-0" />
                             Next: <DateDisplay dateString={lead.next_followup_date} />
                           </div>
@@ -398,14 +398,14 @@ export default function Leads() {
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setDrawerOpen(false)}></div>
           
           <div className="absolute inset-y-0 right-0 max-w-full flex pl-10">
-            <div className="w-screen max-w-md bg-white shadow-xl flex flex-col">
+            <div className="w-screen max-w-md bg-bg-card shadow-xl flex flex-col">
               {/* Header */}
-              <div className="p-6 border-b border-gray-200 flex items-center justify-between">
+              <div className="p-6 border-b border-border-card flex items-center justify-between">
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">{selectedLead.company_name}</h2>
-                  <p className="text-xs text-gray-500">Contact: {selectedLead.contact_person}</p>
+                  <h2 className="text-lg font-bold text-white">{selectedLead.company_name}</h2>
+                  <p className="text-xs text-text-sub">Contact: {selectedLead.contact_person}</p>
                 </div>
-                <button onClick={() => setDrawerOpen(false)} className="p-1 rounded-full hover:bg-gray-100 text-gray-500">
+                <button onClick={() => setDrawerOpen(false)} className="p-1 rounded-full hover:bg-bg-main text-text-sub">
                   <X size={20} />
                 </button>
               </div>
@@ -413,13 +413,13 @@ export default function Leads() {
               {/* Body */}
               <div className="flex-1 overflow-y-auto p-6 space-y-6">
                 {/* Score & Status */}
-                <div className="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-xl border border-gray-100">
+                <div className="grid grid-cols-2 gap-4 bg-bg-main p-4 rounded-2xl border border-border-card/40">
                   <div>
-                    <span className="text-2xs text-gray-400 font-bold uppercase">Lead Score</span>
-                    <p className="text-xl font-bold text-indigo-600 mt-0.5">{selectedLead.lead_score} / 100</p>
+                    <span className="text-2xs text-text-sub/70 font-bold uppercase">Lead Score</span>
+                    <p className="text-xl font-bold text-primary mt-0.5">{selectedLead.lead_score} / 100</p>
                   </div>
                   <div>
-                    <span className="text-2xs text-gray-400 font-bold uppercase">Status</span>
+                    <span className="text-2xs text-text-sub/70 font-bold uppercase">Status</span>
                     <div className="mt-1">
                       <StatusBadge label={selectedLead.status} />
                     </div>
@@ -428,50 +428,50 @@ export default function Leads() {
 
                 {/* Details Section */}
                 <div className="space-y-4">
-                  <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Information</h3>
+                  <h3 className="font-bold text-sm text-white border-b pb-2">Information</h3>
                   
                   {selectedLead.email && (
                     <div className="flex items-center space-x-2 text-sm">
-                      <Mail size={16} className="text-gray-400 shrink-0" />
+                      <Mail size={16} className="text-text-sub/70 shrink-0" />
                       <a href={`mailto:${selectedLead.email}`} className="text-primary hover:underline">{selectedLead.email}</a>
                     </div>
                   )}
 
                   {selectedLead.phone && (
                     <div className="flex items-center space-x-2 text-sm">
-                      <Phone size={16} className="text-gray-400 shrink-0" />
+                      <Phone size={16} className="text-text-sub/70 shrink-0" />
                       <span>{selectedLead.phone}</span>
                     </div>
                   )}
 
                   {selectedLead.website && (
                     <div className="flex items-center space-x-2 text-sm">
-                      <Globe size={16} className="text-gray-400 shrink-0" />
+                      <Globe size={16} className="text-text-sub/70 shrink-0" />
                       <a href={selectedLead.website} target="_blank" rel="noreferrer" className="text-primary hover:underline">{selectedLead.website}</a>
                     </div>
                   )}
 
                   {selectedLead.project_detail && (
-                    <div className="flex items-center space-x-2 text-sm bg-indigo-50/50 p-2.5 rounded-lg border border-indigo-100">
-                      <span className="text-2xs font-bold text-indigo-700 uppercase">Project Source:</span>
-                      <span className="font-semibold text-gray-800">{selectedLead.project_detail.name}</span>
+                    <div className="flex items-center space-x-2 text-sm bg-primary-light/50 p-2.5 rounded-lg border border-indigo-100">
+                      <span className="text-2xs font-bold text-primary uppercase">Project Source:</span>
+                      <span className="font-semibold text-white">{selectedLead.project_detail.name}</span>
                     </div>
                   )}
 
                   {selectedLead.product_detail && (
-                    <div className="flex items-center space-x-2 text-sm bg-green-50/50 p-2.5 rounded-lg border border-green-100">
-                      <span className="text-2xs font-bold text-green-700 uppercase">Product Source:</span>
-                      <span className="font-semibold text-gray-800">{selectedLead.product_detail.name}</span>
+                    <div className="flex items-center space-x-2 text-sm bg-success/10/50 p-2.5 rounded-lg border border-green-100">
+                      <span className="text-2xs font-bold text-success uppercase">Product Source:</span>
+                      <span className="font-semibold text-white">{selectedLead.product_detail.name}</span>
                     </div>
                   )}
 
                   <div className="grid grid-cols-2 gap-4 pt-2">
                     <div>
-                      <span className="text-2xs text-gray-400 font-bold">Estimated Value</span>
+                      <span className="text-2xs text-text-sub/70 font-bold">Estimated Value</span>
                       <p className="text-sm font-semibold">${parseFloat(selectedLead.estimated_value).toLocaleString()}</p>
                     </div>
                     <div>
-                      <span className="text-2xs text-gray-400 font-bold">Priority</span>
+                      <span className="text-2xs text-text-sub/70 font-bold">Priority</span>
                       <p className="mt-0.5"><PriorityBadge label={selectedLead.priority} /></p>
                     </div>
                   </div>
@@ -480,17 +480,17 @@ export default function Leads() {
                 {/* Notes */}
                 {selectedLead.notes && (
                   <div className="space-y-2">
-                    <h3 className="font-bold text-sm text-gray-900 border-b pb-2">Notes</h3>
-                    <p className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg border border-gray-100 whitespace-pre-wrap">{selectedLead.notes}</p>
+                    <h3 className="font-bold text-sm text-white border-b pb-2">Notes</h3>
+                    <p className="text-sm text-text-sub bg-bg-main p-3 rounded-lg border border-border-card/40 whitespace-pre-wrap">{selectedLead.notes}</p>
                   </div>
                 )}
               </div>
 
               {/* Footer Actions */}
-              <div className="p-6 border-t border-gray-200 bg-gray-50 flex items-center justify-between">
+              <div className="p-6 border-t border-border-card bg-bg-main flex items-center justify-between">
                 <button
                   onClick={() => setDeleteModalOpen(true)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="p-2 text-danger hover:bg-danger/10 rounded-lg transition-colors"
                 >
                   <Trash size={20} />
                 </button>
@@ -498,7 +498,7 @@ export default function Leads() {
                 <div className="flex space-x-3">
                   <button
                     onClick={() => handleOpenEdit(selectedLead)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-white hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-card hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                   >
                     Edit
                   </button>
@@ -506,7 +506,7 @@ export default function Leads() {
                   {selectedLead.status !== 'Won' && (
                     <button
                       onClick={() => setConvertModalOpen(true)}
-                      className="flex items-center px-4 py-2 font-semibold text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-sm transition-colors"
+                      className="flex items-center px-4 py-2 font-semibold text-white bg-success hover:bg-success/80 rounded-lg shadow-lg transition-colors"
                     >
                       <UserCheck size={16} className="mr-1.5" />
                       Convert to Client
@@ -524,72 +524,72 @@ export default function Leads() {
         <div className="fixed inset-0 z-50 overflow-y-auto">
           <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm" onClick={() => setCreateModalOpen(false)}></div>
           <div className="flex min-h-screen items-center justify-center p-4">
-            <div className="relative w-full max-w-lg rounded-xl bg-white p-6 shadow-xl border border-gray-200">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">{isEditing ? 'Edit Lead' : 'Create Lead'}</h2>
+            <div className="relative w-full max-w-lg rounded-2xl bg-bg-card p-6 shadow-xl border border-border-card">
+              <h2 className="text-lg font-bold text-white mb-4">{isEditing ? 'Edit Lead' : 'Create Lead'}</h2>
               
               <form onSubmit={handleFormSubmit} className="space-y-4">
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Company Name *</label>
+                    <label className="text-xs font-semibold text-text-sub">Company Name *</label>
                     <input
                       type="text"
                       required
                       value={formData.company_name}
                       onChange={(e) => setFormData({...formData, company_name: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Contact Person *</label>
+                    <label className="text-xs font-semibold text-text-sub">Contact Person *</label>
                     <input
                       type="text"
                       required
                       value={formData.contact_person}
                       onChange={(e) => setFormData({...formData, contact_person: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Email Address</label>
+                    <label className="text-xs font-semibold text-text-sub">Email Address</label>
                     <input
                       type="email"
                       value={formData.email || ''}
                       onChange={(e) => setFormData({...formData, email: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Phone</label>
+                    <label className="text-xs font-semibold text-text-sub">Phone</label>
                     <input
                       type="text"
                       value={formData.phone || ''}
                       onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Status</label>
+                    <label className="text-xs font-semibold text-text-sub">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e: any) => setFormData({...formData, status: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       {kanbanStages.map(s => <option key={s} value={s}>{s}</option>)}
                       <option value="On Hold">On Hold</option>
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Priority</label>
+                    <label className="text-xs font-semibold text-text-sub">Priority</label>
                     <select
                       value={formData.priority}
                       onChange={(e: any) => setFormData({...formData, priority: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="Low">Low</option>
                       <option value="Medium">Medium</option>
@@ -601,45 +601,45 @@ export default function Leads() {
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Lead Score (1-100)</label>
+                    <label className="text-xs font-semibold text-text-sub">Lead Score (1-100)</label>
                     <input
                       type="number"
                       min="1"
                       max="100"
                       value={formData.lead_score}
                       onChange={(e) => setFormData({...formData, lead_score: parseInt(e.target.value)})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">Est. Value ($)</label>
+                    <label className="text-xs font-semibold text-text-sub">Est. Value ($)</label>
                     <input
                       type="text"
                       value={formData.estimated_value}
                       onChange={(e) => setFormData({...formData, estimated_value: e.target.value})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">In-house Project Source</label>
+                    <label className="text-xs font-semibold text-text-sub">In-house Project Source</label>
                     <select
                       value={formData.project || ''}
                       onChange={(e) => setFormData({...formData, project: e.target.value ? parseInt(e.target.value) : null})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="">None</option>
                       {projects.map((proj: any) => <option key={proj.id} value={proj.id}>{proj.name}</option>)}
                     </select>
                   </div>
                   <div className="space-y-1">
-                    <label className="text-xs font-semibold text-gray-500">In-house Product Source</label>
+                    <label className="text-xs font-semibold text-text-sub">In-house Product Source</label>
                     <select
                       value={formData.product || ''}
                       onChange={(e) => setFormData({...formData, product: e.target.value ? parseInt(e.target.value) : null})}
-                      className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                      className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                     >
                       <option value="">None</option>
                       {products.map((prod: any) => <option key={prod.id} value={prod.id}>{prod.name}</option>)}
@@ -648,12 +648,12 @@ export default function Leads() {
                 </div>
 
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-gray-500">Notes</label>
+                  <label className="text-xs font-semibold text-text-sub">Notes</label>
                   <textarea
                     value={formData.notes || ''}
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
                     rows={3}
-                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
+                    className="w-full px-3 py-2 text-sm border border-border-card rounded-lg focus:outline-none focus:ring-2 focus:ring-primary"
                   />
                 </div>
 
@@ -661,13 +661,13 @@ export default function Leads() {
                   <button
                     type="button"
                     onClick={() => setCreateModalOpen(false)}
-                    className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-50 hover:bg-gray-100 border border-gray-300 rounded-lg transition-colors"
+                    className="px-4 py-2 text-sm font-medium text-white bg-bg-main hover:bg-bg-main border border-border-card rounded-lg transition-colors"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-sm transition-colors"
+                    className="px-4 py-2 font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-colors"
                   >
                     {isEditing ? 'Save Changes' : 'Create Lead'}
                   </button>
