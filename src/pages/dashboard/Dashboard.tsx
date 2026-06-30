@@ -93,18 +93,18 @@ export default function Dashboard() {
   // Queries
   const { data: summary } = useQuery<DashboardSummary>({
     queryKey: ['dashboard-summary'],
-    queryFn: () => apiClient('/api/reports/dashboard/summary/'),
+    queryFn: () => apiClient('/api/dashboard/summary/'),
     refetchInterval: 60000,
   });
 
   const { data: salesReport } = useQuery<SalesReport>({
     queryKey: ['reports-sales'],
-    queryFn: () => apiClient('/api/reports/reports/sales/'),
+    queryFn: () => apiClient('/api/reports/sales/'),
   });
 
   const { data: projectsReport } = useQuery<ProjectsReport>({
     queryKey: ['reports-projects'],
-    queryFn: () => apiClient('/api/reports/reports/projects/'),
+    queryFn: () => apiClient('/api/reports/projects/'),
   });
 
   const { data: todayFollowups = [] } = useQuery<FollowUp[]>({
