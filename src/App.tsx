@@ -18,6 +18,7 @@ import Knowledge from './pages/knowledge/Knowledge';
 import Reports from './pages/reports/Reports';
 import SettingsPage from './pages/settings/Settings';
 import Profile from './pages/profile/Profile';
+import Notifications from './pages/notifications/Notifications';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 
@@ -67,7 +68,7 @@ function App() {
             <Route path="reports" element={<Reports />} />
             <Route path="settings" element={<SettingsPage />} />
             <Route path="profile" element={<Profile />} />
-            <Route path="notifications" element={<div className="bg-white p-6 rounded-xl border border-gray-200 shadow-sm"><h2 className="text-xl font-bold">Notifications</h2><p className="text-gray-500 mt-2">Coming soon.</p></div>} />
+            <Route path="notifications" element={<Notifications />} />
           </Route>
 
           {/* Catch-all redirect */}
