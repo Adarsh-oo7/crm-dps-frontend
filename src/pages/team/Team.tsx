@@ -62,6 +62,18 @@ interface WorkLog {
   user_detail?: Member;
 }
 
+const formatAttendanceTime = (dateStr: string, timeStr: string | null) => {
+  if (!timeStr) return '—';
+  try {
+    const cleanTimeStr = timeStr.split('.')[0];
+    const combinedStr = `${dateStr}T${cleanTimeStr}Z`;
+    const date = new Date(combinedStr);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return timeStr;
+  }
+};
+
 export default function Team() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
@@ -148,6 +160,7 @@ export default function Team() {
   // Check if checked in today
   const todayStr = new Date().toISOString().split('T')[0];
   const todayRecord = myAttendance.find(r => r.date === todayStr);
+  const isCurrentlyCheckedIn = todayRecord ? !todayRecord.check_out : false;
   const isCheckedIn = !!todayRecord;
   const isCheckedOut = todayRecord ? !!todayRecord.check_out : false;
 
@@ -435,13 +448,13 @@ export default function Team() {
 
               <div className="py-6 border-y border-border-card/40 flex flex-col items-center">
                 <div className="text-4xl font-extrabold text-primary mb-2">
-                  {todayRecord ? (todayRecord.status) : 'Not Logged'}
+                  {todayRecord ? (isCurrentlyCheckedIn ? 'Present' : 'Checked Out') : 'Not Logged'}
                 </div>
                 {todayRecord?.check_in && (
                   <div className="text-sm text-text-sub mt-1">
-                    Check-in: <span className="font-semibold text-white">{todayRecord.check_in}</span>
+                    Check-in: <span className="font-semibold text-white">{formatAttendanceTime(todayRecord.date, todayRecord.check_in)}</span>
                     {todayRecord.check_out && (
-                      <> | Check-out: <span className="font-semibold text-white">{todayRecord.check_out}</span></>
+                      <> | Check-out: <span className="font-semibold text-white">{formatAttendanceTime(todayRecord.date, todayRecord.check_out)}</span></>
                     )}
                   </div>
                 )}
@@ -449,7 +462,7 @@ export default function Team() {
 
               <div className="flex gap-4">
                 <button
-                  disabled={isCheckedIn || isCheckingIn}
+                  disabled={isCurrentlyCheckedIn || isCheckingIn}
                   onClick={() => checkInMutation.mutate()}
                   className="flex-1 flex items-center justify-center gap-2 py-3 px-4 font-semibold text-white bg-success hover:bg-success/80 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
@@ -457,7 +470,7 @@ export default function Team() {
                   Check In
                 </button>
                 <button
-                  disabled={!isCheckedIn || isCheckedOut || isCheckingOut}
+                  disabled={!isCurrentlyCheckedIn || isCheckingOut}
                   onClick={() => checkOutMutation.mutate()}
                   className="flex-1 flex items-center justify-center gap-2 py-3 px-4 font-semibold text-white bg-danger hover:bg-danger/80 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
@@ -488,8 +501,8 @@ export default function Team() {
                       myAttendance.map((row) => (
                         <tr key={row.id} className="border-b border-border-card/40 hover:bg-bg-main">
                           <td className="py-3 font-medium text-white">{row.date}</td>
-                          <td className="py-3 text-text-sub">{row.check_in || '—'}</td>
-                          <td className="py-3 text-text-sub">{row.check_out || '—'}</td>
+                          <td className="py-3 text-text-sub">{formatAttendanceTime(row.date, row.check_in)}</td>
+                          <td className="py-3 text-text-sub">{formatAttendanceTime(row.date, row.check_out)}</td>
                           <td className="py-3 font-semibold text-white">{row.duration_hours ? `${row.duration_hours} hrs` : '—'}</td>
                           <td className="py-3"><StatusBadge label={row.status} /></td>
                         </tr>
@@ -523,8 +536,8 @@ export default function Team() {
                           <tr key={row.id} className="border-b border-border-card/40 hover:bg-bg-main">
                             <td className="py-3 font-semibold text-white">{row.user_detail?.full_name || 'System User'}</td>
                             <td className="py-3"><StatusBadge label={row.status} /></td>
-                            <td className="py-3">{row.check_in || '—'}</td>
-                            <td className="py-3">{row.check_out || '—'}</td>
+                            <td className="py-3">{formatAttendanceTime(row.date, row.check_in)}</td>
+                            <td className="py-3">{formatAttendanceTime(row.date, row.check_out)}</td>
                             <td className="py-3">{row.duration_hours ? `${row.duration_hours} hrs` : '—'}</td>
                           </tr>
                         ))

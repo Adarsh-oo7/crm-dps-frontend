@@ -238,7 +238,7 @@ export default function Dashboard() {
               </span>
             </div>
             
-            {!isCheckedIn ? (
+            {!isCheckedIn || isCheckedOut ? (
               <button
                 onClick={() => checkInMutation.mutate()}
                 disabled={isCheckingIn}
@@ -247,7 +247,7 @@ export default function Dashboard() {
                 <LogIn size={12} className="mr-1" />
                 {isCheckingIn ? '...' : 'Check In'}
               </button>
-            ) : !isCheckedOut ? (
+            ) : (
               <button
                 onClick={() => checkOutMutation.mutate()}
                 disabled={isCheckingOut}
@@ -256,10 +256,6 @@ export default function Dashboard() {
                 <LogOut size={12} className="mr-1" />
                 {isCheckingOut ? '...' : 'Check Out'}
               </button>
-            ) : (
-              <span className="px-2.5 py-1 bg-bg-main text-text-sub text-3xs font-semibold rounded-lg border border-border-card">
-                Completed
-              </span>
             )}
           </div>
 
