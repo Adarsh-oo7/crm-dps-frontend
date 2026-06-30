@@ -51,12 +51,13 @@ export default function Notifications() {
     }
   });
 
-  const handleNotificationClick = async (notif: Notification) => {
+  const handleNotificationClick = (notif: Notification) => {
     if (!notif.is_read) {
-      await markReadMutation.mutateAsync(notif.id);
+      markReadMutation.mutate(notif.id);
     }
     if (notif.related_url) {
-      navigate(notif.related_url);
+      const targetUrl = notif.related_url.startsWith('/') ? notif.related_url : `/${notif.related_url}`;
+      navigate(targetUrl);
     }
   };
 

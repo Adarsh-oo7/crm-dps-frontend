@@ -493,6 +493,40 @@ export default function Tasks() {
         </div>
       </div>
 
+      {/* Active Timer Banner at the Top */}
+      {tasks.find(t => t.active_timer_detail) && (() => {
+        const activeTask = tasks.find(t => t.active_timer_detail);
+        if (!activeTask || !activeTask.active_timer_detail) return null;
+        return (
+          <div className="flex flex-col sm:flex-row items-center justify-between p-4 bg-success/10 border border-success/30 rounded-2xl shadow-lg animate-pulse gap-3">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-success/20 rounded-xl text-success">
+                <Clock size={20} className="animate-spin [animation-duration:8s]" />
+              </div>
+              <div>
+                <h4 className="text-xs font-bold text-white">Active Session Running</h4>
+                <p className="text-xs text-text-sub">
+                  Working on: <span className="text-white font-semibold">{activeTask.title}</span>
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 w-full sm:w-auto">
+              <LiveTimer startedAt={activeTask.active_timer_detail.started_at} />
+              <button
+                onClick={() => {
+                  setTimerTaskToStop(activeTask.id);
+                  setStopTimerNotes('');
+                  setStopTimerModalOpen(true);
+                }}
+                className="flex-1 sm:flex-initial flex items-center justify-center gap-1.5 py-1.5 px-4 text-xs font-bold text-white bg-danger hover:bg-danger/90 rounded-xl transition-all cursor-pointer shadow-lg shadow-danger/10"
+              >
+                Stop Working
+              </button>
+            </div>
+          </div>
+        );
+      })()}
+
       {/* Search/Filters */}
       <div className="flex flex-col md:flex-row gap-4 bg-bg-card p-4 rounded-2xl border border-border-card shadow-lg">
         <div className="relative flex-1">

@@ -82,6 +82,17 @@ function formatCurrency(amount: number): string {
   return `$${amount.toFixed(0)}`;
 }
 
+const formatAttendanceTime = (dateStr: string, timeStr: string | null) => {
+  if (!timeStr) return '';
+  try {
+    const combinedStr = `${dateStr}T${timeStr}Z`;
+    const date = new Date(combinedStr);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  } catch (e) {
+    return timeStr;
+  }
+};
+
 export default function Dashboard() {
   const { user } = useAuthStore();
   const navigate = useNavigate();
@@ -222,7 +233,7 @@ export default function Dashboard() {
                 ) : isCheckedOut ? (
                   <span className="text-amber-500">Checked Out</span>
                 ) : (
-                  <span className="text-success">Checked In ({todayRecord?.check_in})</span>
+                  <span className="text-success">Checked In ({formatAttendanceTime(todayRecord.date, todayRecord.check_in)})</span>
                 )}
               </span>
             </div>
