@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate } from 'react-router-dom';
-import { ShieldCheck, Mail, Lock, Eye, EyeOff, Loader2, ArrowLeft, KeyRound } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowLeft, KeyRound, MessageCircle } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -18,11 +18,9 @@ export default function Login() {
   const { login, verifyOTP, isAuthenticated, error: authError } = useAuthStore();
   const navigate = useNavigate();
   
-  // Login Form states
   const [showPassword, setShowPassword] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   
-  // OTP Verification states
   const [otpRequired, setOtpRequired] = useState(false);
   const [otpEmail, setOtpEmail] = useState('');
   const [otpValue, setOtpValue] = useState('');
@@ -76,159 +74,156 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-bg-main relative overflow-hidden">
-      {/* Decorative background glow blobs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary rounded-full filter blur-3xl opacity-10 animate-pulse"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-primary-light0 rounded-full filter blur-3xl opacity-10 animate-pulse delay-700"></div>
+    <div className="relative min-h-screen bg-[#111B21] overflow-hidden">
+      <div className="absolute top-0 inset-x-0 h-[222px] bg-wa-banner" />
 
-      <div className="relative w-full max-w-md p-8 bg-bg-card border border-border-card rounded-2xl shadow-2xl mx-4">
-        <Toaster position="top-right" />
-        
-        {/* Logo and Header */}
-        <div className="flex flex-col items-center mb-8">
-          <img src="/logo.png" alt="Digital Product Kerala Logo" className="h-10 w-auto mb-3.5 rounded-2xl border border-border-card bg-bg-card p-1" />
-          <h1 className="text-xl font-extrabold text-white tracking-tight">DPS Agency OS</h1>
-          <p className="text-xs text-text-sub mt-1">Sign in to manage your digital agency</p>
-        </div>
+      <Toaster
+        position="top-right"
+        toastOptions={{
+          style: { background: '#202C33', color: '#E9EDEF', border: '1px solid #2A3942' },
+        }}
+      />
 
-        {/* Auth Error Display */}
-        {authError && (
-          <div className="p-3 mb-6 text-sm text-red-200 bg-red-950/40 border border-red-500/30 rounded-lg">
-            {authError}
-          </div>
-        )}
-
-        {!otpRequired ? (
-          /* Normal Credentials Form */
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-            {/* Email field */}
-            <div className="space-y-1">
-              <label className="text-xs font-semibold text-indigo-100 uppercase tracking-wide">
-                Email Address
-              </label>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-300">
-                  <Mail size={16} />
-                </span>
-                <input
-                  type="email"
-                  {...register('email')}
-                  className="w-full py-2.5 pl-10 pr-4 text-sm text-white bg-bg-main/50 border border-indigo-700/50 rounded-lg placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                  placeholder="admin@digitalprod.com"
-                  disabled={isSubmitting}
-                />
-              </div>
-              {errors.email && (
-                <p className="text-xs font-medium text-red-300">{errors.email.message}</p>
-              )}
+      <div className="relative z-10 flex min-h-screen items-start justify-center px-4 pt-16 sm:pt-24">
+        <div className="w-full max-w-[460px] bg-bg-card rounded-sm shadow-2xl px-8 py-10 sm:px-12">
+          <div className="flex flex-col items-center mb-8">
+            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-[#111B21] mb-4">
+              <MessageCircle size={32} fill="currentColor" />
             </div>
+            <h1 className="text-[28px] font-light text-text-main tracking-tight">DPS Agency OS</h1>
+            <p className="text-[14px] text-text-sub mt-1 text-center">
+              Use DPS OS on your computer. Simple, reliable, private.
+            </p>
+          </div>
 
-            {/* Password field */}
-            <div className="space-y-1">
-              <div className="flex justify-between items-center">
-                <label className="text-xs font-semibold text-indigo-100 uppercase tracking-wide">
+          {authError && (
+            <div className="p-3 mb-6 text-sm text-danger bg-danger/10 border border-danger/30 rounded-lg">
+              {authError}
+            </div>
+          )}
+
+          {!otpRequired ? (
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <div className="space-y-1">
+                <label className="text-[13px] font-medium text-text-sub">
+                  Email
+                </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-wa-icon">
+                    <Mail size={16} />
+                  </span>
+                  <input
+                    type="email"
+                    {...register('email')}
+                    className="w-full py-2.5 pl-10 pr-4 text-[15px] text-text-main bg-wa-panel border-0 border-b-2 border-border-card rounded-none focus:outline-none focus:ring-0 focus:border-primary placeholder-text-sub/70 transition-colors"
+                    placeholder="you@digitalprod.com"
+                    disabled={isSubmitting}
+                  />
+                </div>
+                {errors.email && (
+                  <p className="text-xs font-medium text-danger">{errors.email.message}</p>
+                )}
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[13px] font-medium text-text-sub">
                   Password
                 </label>
+                <div className="relative">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-wa-icon">
+                    <Lock size={16} />
+                  </span>
+                  <input
+                    type={showPassword ? 'text' : 'password'}
+                    {...register('password')}
+                    className="w-full py-2.5 pl-10 pr-10 text-[15px] text-text-main bg-wa-panel border-0 border-b-2 border-border-card rounded-none focus:outline-none focus:ring-0 focus:border-primary placeholder-text-sub/70 transition-colors"
+                    placeholder="••••••••"
+                    disabled={isSubmitting}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-wa-icon hover:text-text-main"
+                    disabled={isSubmitting}
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                {errors.password && (
+                  <p className="text-xs font-medium text-danger">{errors.password.message}</p>
+                )}
               </div>
-              <div className="relative">
-                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-indigo-300">
-                  <Lock size={16} />
-                </span>
+
+              <button
+                type="submit"
+                className="w-full py-2.5 mt-4 flex items-center justify-center font-semibold text-[14px] uppercase tracking-wide text-[#111B21] bg-primary hover:bg-primary-dark rounded-full focus:outline-none transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <Loader2 size={18} className="mr-2 animate-spin" />
+                    Signing in...
+                  </>
+                ) : (
+                  'Sign In'
+                )}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleVerifyOtp} className="space-y-6">
+              <div className="text-center bg-wa-panel p-4 rounded-lg space-y-1">
+                <KeyRound className="mx-auto text-primary" size={28} />
+                <h2 className="text-[15px] font-medium text-text-main">Security verification</h2>
+                <p className="text-[13px] text-text-sub">
+                  A 6-digit code was sent to<br />
+                  <span className="font-medium text-text-main">{otpEmail}</span>
+                </p>
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[13px] font-medium text-text-sub block text-center">
+                  Enter verification code
+                </label>
                 <input
-                  type={showPassword ? 'text' : 'password'}
-                  {...register('password')}
-                  className="w-full py-2.5 pl-10 pr-10 text-sm text-white bg-bg-main/50 border border-indigo-700/50 rounded-lg placeholder-indigo-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                  placeholder="••••••••"
-                  disabled={isSubmitting}
+                  type="text"
+                  maxLength={6}
+                  value={otpValue}
+                  onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
+                  className="w-full py-3 text-center text-xl font-semibold tracking-[0.4em] text-text-main bg-wa-panel border-0 border-b-2 border-border-card rounded-none focus:outline-none focus:ring-0 focus:border-primary"
+                  placeholder="000000"
+                  disabled={isVerifyingOtp}
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-indigo-300 hover:text-white"
-                  disabled={isSubmitting}
-                >
-                  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
               </div>
-              {errors.password && (
-                <p className="text-xs font-medium text-red-300">{errors.password.message}</p>
-              )}
-            </div>
 
-            {/* Submit button */}
-            <button
-              type="submit"
-              className="w-full py-2.5 mt-2 flex items-center justify-center font-semibold text-white bg-primary hover:bg-primary-dark active:bg-primary-dark rounded-lg shadow-md shadow-indigo-600/20 focus:outline-none transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <>
-                  <Loader2 size={18} className="mr-2 animate-spin" />
-                  Signing in...
-                </>
-              ) : (
-                'Sign In'
-              )}
-            </button>
-          </form>
-        ) : (
-          /* OTP Verification Form */
-          <form onSubmit={handleVerifyOtp} className="space-y-6">
-            <div className="text-center bg-bg-main/30 border border-indigo-500/20 p-4 rounded-2xl space-y-1">
-              <KeyRound className="mx-auto text-primary" size={28} />
-              <h2 className="text-sm font-semibold text-white">Security Verification</h2>
-              <p className="text-xs text-indigo-200">
-                A 6-digit access code has been sent to your email:<br />
-                <span className="font-semibold text-white">{otpEmail}</span>
-              </p>
-            </div>
+              <button
+                type="submit"
+                className="w-full py-2.5 flex items-center justify-center font-semibold text-[14px] uppercase tracking-wide text-[#111B21] bg-primary hover:bg-primary-dark rounded-full focus:outline-none transition-colors disabled:opacity-50"
+                disabled={isVerifyingOtp || otpValue.length !== 6}
+              >
+                {isVerifyingOtp ? (
+                  <>
+                    <Loader2 size={18} className="mr-2 animate-spin" />
+                    Verifying...
+                  </>
+                ) : (
+                  'Verify & Log In'
+                )}
+              </button>
 
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-indigo-100 uppercase tracking-wide block text-center">
-                Enter Verification Code
-              </label>
-              <input
-                type="text"
-                maxLength={6}
-                value={otpValue}
-                onChange={(e) => setOtpValue(e.target.value.replace(/\D/g, ''))}
-                className="w-full py-3 text-center text-xl font-bold tracking-widest text-white bg-bg-main/50 border border-indigo-700/50 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200"
-                placeholder="000000"
+              <button
+                type="button"
+                onClick={() => setOtpRequired(false)}
+                className="w-full flex items-center justify-center text-[13px] text-primary hover:underline"
                 disabled={isVerifyingOtp}
-              />
-            </div>
+              >
+                <ArrowLeft size={14} className="mr-1" />
+                Back to login
+              </button>
+            </form>
+          )}
 
-            <button
-              type="submit"
-              className="w-full py-2.5 flex items-center justify-center font-semibold text-white bg-primary hover:bg-primary-dark active:bg-primary-dark rounded-lg shadow-md focus:outline-none transition-all duration-200 disabled:opacity-50"
-              disabled={isVerifyingOtp || otpValue.length !== 6}
-            >
-              {isVerifyingOtp ? (
-                <>
-                  <Loader2 size={18} className="mr-2 animate-spin" />
-                  Verifying...
-                </>
-              ) : (
-                'Verify & Log In'
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={() => setOtpRequired(false)}
-              className="w-full flex items-center justify-center text-xs text-indigo-300 hover:text-white transition-colors"
-              disabled={isVerifyingOtp}
-            >
-              <ArrowLeft size={14} className="mr-1" />
-              Back to Login
-            </button>
-          </form>
-        )}
-
-        {/* Footer info */}
-        <div className="text-center mt-6">
-          <p className="text-xs text-indigo-300">
-            Secure login with system-grade OTP access validation.
+          <p className="text-center mt-8 text-[12px] text-text-sub">
+            End-to-end protected login with OTP for superadmin.
           </p>
         </div>
       </div>

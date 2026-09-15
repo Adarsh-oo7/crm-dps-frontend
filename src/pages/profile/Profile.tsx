@@ -221,7 +221,7 @@ export default function Profile() {
           {/* Profile Details Form */}
           <div className="bg-bg-card border border-border-card rounded-2xl shadow-lg p-6">
             <h3 className="font-bold text-white text-lg border-b pb-3 mb-4 flex items-center gap-2">
-              <User size={18} className="text-indigo-500" />
+              <User size={18} className="text-primary" />
               General Details
             </h3>
             
@@ -348,7 +348,7 @@ export default function Profile() {
               </div>
             ) : (
               <form onSubmit={handleOtpPasswordSubmit} className="space-y-4">
-                <div className="p-4 bg-primary-light border border-primary/10 rounded-2xl text-sm text-indigo-800 flex items-start gap-3">
+                <div className="p-4 bg-primary-light border border-primary/20 rounded-2xl text-sm text-text-main flex items-start gap-3">
                   <ShieldCheck className="text-primary shrink-0 mt-0.5" size={18} />
                   <div>
                     <p className="font-semibold">Access Verification Code Sent</p>

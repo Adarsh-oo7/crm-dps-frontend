@@ -402,7 +402,7 @@ export default function Team() {
                         <div className="flex space-x-1 shrink-0">
                           <button
                             onClick={() => handleOpenEditMember(member)}
-                            className="text-primary hover:text-indigo-800 p-1.5 hover:bg-primary-light rounded transition-colors"
+                            className="text-primary hover:text-primary-dark p-1.5 hover:bg-primary-light rounded transition-colors"
                           >
                             <Edit2 size={16} />
                           </button>

@@ -274,7 +274,7 @@ export default function Finance() {
                   <span className="text-4xs font-bold text-text-sub uppercase tracking-wider">Invoiced This Month</span>
                   <h3 className="text-xl font-extrabold text-white mt-1.5">${parseFloat(summary.total_invoiced_this_month || '0').toLocaleString()}</h3>
                 </div>
-                <div className="p-2.5 rounded-2xl bg-primary-light0/10 text-primary-light border border-indigo-500/20"><FileText size={18} /></div>
+                <div className="p-2.5 rounded-2xl bg-primary/10 text-primary border border-primary/25"><FileText size={18} /></div>
               </div>
               <div className="bg-bg-card border border-border-card shadow-lg rounded-2xl p-5 flex items-center justify-between">
                 <div>
@@ -306,14 +306,14 @@ export default function Finance() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={chartData} margin={{ top: 20, right: 10, left: -10, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="month" stroke="#9CA3AF" fontSize={11} />
-                    <YAxis stroke="#9CA3AF" fontSize={11} />
+                    <XAxis dataKey="month" stroke="#8696A0" fontSize={11} />
+                    <YAxis stroke="#8696A0" fontSize={11} />
                     <Tooltip 
-                      contentStyle={{ backgroundColor: '#111827', borderColor: 'rgba(255,255,255,0.08)', borderRadius: '8px' }} 
+                      contentStyle={{ backgroundColor: '#202C33', borderColor: '#2A3942', borderRadius: '8px' }} 
                       itemStyle={{ color: '#FFFFFF' }}
                     />
                     <Legend wrapperStyle={{ fontSize: '11px' }} />
-                    <Bar dataKey="revenue" fill="#6366F1" name="Revenue / Invoiced" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="revenue" fill="#00A884" name="Revenue / Invoiced" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="expenses" fill="#EF4444" name="Expenses Logged" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>

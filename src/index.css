@@ -1,64 +1,86 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #6366F1;
-  --color-primary-dark: #4F46E5;
-  --color-primary-light: rgba(99, 102, 241, 0.1);
-  
-  --color-success: #22C55E;
-  --color-warning: #F59E0B;
-  --color-danger: #EF4444;
-  --color-info: #06B6D4;
-  
-  --color-bg-main: #0B0F19;
-  --color-bg-card: #111827;
-  --color-border-card: rgba(255, 255, 255, 0.08);
-  --color-text-main: #FFFFFF;
-  --color-text-sub: #9CA3AF;
-  
-  --color-sidebar-bg: #0B0F19;
-  --color-sidebar-text: #9CA3AF;
-  --color-sidebar-active: #6366F1;
-  
-  --font-sans: 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
+  --color-primary: #00A884;
+  --color-primary-dark: #008069;
+  --color-primary-light: rgba(0, 168, 132, 0.16);
+
+  --color-success: #00A884;
+  --color-warning: #FFB938;
+  --color-danger: #F15C6D;
+  --color-info: #53BDEB;
+
+  --color-bg-main: #0B141A;
+  --color-bg-card: #202C33;
+  --color-border-card: #2A3942;
+  --color-text-main: #E9EDEF;
+  --color-text-sub: #8696A0;
+
+  --color-sidebar-bg: #111B21;
+  --color-sidebar-text: #8696A0;
+  --color-sidebar-active: #2A3942;
+
+  --color-wa-header: #202C33;
+  --color-wa-panel: #111B21;
+  --color-wa-hover: #2A3942;
+  --color-wa-outgoing: #005C4B;
+  --color-wa-icon: #AEBAC1;
+  --color-wa-banner: #00A884;
+
+  --font-sans: "Segoe UI", "Helvetica Neue", Helvetica, "Lucida Grande", Arial, Ubuntu, Cantarell, sans-serif;
+  --font-mono: "Segoe UI", ui-monospace, monospace;
 }
 
 @layer base {
+  :root {
+    color-scheme: dark;
+  }
+
   body {
     @apply bg-bg-main text-text-main font-sans antialiased selection:bg-primary/30 selection:text-white;
   }
-  /* Custom scrollbar */
+
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;
   }
   ::-webkit-scrollbar-track {
-    background: #0B0F19;
+    background: #0B141A;
   }
   ::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.1);
+    background: #2A3942;
     border-radius: 9999px;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: #3B4A54;
   }
 
-  /* Browser Autofill Overrides for Dark Mode Forms */
   input:-webkit-autofill,
-  input:-webkit-autofill:hover, 
-  input:-webkit-autofill:focus, 
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
   input:-webkit-autofill:active {
     -webkit-background-clip: text;
-    -webkit-text-fill-color: #ffffff !important;
+    -webkit-text-fill-color: #E9EDEF !important;
     transition: background-color 5000s ease-in-out 0s;
-    box-shadow: 0 0 0px 1000px #0b0f19 inset !important;
+    box-shadow: 0 0 0px 1000px #111B21 inset !important;
   }
 
-  /* Consistent styling for inputs/select/textarea in dark mode */
   input, select, textarea {
-    @apply focus:ring-1 focus:ring-primary focus:border-primary border-border-card bg-bg-main text-white placeholder-text-sub/50;
+    @apply focus:ring-1 focus:ring-primary focus:border-primary border-border-card bg-wa-panel text-text-main placeholder-text-sub/70;
   }
 }
 
+@layer components {
+  .wa-wallpaper {
+    background-color: #0B141A;
+    background-image:
+      radial-gradient(rgba(0, 168, 132, 0.05) 0.7px, transparent 0.7px),
+      radial-gradient(rgba(233, 237, 239, 0.035) 0.7px, transparent 0.7px);
+    background-size: 26px 26px, 13px 13px;
+    background-position: 0 0, 6px 6px;
+  }
+
+  .wa-chat-row {
+    @apply flex items-center gap-3 px-3 py-2.5 border-b border-border-card/60 transition-colors;
+  }
+}

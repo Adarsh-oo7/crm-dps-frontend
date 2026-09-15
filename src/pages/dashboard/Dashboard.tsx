@@ -65,7 +65,7 @@ interface AttendanceRecord {
 
 const COLORS_BY_STATUS: Record<string, string> = {
   'New': 'bg-gray-800 text-text-sub/70 border-gray-700',
-  'Planning': 'bg-indigo-900/40 text-indigo-300 border-indigo-500/20',
+  'Planning': 'bg-primary/10 text-primary border-primary/25',
   'UI Design': 'bg-purple-900/40 text-purple-300 border-purple-500/20',
   'Development': 'bg-blue-900/40 text-blue-300 border-blue-500/20',
   'Testing': 'bg-amber-900/40 text-amber-300 border-amber-500/20',
@@ -170,7 +170,7 @@ export default function Dashboard() {
       sub: `${summary?.hot_leads_count ?? 0} hot leads`,
       positive: (summary?.leads_count ?? 0) > 0,
       icon: Users,
-      color: 'bg-primary-light0/10 text-primary-light border-indigo-500/20',
+      color: 'bg-primary/10 text-primary border-primary/25',
       onClick: () => navigate('/leads'),
     },
     {

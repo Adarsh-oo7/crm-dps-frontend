@@ -8,23 +8,23 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#4F46E5', // Indigo 600
-          dark: '#3730A3',    // Indigo 800
-          light: '#EEF2FF',   // Indigo 50',
+          DEFAULT: '#00A884',
+          dark: '#008069',
+          light: 'rgba(0, 168, 132, 0.16)',
         },
-        success: '#10B981',
-        warning: '#F59E0B',
-        danger: '#EF4444',
-        info: '#3B82F6',
+        success: '#00A884',
+        warning: '#FFB938',
+        danger: '#F15C6D',
+        info: '#53BDEB',
         sidebar: {
-          bg: '#1E1B4B',
-          text: '#C7D2FE',
-          active: '#4F46E5',
+          bg: '#111B21',
+          text: '#8696A0',
+          active: '#2A3942',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        sans: ['Segoe UI', 'Helvetica Neue', 'Helvetica', 'Arial', 'sans-serif'],
+        mono: ['Segoe UI', 'ui-monospace', 'monospace'],
       }
     },
   },

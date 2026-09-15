@@ -52,112 +52,102 @@ export default function Topbar({ toggleSidebar }: { toggleSidebar: () => void })
   };
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-16 px-4 sm:px-6 bg-bg-card border-b border-border-card backdrop-blur-md shadow-lg">
-      {/* Mobile Toggle Button */}
+    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-[60px] px-3 sm:px-4 bg-wa-header border-b border-border-card">
       <button 
         onClick={toggleSidebar}
-        className="p-1.5 mr-2 rounded-lg bg-bg-main border border-border-card text-text-sub hover:text-white lg:hidden transition-colors"
+        className="p-2 mr-1 rounded-full text-wa-icon hover:bg-wa-hover hover:text-text-main lg:hidden transition-colors"
       >
         <Menu size={20} />
       </button>
 
-      {/* Search Bar */}
-      <div className="relative w-72 sm:w-96 max-w-lg hidden sm:block">
-        <span className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-text-sub">
+      <div className="relative w-72 sm:w-[420px] max-w-lg hidden sm:block">
+        <span className="absolute inset-y-0 left-0 flex items-center pl-3.5 pointer-events-none text-wa-icon">
           <Search size={16} />
         </span>
         <input
           type="text"
           readOnly
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}
-          placeholder="Global search (Cmd + K)..."
-          className="w-full py-1.5 pl-9 pr-4 text-xs text-white bg-bg-main border border-border-card rounded-lg focus:outline-none focus:ring-1 focus:ring-primary focus:border-transparent transition-all duration-200 cursor-pointer placeholder-text-sub"
+          placeholder="Search or start a new chat"
+          className="w-full py-2 pl-10 pr-4 text-[14px] text-text-main bg-wa-panel border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer placeholder-text-sub"
         />
       </div>
 
-      {/* Right Side Actions */}
-      <div className="flex items-center space-x-3 ml-auto">
-        {/* Quick Add Button */}
+      <div className="flex items-center gap-1.5 ml-auto">
         <button 
           onClick={() => navigate('/tasks?action=create')}
-          className="flex items-center px-3 py-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary-dark rounded-lg shadow-lg transition-all duration-205"
+          className="flex items-center px-3 py-1.5 text-[13px] font-semibold text-[#111B21] bg-primary hover:bg-primary-dark rounded-full transition-colors"
         >
           <Plus size={14} className="mr-1" />
-          Quick Add
+          New
         </button>
 
-        {/* Notifications Bell */}
         <button 
           onClick={() => navigate('/notifications')}
-          className="relative p-2 text-text-sub hover:text-white bg-bg-main border border-border-card rounded-full transition-colors duration-200"
+          className="relative p-2 text-wa-icon hover:text-text-main hover:bg-wa-hover rounded-full transition-colors"
         >
-          <Bell size={18} />
+          <Bell size={20} />
           {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 flex items-center justify-center w-4 h-4 text-3xs font-bold text-white bg-danger rounded-full ring-1 ring-bg-main">
+            <span className="absolute top-1 right-1 flex items-center justify-center min-w-4 h-4 px-1 text-[10px] font-bold text-[#111B21] bg-primary rounded-full">
               {unreadCount}
             </span>
           )}
         </button>
 
-        {/* Vertical divider */}
-        <div className="w-px h-5 bg-border-card"></div>
-
-        {/* User Dropdown */}
         <div className="relative" ref={dropdownRef}>
           <button 
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="flex items-center space-x-2 focus:outline-none group"
+            className="flex items-center gap-2 pl-1 pr-1 py-1 rounded-full hover:bg-wa-hover focus:outline-none"
           >
             {getAvatarUrl() ? (
               <img 
                 src={getAvatarUrl()} 
                 alt="Profile avatar" 
-                className="w-8 h-8 rounded-full object-cover border border-border-card"
+                className="w-9 h-9 rounded-full object-cover"
               />
             ) : (
-              <div className="flex items-center justify-center w-8 h-8 text-xs font-bold text-primary bg-primary-light border border-primary/20 rounded-full">
+              <div className="flex items-center justify-center w-9 h-9 text-[12px] font-bold text-[#111B21] bg-primary rounded-full">
                 {initials}
               </div>
             )}
-            <div className="text-left hidden md:block">
-              <p className="text-xs font-semibold text-white leading-none group-hover:text-primary transition-colors duration-200">
+            <div className="text-left hidden md:block pr-1">
+              <p className="text-[14px] font-medium text-text-main leading-none">
                 {user?.full_name || 'System User'}
               </p>
-              <p className="text-3xs text-text-sub capitalize leading-none mt-1">
-                {user?.role || 'developer'}
+              <p className="text-[11px] text-primary capitalize leading-none mt-1">
+                {user?.role || 'developer'} · online
               </p>
             </div>
-            <ChevronDown size={12} className="text-text-sub group-hover:text-white transition-colors" />
+            <ChevronDown size={14} className="text-wa-icon hidden md:block" />
           </button>
 
-          {/* Dropdown Menu */}
           {dropdownOpen && (
-            <div className="absolute right-0 w-44 mt-2 origin-top-right bg-bg-card border border-border-card rounded-lg shadow-xl divide-y divide-border-card focus:outline-none z-50">
+            <div className="absolute right-0 w-48 mt-2 origin-top-right bg-bg-card border border-border-card rounded-lg shadow-xl overflow-hidden z-50">
               <div className="py-1">
                 <button
                   onClick={handleProfileClick}
-                  className="flex items-center w-full px-3 py-2 text-xs text-text-sub hover:bg-bg-main hover:text-white transition-colors"
+                  className="flex items-center w-full px-4 py-2.5 text-[14px] text-text-main hover:bg-wa-hover transition-colors"
                 >
-                  <User size={14} className="mr-2 text-text-sub" />
+                  <User size={16} className="mr-3 text-wa-icon" />
                   My Profile
                 </button>
                 <button
                   onClick={handleSettingsClick}
-                  className="flex items-center w-full px-3 py-2 text-xs text-text-sub hover:bg-bg-main hover:text-white transition-colors"
+                  className="flex items-center w-full px-4 py-2.5 text-[14px] text-text-main hover:bg-wa-hover transition-colors"
                 >
-                  <Settings size={14} className="mr-2 text-text-sub" />
+                  <Settings size={16} className="mr-3 text-wa-icon" />
                   Settings
                 </button>
               </div>
-              <div className="py-1">
+              <div className="border-t border-border-card py-1">
                 <button
                   onClick={() => {
                     setDropdownOpen(false);
                     logout();
                   }}
-                  className="flex items-center w-full px-3 py-2 text-xs text-danger hover:bg-danger/10 transition-colors"
+                  className="flex items-center w-full px-4 py-2.5 text-[14px] text-danger hover:bg-danger/10 transition-colors"
                 >
-                  <LogOut size={14} className="mr-2 text-danger" />
+                  <LogOut size={16} className="mr-3" />
                   Logout
                 </button>
               </div>

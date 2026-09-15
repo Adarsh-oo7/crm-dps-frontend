@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, UserSquare2, FolderGit, CheckSquare, 
   Clock, DollarSign, CalendarRange, TrendingUp, ShieldCheck, 
   Settings, Server, Globe, Package, ChevronLeft, 
-  ChevronRight, LogOut, BookOpen, X
+  ChevronRight, LogOut, BookOpen, MessageCircle
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -22,7 +22,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
 
   const menuGroups = [
     {
-      title: 'Core Management',
+      title: 'Chats',
       items: [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { name: 'Leads', path: '/leads', icon: Users, roles: ['superadmin', 'admin', 'manager', 'marketer'] },
@@ -33,14 +33,14 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
       ] as SidebarItem[]
     },
     {
-      title: 'Finance & Staffing',
+      title: 'Team',
       items: [
         { name: 'Finance', path: '/finance', icon: DollarSign, roles: ['superadmin', 'admin', 'finance'] },
         { name: 'Team Hub', path: '/team', icon: CalendarRange, roles: ['superadmin', 'admin', 'manager', 'developer', 'designer', 'marketer', 'support', 'finance'] },
       ] as SidebarItem[]
     },
     {
-      title: 'Growth & Infrastructure',
+      title: 'Channels',
       items: [
         { name: 'Marketing', path: '/marketing', icon: TrendingUp, roles: ['superadmin', 'admin', 'marketer'] },
         { name: 'SEO Control', path: '/seo', icon: Globe, roles: ['superadmin', 'admin', 'marketer'] },
@@ -49,7 +49,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
       ] as SidebarItem[]
     },
     {
-      title: 'Knowledge & Metrics',
+      title: 'Starred',
       items: [
         { name: 'Knowledge SOPs', path: '/knowledge', icon: BookOpen },
         { name: 'Reports', path: '/reports', icon: ShieldCheck, roles: ['superadmin', 'admin', 'manager', 'finance'] },
@@ -67,95 +67,121 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
     return userPermissions.includes(permName);
   };
 
+  const initials = user?.full_name
+    ? user.full_name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
+    : 'U';
+
   return (
     <>
-      {/* Mobile Sidebar backdrop */}
       {isOpen && (
         <div 
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 z-35 bg-black/60 backdrop-blur-sm lg:hidden transition-opacity duration-300"
+          className="fixed inset-0 z-35 bg-black/70 lg:hidden transition-opacity duration-300"
         />
       )}
 
       <aside 
-        className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-in-out bg-bg-card border-r border-border-card flex flex-col justify-between
-          ${isOpen ? 'w-64 translate-x-0' : 'w-20 lg:translate-x-0 -translate-x-full'}
+        className={`fixed top-0 left-0 z-40 h-screen transition-all duration-300 ease-in-out bg-wa-panel border-r border-border-card flex flex-col
+          ${isOpen ? 'w-[280px] translate-x-0' : 'w-20 lg:translate-x-0 -translate-x-full'}
         `}
       >
-        {/* Sidebar Header */}
-        <div>
-          <div className="flex items-center justify-between h-16 px-4 border-b border-border-card bg-bg-main/30">
-            <div className="flex items-center space-x-2 overflow-hidden">
-              <div className="flex items-center justify-center w-8 h-8 bg-bg-card rounded-lg shrink-0 shadow-md border border-border-card p-0.5">
-                <img src="/logo.png" alt="DPS Logo" className="w-full h-full object-contain" />
+        <div className="flex items-center justify-between h-[60px] px-3 bg-wa-header shrink-0">
+          <div className="flex items-center gap-3 overflow-hidden min-w-0">
+            <div className="relative shrink-0">
+              <div className="flex items-center justify-center w-10 h-10 rounded-full bg-primary text-[#111B21]">
+                <MessageCircle size={20} fill="currentColor" />
               </div>
-              {isOpen && (
-                <span className="text-sm font-bold text-white tracking-wide truncate">DPS Agency OS</span>
-              )}
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-primary rounded-full ring-2 ring-wa-header" />
             </div>
-            
-            {/* Toggle Button */}
-            <button 
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-1 rounded-lg bg-bg-main border border-border-card text-text-sub hover:text-white transition-colors duration-200"
-            >
-              {isOpen ? <ChevronLeft size={14} /> : <ChevronRight size={14} />}
-            </button>
+            {isOpen && (
+              <div className="min-w-0">
+                <p className="text-[15px] font-semibold text-text-main truncate leading-tight">DPS Agency OS</p>
+                <p className="text-[12px] text-text-sub truncate capitalize">{user?.full_name || 'Online'}</p>
+              </div>
+            )}
           </div>
-
-          {/* Sidebar Items */}
-          <div className="px-3 py-4 overflow-y-auto max-h-[calc(100vh-130px)] space-y-4">
-            {menuGroups.map((group, groupIdx) => {
-              const visibleItems = group.items.filter(item => checkRoleAccess(item));
-              if (visibleItems.length === 0) return null;
-
-              return (
-                <div key={groupIdx} className="space-y-1">
-                  {isOpen && (
-                    <h3 className="px-3 text-3xs font-bold text-text-sub uppercase tracking-wider block mb-1.5 opacity-60">
-                      {group.title}
-                    </h3>
-                  )}
-                  {visibleItems.map((item, itemIdx) => {
-                    const Icon = item.icon;
-                    return (
-                      <NavLink
-                        key={itemIdx}
-                        to={item.path}
-                        onClick={() => {
-                          // Close sidebar on mobile after clicking a link
-                          if (window.innerWidth < 1024) setIsOpen(false);
-                        }}
-                        className={({ isActive }) => `
-                          flex items-center px-3 py-2 rounded-lg text-xs font-semibold transition-all duration-200 group
-                          ${isActive 
-                            ? 'bg-primary text-white shadow-md shadow-primary/10' 
-                            : 'text-text-sub hover:bg-bg-main hover:text-white'
-                          }
-                        `}
-                      >
-                        <Icon className="w-4 h-4 shrink-0" />
-                        {isOpen && (
-                          <span className="ml-3 truncate">{item.name}</span>
-                        )}
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              );
-            })}
-          </div>
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="p-2 rounded-full text-wa-icon hover:bg-wa-hover hover:text-text-main transition-colors"
+            aria-label="Toggle sidebar"
+          >
+            {isOpen ? <ChevronLeft size={18} /> : <ChevronRight size={18} />}
+          </button>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="p-3 border-t border-border-card bg-bg-main/30">
+        <div className="flex-1 overflow-y-auto">
+          {menuGroups.map((group, groupIdx) => {
+            const visibleItems = group.items.filter(item => checkRoleAccess(item));
+            if (visibleItems.length === 0) return null;
+
+            return (
+              <div key={groupIdx}>
+                {isOpen && (
+                  <h3 className="px-4 pt-3 pb-1 text-[11px] font-semibold text-primary tracking-wide">
+                    {group.title}
+                  </h3>
+                )}
+                {visibleItems.map((item, itemIdx) => {
+                  const Icon = item.icon;
+                  return (
+                    <NavLink
+                      key={itemIdx}
+                      to={item.path}
+                      onClick={() => {
+                        if (window.innerWidth < 1024) setIsOpen(false);
+                      }}
+                      className={({ isActive }) => `
+                        wa-chat-row group relative
+                        ${isActive
+                          ? 'bg-wa-hover'
+                          : 'hover:bg-wa-hover/70'
+                        }
+                        ${!isOpen ? 'justify-center px-0 border-b-0 py-3' : ''}
+                      `}
+                    >
+                      {({ isActive }) => (
+                        <>
+                          {isActive && (
+                            <span className="absolute left-0 top-0 bottom-0 w-[3px] bg-primary rounded-r" />
+                          )}
+                          <div className={`flex items-center justify-center w-10 h-10 rounded-full shrink-0 ${
+                            isActive ? 'bg-primary text-[#111B21]' : 'bg-bg-card text-wa-icon group-hover:text-text-main'
+                          }`}>
+                            <Icon className="w-[18px] h-[18px]" />
+                          </div>
+                          {isOpen && (
+                            <div className="min-w-0 flex-1">
+                              <p className={`text-[15px] truncate ${isActive ? 'text-text-main font-medium' : 'text-text-main'}`}>
+                                {item.name}
+                              </p>
+                              <p className="text-[12px] text-text-sub truncate">
+                                {item.name === 'Dashboard' ? 'Today · Agency overview' : 'Open conversation'}
+                              </p>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </NavLink>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+
+        <div className="p-2 border-t border-border-card bg-wa-header">
           <button
             onClick={() => logout()}
-            className="flex items-center w-full px-3 py-2 text-xs font-semibold text-danger rounded-lg hover:bg-danger/10 transition-all duration-200"
+            className={`flex items-center w-full rounded-lg text-[14px] font-medium text-danger hover:bg-danger/10 transition-all duration-200 ${
+              isOpen ? 'px-3 py-2.5 gap-3' : 'justify-center py-3'
+            }`}
           >
-            <LogOut className="w-4 h-4 shrink-0" />
-            {isOpen && <span className="ml-3">Logout</span>}
+            <LogOut className="w-[18px] h-[18px] shrink-0" />
+            {isOpen && <span>Logout</span>}
           </button>
+          {isOpen && (
+            <p className="px-3 pb-2 text-[11px] text-text-sub">{initials} · {userRole}</p>
+          )}
         </div>
       </aside>
     </>

@@ -216,7 +216,7 @@ export default function Clients() {
       header: 'Company Name', 
       accessor: (row: Client) => (
         <div className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-8 h-8 font-bold text-xs text-primary bg-primary-light border border-indigo-150 rounded-lg">
+          <div className="flex items-center justify-center w-8 h-8 font-bold text-xs text-primary bg-primary-light border border-primary/25 rounded-full">
             {row.company_name[0].toUpperCase()}
           </div>
           <span className="font-semibold text-white">{row.company_name}</span>

@@ -102,13 +102,12 @@ export default function GlobalSearch() {
     : 0;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-gray-900/40 backdrop-blur-xs">
+    <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 bg-black/60">
       <div 
         ref={modalRef}
-        className="w-full max-w-2xl bg-bg-card rounded-2xl shadow-2xl border border-border-card overflow-hidden flex flex-col max-h-[500px]"
+        className="w-full max-w-2xl bg-bg-card rounded-lg shadow-2xl border border-border-card overflow-hidden flex flex-col max-h-[500px]"
       >
-        {/* Search Input */}
-        <div className="flex items-center border-b border-border-card px-4 py-3 bg-bg-main">
+        <div className="flex items-center border-b border-border-card px-4 py-3 bg-wa-panel">
           <Search className="text-text-sub/70 mr-3" size={20} />
           <input
             ref={inputRef}

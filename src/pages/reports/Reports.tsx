@@ -9,7 +9,7 @@ import {
   TrendingUp, Users, FolderGit, ShieldCheck, FileText, AlertCircle
 } from 'lucide-react';
 
-const COLORS = ['#4F46E5', '#10B981', '#F59E0B', '#EF4444', '#3B82F6', '#8B5CF6', '#EC4899', '#6B7280'];
+const COLORS = ['#00A884', '#25D366', '#FFB938', '#F15C6D', '#53BDEB', '#005C4B', '#8696A0', '#AEBAC1'];
 
 export default function Reports() {
   // Queries
@@ -93,7 +93,7 @@ export default function Reports() {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="revenue" fill="#4F46E5" name="Revenue / Invoiced" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="revenue" fill="#00A884" name="Revenue / Invoiced" radius={[4, 4, 0, 0]} />
                   <Bar dataKey="expenses" fill="#EF4444" name="Expenses" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
