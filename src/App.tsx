@@ -19,6 +19,7 @@ import Reports from './pages/reports/Reports';
 import SettingsPage from './pages/settings/Settings';
 import Profile from './pages/profile/Profile';
 import Notifications from './pages/notifications/Notifications';
+import WhatsAppInbox from './pages/whatsapp/WhatsAppInbox';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 
@@ -49,6 +50,7 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="whatsapp" element={<WhatsAppInbox />} />
             
             {/* Real core modules */}
             <Route path="leads" element={<Leads />} />

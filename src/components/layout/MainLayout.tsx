@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet, Navigate } from 'react-router-dom';
+import { Outlet, Navigate, useLocation } from 'react-router-dom';
 import Sidebar from './Sidebar';
 import Topbar from './Topbar';
 import GlobalSearch from './GlobalSearch';
@@ -8,6 +8,12 @@ import { useAuthStore } from '../../store/authStore';
 export default function MainLayout() {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const location = useLocation();
+  const isWhatsApp = location.pathname.startsWith('/whatsapp');
+
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   useEffect(() => {
     checkAuth();
@@ -39,8 +45,19 @@ export default function MainLayout() {
           ${sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'}
         `}
       >
-        <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-        <main className="flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper">
+        {!isWhatsApp && <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />}
+        {isWhatsApp && (
+          <button
+            onClick={() => setSidebarOpen(!sidebarOpen)}
+            className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-full bg-[#202C33] text-[#AEBAC1]"
+          >
+            Menu
+          </button>
+        )}
+        <main className={isWhatsApp
+          ? 'flex-1 overflow-hidden h-screen'
+          : 'flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper'
+        }>
           <Outlet />
         </main>
       </div>

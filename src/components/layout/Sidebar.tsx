@@ -24,6 +24,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
     {
       title: 'Chats',
       items: [
+        { name: 'WhatsApp', path: '/whatsapp', icon: MessageCircle },
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { name: 'Leads', path: '/leads', icon: Users, roles: ['superadmin', 'admin', 'manager', 'marketer'] },
         { name: 'Clients', path: '/clients', icon: UserSquare2, roles: ['superadmin', 'admin', 'manager', 'support', 'finance'] },
@@ -155,7 +156,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
                                 {item.name}
                               </p>
                               <p className="text-[12px] text-text-sub truncate">
-                                {item.name === 'Dashboard' ? 'Today · Agency overview' : 'Open conversation'}
+                                {item.name === 'WhatsApp' ? 'Business inbox' : item.name === 'Dashboard' ? 'Today · Agency overview' : 'Open conversation'}
                               </p>
                             </div>
                           )}
