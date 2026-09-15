@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Send, Check, CheckCheck, Smile, Paperclip, MoreVertical, ArrowLeft, MessageCircle } from 'lucide-react';
-import toast from 'react-hot-toast';
+import { Search, Plus, Send, Check, CheckCheck, Smile, Paperclip, MoreVertical, ArrowLeft, MessageCircle, Clock } from 'lucide-react';
+import toast, { Toaster } from 'react-hot-toast';
 import { apiClient } from '../../api/client';
 
 interface WaContact {
@@ -11,6 +11,7 @@ interface WaContact {
   last_message_at: string | null;
   last_message_preview: string;
   unread_count: number;
+  session_open?: boolean;
 }
 
 interface WaMessage {
@@ -25,6 +26,16 @@ interface WaMessage {
   sent_by_name?: string;
 }
 
+interface WaStatus {
+  configured?: boolean;
+  display_number?: string;
+  last_webhook_at?: string;
+  inbound_count?: number;
+  billing_blocked?: boolean;
+  billing_url?: string;
+  last_error?: string;
+}
+
 function asList<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
   return [];
@@ -34,7 +45,7 @@ function formatPhone(waId: string) {
   if (waId.startsWith('91') && waId.length === 12) {
     return `+91 ${waId.slice(2, 7)} ${waId.slice(7)}`;
   }
-  return `+${waId}`;
+  return waId.startsWith('+') ? waId : `+${waId}`;
 }
 
 function initials(name: string, waId: string) {
@@ -52,13 +63,17 @@ function timeLabel(iso: string | null) {
   return d.toLocaleDateString([], { day: 'numeric', month: 'short' });
 }
 
+function looksLikePhone(value: string) {
+  const digits = value.replace(/\D/g, '');
+  return digits.length >= 10 && digits.length <= 15;
+}
+
 function StatusTicks({ status }: { status: string }) {
-  if (status === 'failed') return <span className="text-[11px] text-danger ml-1">!</span>;
+  if (status === 'failed') return <span className="text-[11px] text-[#F15C6D] ml-1">!</span>;
   if (status === 'read') return <CheckCheck size={14} className="text-[#53BDEB] ml-1" />;
-  if (status === 'delivered' || status === 'sent' || status === 'accepted') {
-    return <CheckCheck size={14} className="text-[#8696A0] ml-1" />;
-  }
-  return <Check size={14} className="text-[#8696A0] ml-1" />;
+  if (status === 'delivered') return <CheckCheck size={14} className="text-[#8696A0] ml-1" />;
+  if (status === 'sent') return <Check size={14} className="text-[#8696A0] ml-1" />;
+  return <Clock size={12} className="text-[#8696A0] ml-1" />;
 }
 
 export default function WhatsAppInbox() {
@@ -71,48 +86,57 @@ export default function WhatsAppInbox() {
   const [newText, setNewText] = useState('Hello from Digital Product Solutions');
   const bottomRef = useRef<HTMLDivElement>(null);
 
-  const { data: status } = useQuery({
+  const { data: status } = useQuery<WaStatus>({
     queryKey: ['whatsapp-status'],
     queryFn: () => apiClient('/api/whatsapp/status/'),
+    refetchInterval: 15000,
   });
 
   const { data: contacts = [] } = useQuery<WaContact[]>({
     queryKey: ['whatsapp-conversations', search],
     queryFn: () => apiClient('/api/whatsapp/conversations/', { params: search ? { q: search } : undefined }).then(asList<WaContact>),
-    refetchInterval: 5000,
+    refetchInterval: 3000,
   });
 
   const { data: thread } = useQuery<{ contact: WaContact; messages: WaMessage[] }>({
     queryKey: ['whatsapp-thread', activeId],
     queryFn: () => apiClient(`/api/whatsapp/conversations/${activeId}/`),
     enabled: !!activeId,
-    refetchInterval: 4000,
+    refetchInterval: 2000,
   });
 
   const sendMutation = useMutation({
     mutationFn: (text: string) => apiClient(`/api/whatsapp/conversations/${activeId}/`, { method: 'POST', body: { text } }),
-    onSuccess: () => {
+    onSuccess: (msg: WaMessage) => {
       setDraft('');
       queryClient.invalidateQueries({ queryKey: ['whatsapp-thread', activeId] });
       queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
+      if (msg.message_type === 'template') {
+        toast.success('Opening template sent. Free chat unlocks after they reply.');
+      }
     },
     onError: (err: Error) => toast.error(err.message || 'Could not send'),
   });
 
   const startMutation = useMutation({
     mutationFn: () => apiClient('/api/whatsapp/send/', { method: 'POST', body: { to: newPhone, text: newText } }),
-    onSuccess: (data: { contact: WaContact }) => {
+    onSuccess: (data: { contact: WaContact; message: WaMessage }) => {
       setComposerOpen(false);
       setNewPhone('');
       setActiveId(data.contact.id);
       queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
-      toast.success('Message sent');
+      if (data.message?.message_type === 'template') {
+        toast.success('Template sent to WhatsApp. They must reply before free-form chat.');
+      } else {
+        toast.success('Message sent');
+      }
     },
     onError: (err: Error) => toast.error(err.message || 'Could not send'),
   });
 
   const activeContact = thread?.contact || contacts.find((c) => c.id === activeId) || null;
   const messages = thread?.messages || [];
+  const sessionOpen = !!activeContact?.session_open;
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -137,8 +161,14 @@ export default function WhatsAppInbox() {
     sendMutation.mutate(draft.trim());
   };
 
+  const openNewChat = (phone = '') => {
+    setNewPhone(phone);
+    setComposerOpen(true);
+  };
+
   return (
     <div className="flex h-full min-h-0 bg-[#0B141A] overflow-hidden">
+      <Toaster position="top-center" />
       <aside className={`flex flex-col w-full max-w-full sm:max-w-[380px] sm:min-w-[320px] border-r border-[#2A3942] bg-[#111B21] ${activeId ? 'hidden sm:flex' : 'flex'} h-full`}>
         <div className="h-[60px] px-4 flex items-center justify-between bg-[#202C33] shrink-0">
           <div>
@@ -146,7 +176,7 @@ export default function WhatsAppInbox() {
             <p className="text-[12px] text-[#8696A0]">{status?.display_number || '+91 94478 45185'}</p>
           </div>
           <button
-            onClick={() => setComposerOpen(true)}
+            onClick={() => openNewChat(looksLikePhone(search) ? search : '')}
             className="p-2 rounded-full text-[#AEBAC1] hover:bg-[#2A3942]"
             title="New chat"
           >
@@ -154,11 +184,21 @@ export default function WhatsAppInbox() {
           </button>
         </div>
 
-        {!status?.configured && (
-          <div className="px-4 py-2 text-[12px] bg-[#2A3942] text-[#FFB938]">
-            Access token not on the server yet. Incoming chats will still appear after webhooks. Replies need WHATSAPP_ACCESS_TOKEN.
-          </div>
+        {status?.billing_blocked && (
+          <a
+            href={status.billing_url}
+            target="_blank"
+            rel="noreferrer"
+            className="px-4 py-2 text-[12px] bg-[#5C2E2E] text-[#FFD3D3] border-b border-[#2A3942] block"
+          >
+            Messages are not reaching phones: Meta needs a payment method on this WhatsApp Business account. Click to add billing, then send again.
+          </a>
         )}
+        <div className="px-4 py-2 text-[11px] bg-[#182229] text-[#8696A0] border-b border-[#2A3942]">
+          {status?.last_webhook_at
+            ? `Live · inbound ${status.inbound_count || 0}`
+            : 'Waiting for the first incoming WhatsApp. Message +91 94478 45185 from a customer phone to open a chat.'}
+        </div>
 
         <div className="px-3 py-2 bg-[#111B21]">
           <div className="relative">
@@ -166,6 +206,11 @@ export default function WhatsAppInbox() {
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && looksLikePhone(search) && contacts.length === 0) {
+                  openNewChat(search);
+                }
+              }}
               placeholder="Search or start a new chat"
               className="w-full bg-[#202C33] border-0 rounded-lg py-2 pl-9 pr-3 text-[14px] text-[#E9EDEF] placeholder-[#8696A0]"
             />
@@ -175,7 +220,7 @@ export default function WhatsAppInbox() {
         <div className="flex-1 overflow-y-auto">
           {contacts.length === 0 && (
             <div className="px-6 py-16 text-center text-[#8696A0] text-sm">
-              No chats yet. When a customer messages +91 94478 45185, it will show here.
+              No chats yet. When someone messages {status?.display_number || '+91 94478 45185'}, it appears here like WhatsApp Web.
             </div>
           )}
           {contacts.map((c) => (
@@ -214,7 +259,7 @@ export default function WhatsAppInbox() {
             </div>
             <h2 className="text-[28px] font-light text-[#E9EDEF]">Digital Product Solutions</h2>
             <p className="text-[#8696A0] mt-2 max-w-md text-[14px]">
-              WhatsApp Business inbox for +91 94478 45185. Select a chat, or send the first message after the access token is on the server.
+              This inbox is the WhatsApp for {status?.display_number || '+91 94478 45185'}. Chats will not appear on the phone app for this Cloud API number.
             </p>
           </div>
         ) : (
@@ -228,10 +273,18 @@ export default function WhatsAppInbox() {
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-[16px] text-[#E9EDEF] truncate">{activeContact.profile_name || formatPhone(activeContact.wa_id)}</p>
-                <p className="text-[12px] text-[#8696A0] truncate">{formatPhone(activeContact.wa_id)}</p>
+                <p className="text-[12px] text-[#8696A0] truncate">
+                  {sessionOpen ? 'Online · 24-hour chat open' : formatPhone(activeContact.wa_id)}
+                </p>
               </div>
               <MoreVertical size={18} className="text-[#AEBAC1]" />
             </div>
+
+            {!sessionOpen && (
+              <div className="px-4 py-2 text-[12px] bg-[#182229] text-[#FFD279] text-center">
+                No customer reply yet. Send uses an approved template until they message {status?.display_number || '+91 94478 45185'}. After they reply, type freely like WhatsApp.
+              </div>
+            )}
 
             <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-4 space-y-3 wa-wallpaper">
               {grouped.map((group) => (
@@ -257,7 +310,7 @@ export default function WhatsAppInbox() {
                           {msg.direction === 'out' && <StatusTicks status={msg.status} />}
                         </div>
                         {msg.error_message && (
-                          <p className="text-[11px] text-danger mt-1">{msg.error_message}</p>
+                          <p className="text-[11px] text-[#F15C6D] mt-1">{msg.error_message}</p>
                         )}
                       </div>
                     </div>
@@ -280,7 +333,7 @@ export default function WhatsAppInbox() {
                   }
                 }}
                 rows={1}
-                placeholder="Type a message"
+                placeholder={sessionOpen ? 'Type a message' : 'Send a template to start this chat'}
                 className="flex-1 max-h-32 resize-none bg-[#2A3942] border-0 rounded-lg px-4 py-2.5 text-[15px] text-[#E9EDEF] placeholder-[#8696A0]"
               />
               <button
@@ -306,7 +359,9 @@ export default function WhatsAppInbox() {
             className="relative w-full max-w-md bg-[#202C33] rounded-xl p-5 space-y-3 border border-[#2A3942]"
           >
             <h3 className="text-lg font-semibold">New chat</h3>
-            <p className="text-xs text-[#8696A0]">Use country code, e.g. 919400355185. Template-free replies work after the customer messages you first. Business-initiated texts outside that window need an approved template and billing.</p>
+            <p className="text-xs text-[#8696A0]">
+              First message is an approved WhatsApp template. After the customer replies to {status?.display_number || '+91 94478 45185'}, you can chat freely for 24 hours.
+            </p>
             <input
               required
               value={newPhone}
