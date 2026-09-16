@@ -173,11 +173,6 @@ export default function WhatsAppInbox() {
   const onSend = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!draft.trim() || !activeId || sendMutation.isPending) return;
-    if (!sessionOpen) {
-      copyStartLink();
-      toast.error(`Ask them to message ${businessNumber} first. Then you can reply here for free.`);
-      return;
-    }
     sendMutation.mutate(draft.trim());
   };
 
@@ -327,7 +322,7 @@ export default function WhatsAppInbox() {
                 <span className="max-w-md text-[12px] leading-4 bg-[#182229] text-[#FFD279] px-3 py-1.5 rounded-lg text-center">
                   {sessionOpen
                     ? 'Messages are end-to-end encrypted. You can reply freely for 24 hours.'
-                    : `They have not messaged ${businessNumber} yet. Share the chat link — after they text you, type here like WhatsApp.`}
+                    : `Type a message to send. If Meta has no open 24-hour window, ask them to WhatsApp ${businessNumber} first.`}
                 </span>
               </div>
               {grouped.map((group) => (
