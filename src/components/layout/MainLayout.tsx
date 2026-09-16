@@ -19,6 +19,15 @@ export default function MainLayout() {
     if (isWhatsAppInbox) setSidebarOpen(false);
   }, [isWhatsAppInbox]);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('wa-lock', isWhatsAppInbox);
+    document.body.classList.toggle('wa-lock', isWhatsAppInbox);
+    return () => {
+      document.documentElement.classList.remove('wa-lock');
+      document.body.classList.remove('wa-lock');
+    };
+  }, [isWhatsAppInbox]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-screen h-screen bg-bg-main">
@@ -40,28 +49,30 @@ export default function MainLayout() {
       
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       
-      <div 
-        className={`flex flex-col transition-all duration-300 ease-in-out
-          ${isWhatsAppInbox ? 'h-dvh overflow-hidden' : 'min-h-screen'}
-          ${sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'}
-        `}
-      >
-        {!isWhatsAppInbox && <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />}
-        {isWhatsAppInbox && (
+      {isWhatsAppInbox ? (
+        <>
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-full bg-[#202C33] text-[#AEBAC1]"
           >
             Menu
           </button>
-        )}
-        <main className={isWhatsAppInbox
-          ? 'flex-1 min-h-0 h-full overflow-hidden'
-          : 'flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper'
-        }>
-          <Outlet />
-        </main>
-      </div>
+          <main className={`fixed inset-0 z-30 overflow-hidden ${sidebarOpen ? 'lg:left-[280px]' : 'lg:left-20'}`}>
+            <Outlet />
+          </main>
+        </>
+      ) : (
+        <div
+          className={`flex flex-col min-h-screen transition-all duration-300 ease-in-out ${
+            sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'
+          }`}
+        >
+          <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+          <main className="flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper">
+            <Outlet />
+          </main>
+        </div>
+      )}
     </div>
   );
 }

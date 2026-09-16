@@ -32,8 +32,14 @@
 }
 
 html, body, #root {
-  height: 100%;
   margin: 0;
+}
+
+html.wa-lock,
+html.wa-lock body,
+html.wa-lock #root {
+  height: 100dvh;
+  overflow: hidden;
 }
 
 @layer base {

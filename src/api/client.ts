@@ -1,4 +1,5 @@
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+export const API_BASE_URL = BASE_URL;
 
 interface RequestOptions extends RequestInit {
   params?: Record<string, string | number>;
@@ -94,4 +95,15 @@ export async function apiClient(endpoint: string, options: RequestOptions = {}) 
   }
 
   return response.json();
+}
+
+export async function apiBlob(endpoint: string) {
+  const token = localStorage.getItem('access_token');
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
+  if (!response.ok) {
+    throw new Error('Could not load media');
+  }
+  return response.blob();
 }

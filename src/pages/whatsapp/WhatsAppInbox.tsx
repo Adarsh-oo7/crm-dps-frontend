@@ -2,10 +2,11 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   Search, Plus, Send, Check, CheckCheck, Smile, Paperclip, MoreVertical,
-  ArrowLeft, MessageCircle, Clock, Mic, Copy, Phone, X,
+  ArrowLeft, MessageCircle, Clock, Mic, Copy, Phone, X, Video, Image as ImageIcon,
+  FileText, Camera, Square,
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
-import { apiClient } from '../../api/client';
+import { apiBlob, apiClient } from '../../api/client';
 
 interface WaContact {
   id: number;
@@ -30,6 +31,7 @@ interface WaMessage {
   error_message: string;
   timestamp: string;
   sent_by_name?: string;
+  media_id?: string;
 }
 
 interface WaStatus {
@@ -44,6 +46,11 @@ interface WaStatus {
 }
 
 const AVATAR_COLORS = ['#E17076', '#7BC862', '#6EC9CB', '#6BCBEF', '#E6BF7E', '#A695E7', '#EE7B4D', '#61CDBB'];
+const EMOJIS = [
+  '😀','😁','😂','🤣','😊','😍','😘','😎','🤔','😅','😭','😡','👍','👎','🙏','👏','🔥','❤️','💯','🎉',
+  '👌','🤝','💪','🙌','✨','⭐','🇮🇳','✅','❌','📱','📷','🎤','📞','💬','📌','📍','📎','🕐','💡','🚀',
+  '😅','😉','😌','😴','🤗','🤩','😇','😋','😐','🙄','😬','😳','😢','😤','🤯','👋','✌️','🤞','👀','💀',
+];
 
 function asList<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
@@ -56,15 +63,9 @@ function digitsOnly(value: string) {
 
 function formatPhone(waId: string) {
   const digits = digitsOnly(waId);
-  if (digits.length === 10) {
-    return `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
-  }
-  if (digits.length === 12 && digits.startsWith('91')) {
-    return `+91 ${digits.slice(2, 7)} ${digits.slice(7)}`;
-  }
-  if (digits.length === 11 && digits.startsWith('0')) {
-    return formatPhone(`91${digits.slice(1)}`);
-  }
+  if (digits.length === 10) return `+91 ${digits.slice(0, 5)} ${digits.slice(5)}`;
+  if (digits.length === 12 && digits.startsWith('91')) return `+91 ${digits.slice(2, 7)} ${digits.slice(7)}`;
+  if (digits.length === 11 && digits.startsWith('0')) return formatPhone(`91${digits.slice(1)}`);
   return digits ? `+${digits}` : '';
 }
 
@@ -94,8 +95,7 @@ function timeLabel(iso: string | null) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
   const now = new Date();
-  const sameDay = d.toDateString() === now.toDateString();
-  if (sameDay) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  if (d.toDateString() === now.toDateString()) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   const yesterday = new Date(now);
   yesterday.setDate(now.getDate() - 1);
   if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
@@ -122,26 +122,9 @@ function StatusTicks({ status }: { status: string }) {
   return <Clock size={13} className="text-[#8696A0] ml-0.5" />;
 }
 
-function Avatar({
-  name,
-  waId,
-  photo,
-  size = 40,
-}: {
-  name: string;
-  waId: string;
-  photo?: string;
-  size?: number;
-}) {
+function Avatar({ name, waId, photo, size = 40 }: { name: string; waId: string; photo?: string; size?: number }) {
   if (photo) {
-    return (
-      <img
-        src={photo}
-        alt=""
-        className="rounded-full object-cover shrink-0"
-        style={{ width: size, height: size }}
-      />
-    );
+    return <img src={photo} alt="" className="rounded-full object-cover shrink-0" style={{ width: size, height: size }} />;
   }
   return (
     <div
@@ -150,6 +133,69 @@ function Avatar({
     >
       {initials(name, waId)}
     </div>
+  );
+}
+
+function MediaBubble({ message }: { message: WaMessage }) {
+  const [url, setUrl] = useState('');
+  const hasMedia = Boolean(message.media_id) && ['image', 'video', 'audio', 'document', 'sticker'].includes(message.message_type);
+
+  useEffect(() => {
+    if (!hasMedia) return;
+    let objectUrl = '';
+    let cancelled = false;
+    apiBlob(`/api/whatsapp/messages/${message.id}/media/`)
+      .then((blob) => {
+        if (cancelled) return;
+        objectUrl = URL.createObjectURL(blob);
+        setUrl(objectUrl);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [hasMedia, message.id]);
+
+  if (!hasMedia) {
+    return <p className="whitespace-pre-wrap break-words text-[14.2px] leading-[19px]">{message.text || ' '}</p>;
+  }
+
+  if (message.message_type === 'image' || message.message_type === 'sticker') {
+    return (
+      <div>
+        {url ? (
+          <a href={url} target="_blank" rel="noreferrer">
+            <img src={url} alt="" className="max-w-[260px] max-h-[320px] rounded-lg object-cover mb-1" />
+          </a>
+        ) : (
+          <div className="w-[220px] h-[160px] rounded-lg bg-black/20 mb-1" />
+        )}
+        {message.text && message.text !== 'Photo' && (
+          <p className="whitespace-pre-wrap break-words text-[14.2px] leading-[19px]">{message.text}</p>
+        )}
+      </div>
+    );
+  }
+
+  if (message.message_type === 'video') {
+    return url ? (
+      <video src={url} controls className="max-w-[260px] rounded-lg mb-1" />
+    ) : (
+      <p className="text-sm text-[#8696A0]">Video</p>
+    );
+  }
+
+  if (message.message_type === 'audio') {
+    return url ? <audio src={url} controls className="max-w-[240px]" /> : <p className="text-sm">Voice message</p>;
+  }
+
+  return url ? (
+    <a href={url} target="_blank" rel="noreferrer" className="text-[#53BDEB] underline text-sm">
+      {message.text || 'Document'}
+    </a>
+  ) : (
+    <p className="text-sm">{message.text || 'Document'}</p>
   );
 }
 
@@ -162,8 +208,14 @@ export default function WhatsAppInbox() {
   const [newPhone, setNewPhone] = useState('');
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [infoOpen, setInfoOpen] = useState(false);
+  const [emojiOpen, setEmojiOpen] = useState(false);
+  const [attachOpen, setAttachOpen] = useState(false);
+  const [recording, setRecording] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
 
   const { data: status } = useQuery<WaStatus>({
     queryKey: ['whatsapp-status'],
@@ -185,15 +237,30 @@ export default function WhatsAppInbox() {
     retry: false,
   });
 
+  const refreshThread = () => {
+    queryClient.invalidateQueries({ queryKey: ['whatsapp-thread', activeId] });
+    queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
+  };
+
   const sendMutation = useMutation({
     mutationFn: (text: string) => apiClient(`/api/whatsapp/conversations/${activeId}/`, { method: 'POST', body: { text } }),
     onSuccess: () => {
       setDraft('');
-      queryClient.invalidateQueries({ queryKey: ['whatsapp-thread', activeId] });
-      queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
+      setEmojiOpen(false);
+      refreshThread();
       requestAnimationFrame(() => inputRef.current?.focus());
     },
     onError: (err: Error) => toast.error(err.message || 'Could not send'),
+  });
+
+  const mediaMutation = useMutation({
+    mutationFn: (form: FormData) => apiClient(`/api/whatsapp/conversations/${activeId}/media/`, { method: 'POST', body: form }),
+    onSuccess: () => {
+      setDraft('');
+      setAttachOpen(false);
+      refreshThread();
+    },
+    onError: (err: Error) => toast.error(err.message || 'Could not send file'),
   });
 
   const startLink = status?.click_to_chat_url || 'https://wa.me/919447845185';
@@ -206,7 +273,12 @@ export default function WhatsAppInbox() {
 
   useEffect(() => {
     if (activeId != null && contacts.some((c) => c.id === activeId)) return;
-    setActiveId(visibleContacts[0]?.id ?? contacts[0]?.id ?? null);
+    const preferred = visibleContacts.find((c) => c.session_open)
+      || visibleContacts.find((c) => c.last_status !== 'failed')
+      || visibleContacts[0]
+      || contacts.find((c) => c.session_open)
+      || contacts[0];
+    setActiveId(preferred?.id ?? null);
   }, [contacts, visibleContacts, activeId]);
 
   useEffect(() => {
@@ -219,8 +291,7 @@ export default function WhatsAppInbox() {
 
   const activeContact = thread?.contact || contacts.find((c) => c.id === activeId) || null;
   const messages = thread?.messages || [];
-  const hasInbound = messages.some((msg) => msg.direction === 'in');
-  const sessionOpen = !!activeContact?.session_open || hasInbound;
+  const sessionOpen = !!activeContact?.session_open || messages.some((msg) => msg.direction === 'in');
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -267,19 +338,85 @@ export default function WhatsAppInbox() {
     sendMutation.mutate(draft.trim());
   };
 
+  const sendFile = (file: File) => {
+    if (!activeId) return;
+    const form = new FormData();
+    form.append('file', file);
+    if (draft.trim()) form.append('caption', draft.trim());
+    mediaMutation.mutate(form);
+  };
+
+  const pickFile = (accept: string) => {
+    if (!fileRef.current) return;
+    fileRef.current.accept = accept;
+    fileRef.current.click();
+    setAttachOpen(false);
+  };
+
+  const startCall = () => {
+    if (!activeContact) return;
+    window.location.href = `tel:+${digitsOnly(activeContact.wa_id)}`;
+  };
+
+  const startVideo = () => {
+    if (!activeContact) return;
+    window.open(`https://wa.me/${digitsOnly(activeContact.wa_id)}`, '_blank');
+    toast.success('Video calls use the WhatsApp app. Chat opened for this number.');
+  };
+
+  const toggleVoice = async () => {
+    if (recording) {
+      recorderRef.current?.stop();
+      setRecording(false);
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mime = MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
+        ? 'audio/ogg;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+          ? 'audio/webm;codecs=opus'
+          : '';
+      const recorder = new MediaRecorder(stream, mime ? { mimeType: mime } : undefined);
+      chunksRef.current = [];
+      recorder.ondataavailable = (event) => {
+        if (event.data.size) chunksRef.current.push(event.data);
+      };
+      recorder.onstop = () => {
+        stream.getTracks().forEach((track) => track.stop());
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType || 'audio/webm' });
+        const ext = (recorder.mimeType || '').includes('ogg') ? 'ogg' : 'webm';
+        sendFile(new File([blob], `voice.${ext}`, { type: recorder.mimeType || 'audio/webm' }));
+      };
+      recorderRef.current = recorder;
+      recorder.start();
+      setRecording(true);
+      toast.success('Recording… tap again to send');
+    } catch {
+      toast.error('Microphone permission is required for voice notes');
+    }
+  };
+
+  const busy = sendMutation.isPending || mediaMutation.isPending;
+
   return (
     <div className="flex h-full min-h-0 w-full overflow-hidden bg-[#0B141A] text-[#E9EDEF]">
       <Toaster position="top-center" toastOptions={{ style: { background: '#202C33', color: '#E9EDEF' } }} />
+      <input
+        ref={fileRef}
+        type="file"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = '';
+          if (file) sendFile(file);
+        }}
+      />
 
       <aside className={`flex flex-col w-full sm:w-[410px] sm:min-w-[360px] sm:max-w-[410px] border-r border-[#2A3942] bg-[#111B21] ${activeId ? 'hidden sm:flex' : 'flex'} h-full min-h-0`}>
         <div className="h-[60px] px-4 flex items-center justify-between bg-[#202C33] shrink-0">
           <div className="flex items-center gap-3 min-w-0">
-            <Avatar
-              name={status?.verified_name || 'WhatsApp'}
-              waId={businessNumber}
-              photo={status?.profile_picture_url}
-              size={40}
-            />
+            <Avatar name={status?.verified_name || 'WhatsApp'} waId={businessNumber} photo={status?.profile_picture_url} size={40} />
             <div className="min-w-0">
               <p className="text-[16px] font-semibold leading-tight truncate">{status?.verified_name || 'WhatsApp'}</p>
               <p className="text-[12px] text-[#8696A0] truncate">{formatPhone(businessNumber)}</p>
@@ -304,11 +441,9 @@ export default function WhatsAppInbox() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && looksLikePhone(search)) {
-                  if (!openExistingOrCompose(search)) {
-                    setNewPhone(search);
-                    setComposerOpen(true);
-                  }
+                if (e.key === 'Enter' && looksLikePhone(search) && !openExistingOrCompose(search)) {
+                  setNewPhone(search);
+                  setComposerOpen(true);
                 }
               }}
               placeholder="Search or start a new chat"
@@ -370,46 +505,38 @@ export default function WhatsAppInbox() {
         </div>
       </aside>
 
-      <section className={`flex-1 min-w-0 min-h-0 flex-col ${activeId ? 'flex' : 'hidden sm:flex'} h-full bg-[#0B141A]`}>
+      <section className={`flex-1 min-w-0 min-h-0 h-full flex-col ${activeId ? 'flex' : 'hidden sm:flex'} bg-[#0B141A]`}>
         {!activeContact ? (
           <div className="flex-1 flex flex-col items-center justify-center bg-[#222E35] text-center px-8 border-b-[6px] border-[#00A884]">
-            <div className="w-[280px] h-[180px] rounded-3xl bg-[#00A884]/10 flex items-center justify-center mb-8">
-              <MessageCircle size={72} className="text-[#00A884]" />
-            </div>
-            <h2 className="text-[32px] font-light text-[#E9EDEF]">{status?.verified_name || 'Digital Product Solutions'}</h2>
+            <MessageCircle size={72} className="text-[#00A884] mb-6" />
+            <h2 className="text-[32px] font-light">{status?.verified_name || 'Digital Product Solutions'}</h2>
             <p className="text-[#8696A0] mt-3 max-w-lg text-[14px] leading-6">
-              WhatsApp Business inbox for {formatPhone(businessNumber)}. Ask a customer to send the first message, then reply here like WhatsApp Web.
+              WhatsApp inbox for {formatPhone(businessNumber)}. Reply with text, emoji, photos, voice notes, or documents.
             </p>
-            <button
-              onClick={copyStartLink}
-              className="mt-6 px-5 py-2.5 rounded-full bg-[#00A884] text-[#111B21] text-sm font-semibold"
-            >
-              Copy chat link
-            </button>
           </div>
         ) : (
           <>
-            <button
-              type="button"
-              onClick={() => setInfoOpen(true)}
-              className="h-[60px] px-3 sm:px-4 flex items-center gap-3 bg-[#202C33] shrink-0 text-left"
-            >
-              <span className="sm:hidden p-2 text-[#AEBAC1]" onClick={(e) => { e.stopPropagation(); setActiveId(null); }}>
+            <div className="h-[60px] px-3 sm:px-4 flex items-center gap-2 bg-[#202C33] shrink-0">
+              <button className="sm:hidden p-2 text-[#AEBAC1]" onClick={() => setActiveId(null)}>
                 <ArrowLeft size={22} />
-              </span>
-              <Avatar name={activeContact.profile_name} waId={activeContact.wa_id} size={40} />
-              <div className="min-w-0 flex-1">
-                <p className="text-[16px] font-medium truncate">{contactName(activeContact)}</p>
-                <p className="text-[13px] text-[#8696A0] truncate">{contactPhone(activeContact)}</p>
-              </div>
-              <Copy
-                size={18}
-                className="text-[#AEBAC1] hidden sm:block"
-                onClick={(e) => { e.stopPropagation(); copyStartLink(); }}
-              />
-              <Phone size={18} className="text-[#AEBAC1] hidden sm:block" />
-              <MoreVertical size={18} className="text-[#AEBAC1]" />
-            </button>
+              </button>
+              <button type="button" onClick={() => setInfoOpen(true)} className="flex items-center gap-3 min-w-0 flex-1 text-left">
+                <Avatar name={activeContact.profile_name} waId={activeContact.wa_id} size={40} />
+                <div className="min-w-0">
+                  <p className="text-[16px] font-medium truncate">{contactName(activeContact)}</p>
+                  <p className="text-[13px] text-[#8696A0] truncate">{contactPhone(activeContact)}</p>
+                </div>
+              </button>
+              <button type="button" onClick={startVideo} className="p-2 rounded-full text-[#AEBAC1] hover:bg-[#2A3942]" title="Video">
+                <Video size={20} />
+              </button>
+              <button type="button" onClick={startCall} className="p-2 rounded-full text-[#AEBAC1] hover:bg-[#2A3942]" title="Call">
+                <Phone size={20} />
+              </button>
+              <button type="button" onClick={() => setInfoOpen(true)} className="p-2 rounded-full text-[#AEBAC1] hover:bg-[#2A3942]">
+                <MoreVertical size={20} />
+              </button>
+            </div>
 
             <div className="flex-1 min-h-0 overflow-y-auto px-4 sm:px-[8%] py-4 space-y-1 wa-wallpaper">
               <div className="flex justify-center mb-3">
@@ -428,11 +555,8 @@ export default function WhatsAppInbox() {
                       <div className={`max-w-[85%] sm:max-w-[65%] px-[9px] pt-[6px] pb-[4px] text-[#E9EDEF] ${
                         msg.direction === 'out' ? 'wa-bubble-out' : 'wa-bubble-in'
                       }`}>
-                        {msg.message_type !== 'text' && (
-                          <p className="text-[11px] uppercase tracking-wide text-[#8696A0] mb-0.5">{msg.message_type}</p>
-                        )}
-                        <p className="whitespace-pre-wrap break-words text-[14.2px] leading-[19px]">{msg.text || (msg.direction === 'in' ? 'Message' : ' ')}</p>
-                        <div className="flex items-center justify-end gap-1 mt-[2px] relative top-[1px]">
+                        <MediaBubble message={msg} />
+                        <div className="flex items-center justify-end gap-1 mt-[2px]">
                           <span className="text-[11px] text-[#ffffff99]">{timeLabel(msg.timestamp)}</span>
                           {msg.direction === 'out' && <StatusTicks status={msg.status} />}
                         </div>
@@ -447,35 +571,76 @@ export default function WhatsAppInbox() {
               <div ref={bottomRef} />
             </div>
 
-            <form onSubmit={onSend} className="px-2 sm:px-4 py-2 bg-[#202C33] flex items-end gap-2 shrink-0">
-              <button type="button" className="p-2 text-[#AEBAC1] hover:bg-[#2A3942] rounded-full"><Smile size={24} /></button>
-              <button type="button" className="p-2 text-[#AEBAC1] hover:bg-[#2A3942] rounded-full hidden sm:inline-flex"><Paperclip size={22} /></button>
-              <textarea
-                ref={inputRef}
-                value={draft}
-                onChange={(e) => {
-                  setDraft(e.target.value);
-                  e.target.style.height = 'auto';
-                  e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    onSend();
-                  }
-                }}
-                rows={1}
-                placeholder="Type a message"
-                className="flex-1 max-h-[120px] resize-none bg-[#2A3942] border-0 rounded-lg px-4 py-[11px] text-[15px] text-[#E9EDEF] placeholder-[#8696A0] leading-[20px]"
-              />
-              <button
-                type="submit"
-                disabled={!draft.trim() || sendMutation.isPending}
-                className="w-[46px] h-[46px] rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center disabled:opacity-40 shrink-0"
-              >
-                {draft.trim() ? <Send size={20} /> : <Mic size={20} />}
-              </button>
-            </form>
+            <div className="relative shrink-0 bg-[#202C33]">
+              {emojiOpen && (
+                <div className="absolute bottom-full left-2 right-2 mb-2 bg-[#202C33] border border-[#2A3942] rounded-xl p-2 grid grid-cols-10 gap-1 max-h-48 overflow-y-auto shadow-2xl">
+                  {EMOJIS.map((emoji) => (
+                    <button
+                      key={emoji}
+                      type="button"
+                      className="h-8 text-lg hover:bg-[#2A3942] rounded"
+                      onClick={() => {
+                        setDraft((value) => value + emoji);
+                        inputRef.current?.focus();
+                      }}
+                    >
+                      {emoji}
+                    </button>
+                  ))}
+                </div>
+              )}
+              {attachOpen && (
+                <div className="absolute bottom-full left-12 mb-2 bg-[#233138] rounded-xl p-2 w-44 shadow-2xl">
+                  <button type="button" onClick={() => pickFile('image/*')} className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-[#2A3942] text-sm">
+                    <ImageIcon size={18} className="text-[#007BFC]" /> Photos
+                  </button>
+                  <button type="button" onClick={() => pickFile('image/*;capture=camera')} className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-[#2A3942] text-sm">
+                    <Camera size={18} className="text-[#FF2E74]" /> Camera
+                  </button>
+                  <button type="button" onClick={() => pickFile('video/*')} className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-[#2A3942] text-sm">
+                    <Video size={18} className="text-[#5F66CD]" /> Video
+                  </button>
+                  <button type="button" onClick={() => pickFile('*/*')} className="flex items-center gap-3 w-full px-3 py-2 rounded-lg hover:bg-[#2A3942] text-sm">
+                    <FileText size={18} className="text-[#7F66FF]" /> Document
+                  </button>
+                </div>
+              )}
+              <form onSubmit={onSend} className="px-2 sm:px-4 py-2 flex items-end gap-2">
+                <button type="button" onClick={() => { setEmojiOpen((v) => !v); setAttachOpen(false); }} className="p-2 text-[#AEBAC1] hover:bg-[#2A3942] rounded-full">
+                  <Smile size={24} />
+                </button>
+                <button type="button" onClick={() => { setAttachOpen((v) => !v); setEmojiOpen(false); }} className="p-2 text-[#AEBAC1] hover:bg-[#2A3942] rounded-full">
+                  <Paperclip size={22} />
+                </button>
+                <textarea
+                  ref={inputRef}
+                  value={draft}
+                  onChange={(e) => {
+                    setDraft(e.target.value);
+                    e.target.style.height = 'auto';
+                    e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      onSend();
+                    }
+                  }}
+                  rows={1}
+                  placeholder={recording ? 'Recording voice note…' : 'Type a message'}
+                  className="flex-1 max-h-[120px] resize-none bg-[#2A3942] border-0 rounded-lg px-4 py-[11px] text-[15px] text-[#E9EDEF] placeholder-[#8696A0] leading-[20px]"
+                />
+                {draft.trim() ? (
+                  <button type="submit" disabled={busy} className="w-[46px] h-[46px] rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center disabled:opacity-40 shrink-0">
+                    <Send size={20} />
+                  </button>
+                ) : (
+                  <button type="button" onClick={toggleVoice} disabled={busy} className={`w-[46px] h-[46px] rounded-full flex items-center justify-center shrink-0 ${recording ? 'bg-[#F15C6D] text-white' : 'bg-[#00A884] text-[#111B21]'}`}>
+                    {recording ? <Square size={16} fill="currentColor" /> : <Mic size={20} />}
+                  </button>
+                )}
+              </form>
+            </div>
           </>
         )}
       </section>
@@ -493,14 +658,21 @@ export default function WhatsAppInbox() {
               <Avatar name={activeContact.profile_name} waId={activeContact.wa_id} size={200} />
               <p className="text-[24px] px-6 text-center">{contactName(activeContact)}</p>
               <p className="text-[#8696A0]">{contactPhone(activeContact)}</p>
+              <div className="flex gap-6 mt-2">
+                <button type="button" onClick={startCall} className="flex flex-col items-center gap-1 text-[#00A884] text-xs">
+                  <span className="w-10 h-10 rounded-full bg-[#00A884]/15 flex items-center justify-center"><Phone size={18} /></span>
+                  Call
+                </button>
+                <button type="button" onClick={startVideo} className="flex flex-col items-center gap-1 text-[#00A884] text-xs">
+                  <span className="w-10 h-10 rounded-full bg-[#00A884]/15 flex items-center justify-center"><Video size={18} /></span>
+                  Video
+                </button>
+                <button type="button" onClick={copyStartLink} className="flex flex-col items-center gap-1 text-[#00A884] text-xs">
+                  <span className="w-10 h-10 rounded-full bg-[#00A884]/15 flex items-center justify-center"><Copy size={18} /></span>
+                  Link
+                </button>
+              </div>
             </div>
-            <div className="mt-2 bg-[#202C33] px-6 py-4 text-sm">
-              <p className="text-[#8696A0] text-[13px] mb-1">About</p>
-              <p>{sessionOpen ? 'WhatsApp customer · 24-hour chat window is open' : 'Waiting for their next inbound message'}</p>
-            </div>
-            <p className="px-6 py-4 text-[12px] text-[#8696A0] leading-5">
-              Meta Cloud API does not share customer profile photos. The name above comes from their WhatsApp profile.
-            </p>
           </div>
         </aside>
       )}
@@ -516,9 +688,6 @@ export default function WhatsAppInbox() {
               placeholder="9400355185"
               className="w-full bg-[#111B21] rounded-lg px-3 py-2.5 text-sm"
             />
-            <p className="text-[13px] text-[#8696A0] leading-5">
-              If this number already messaged {formatPhone(businessNumber)}, we open that same chat. Otherwise share the link so they text first.
-            </p>
             <div className="flex justify-end gap-2 pt-1">
               <button type="button" onClick={() => setComposerOpen(false)} className="px-4 py-2 text-sm text-[#AEBAC1]">Close</button>
               <button
