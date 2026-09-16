@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuthStore } from '../../store/authStore';
-import { Settings, Shield, Bell, Key, Save } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { Settings, Bell, Key, Save } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
 export default function SettingsPage() {
@@ -161,8 +162,11 @@ export default function SettingsPage() {
                   <input type="email" value={integrationsForm.smtp_user} onChange={(e) => setIntegrationsForm({...integrationsForm, smtp_user: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg" />
                 </div>
                 <div className="space-y-1">
-                  <label className="text-xs font-semibold text-text-sub">OpenWA WhatsApp Endpoint URL</label>
-                  <input type="url" value={integrationsForm.whatsapp_url} onChange={(e) => setIntegrationsForm({...integrationsForm, whatsapp_url: e.target.value})} className="w-full px-3 py-2 text-sm border border-border-card rounded-lg font-mono text-xs" />
+                  <label className="text-xs font-semibold text-text-sub">WhatsApp</label>
+                  <p className="text-sm text-text-sub">Connection and templates live under WhatsApp → Settings. Technical Meta tools are admin-only.</p>
+                  <Link to="/whatsapp/settings" className="inline-flex mt-2 px-4 py-2 rounded-lg bg-primary text-[#111B21] text-sm font-semibold">
+                    Open WhatsApp settings
+                  </Link>
                 </div>
               </div>
             )}

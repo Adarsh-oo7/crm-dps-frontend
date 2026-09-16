@@ -7,26 +7,13 @@ import { useAuthStore } from '../../store/authStore';
 
 export default function MainLayout() {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
-  const [sidebarOpen, setSidebarOpen] = useState(() => window.location.pathname !== '/whatsapp');
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
-  const isWhatsAppInbox = location.pathname === '/whatsapp';
+  const isWhatsAppModule = location.pathname === '/whatsapp' || location.pathname.startsWith('/whatsapp/');
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-
-  useEffect(() => {
-    if (isWhatsAppInbox) setSidebarOpen(false);
-  }, [isWhatsAppInbox]);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle('wa-lock', isWhatsAppInbox);
-    document.body.classList.toggle('wa-lock', isWhatsAppInbox);
-    return () => {
-      document.documentElement.classList.remove('wa-lock');
-      document.body.classList.remove('wa-lock');
-    };
-  }, [isWhatsAppInbox]);
 
   if (isLoading) {
     return (
@@ -44,35 +31,25 @@ export default function MainLayout() {
   }
 
   return (
-    <div className={isWhatsAppInbox ? 'h-dvh overflow-hidden bg-bg-main text-text-main' : 'min-h-screen bg-bg-main text-text-main'}>
+    <div className="min-h-screen bg-bg-main text-text-main">
       <GlobalSearch />
-      
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
-      
-      {isWhatsAppInbox ? (
-        <>
-          <button
-            onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-full bg-[#202C33] text-[#AEBAC1]"
-          >
-            Menu
-          </button>
-          <main className={`fixed inset-0 z-30 overflow-hidden ${sidebarOpen ? 'lg:left-[280px]' : 'lg:left-20'}`}>
-            <Outlet />
-          </main>
-        </>
-      ) : (
-        <div
-          className={`flex flex-col min-h-screen transition-all duration-300 ease-in-out ${
-            sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'
+      <div
+        className={`flex flex-col min-h-screen transition-all duration-300 ${
+          sidebarOpen ? 'lg:ml-[260px]' : 'lg:ml-20'
+        }`}
+      >
+        <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
+        <main
+          className={`flex-1 ${
+            isWhatsAppModule
+              ? 'p-4 sm:p-5 min-h-0 overflow-hidden flex flex-col h-[calc(100dvh-60px)]'
+              : 'p-4 sm:p-6 overflow-x-hidden'
           }`}
         >
-          <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
-          <main className="flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper">
-            <Outlet />
-          </main>
-        </div>
-      )}
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }

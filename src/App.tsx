@@ -20,7 +20,10 @@ import SettingsPage from './pages/settings/Settings';
 import Profile from './pages/profile/Profile';
 import Notifications from './pages/notifications/Notifications';
 import WhatsAppInbox from './pages/whatsapp/WhatsAppInbox';
-import WhatsAppIntegration from './pages/whatsapp/WhatsAppIntegration';
+import WhatsAppModule from './pages/whatsapp/WhatsAppModule';
+import WhatsAppTemplates from './pages/whatsapp/WhatsAppTemplates';
+import WhatsAppContactsPage from './pages/whatsapp/WhatsAppContactsPage';
+import WhatsAppSettings from './pages/whatsapp/WhatsAppSettings';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 
@@ -44,24 +47,32 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <Routes>
-          {/* Public Authentication Route */}
           <Route path="/login" element={<Login />} />
 
-          {/* Protected Main Layout routes */}
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
-            <Route path="whatsapp" element={<WhatsAppInbox />} />
-            <Route path="whatsapp/integration" element={<WhatsAppIntegration />} />
-            
-            {/* Real core modules */}
+
+            <Route path="whatsapp" element={<WhatsAppModule />}>
+              <Route index element={<WhatsAppInbox />} />
+              <Route path="contacts" element={<WhatsAppContactsPage />} />
+              <Route path="templates" element={<WhatsAppTemplates />} />
+              <Route path="settings" element={<WhatsAppSettings />} />
+            </Route>
+            <Route path="whatsapp/integration" element={<Navigate to="/whatsapp/settings" replace />} />
+            <Route path="whatsapp/connect" element={<Navigate to="/whatsapp/settings" replace />} />
+            <Route path="whatsapp/dashboard" element={<Navigate to="/whatsapp" replace />} />
+            <Route path="whatsapp/businesses" element={<Navigate to="/whatsapp/settings" replace />} />
+            <Route path="whatsapp/numbers" element={<Navigate to="/whatsapp/settings" replace />} />
+            <Route path="whatsapp/history" element={<Navigate to="/whatsapp" replace />} />
+            <Route path="whatsapp/sync" element={<Navigate to="/whatsapp/settings" replace />} />
+            <Route path="whatsapp/provider" element={<Navigate to="/whatsapp/settings" replace />} />
+
             <Route path="leads" element={<Leads />} />
             <Route path="clients" element={<Clients />} />
             <Route path="projects" element={<Projects />} />
             <Route path="tasks" element={<Tasks />} />
             <Route path="followups" element={<FollowUps />} />
-            
-            {/* Fallbacks for pending modules in future setup */}
             <Route path="finance" element={<Finance />} />
             <Route path="team" element={<Team />} />
             <Route path="marketing" element={<Marketing />} />
@@ -75,7 +86,6 @@ function App() {
             <Route path="notifications" element={<Notifications />} />
           </Route>
 
-          {/* Catch-all redirect */}
           <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>

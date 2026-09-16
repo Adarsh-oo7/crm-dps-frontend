@@ -68,7 +68,7 @@ export default function Topbar({ toggleSidebar }: { toggleSidebar: () => void })
           type="text"
           readOnly
           onClick={() => window.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', ctrlKey: true }))}
-          placeholder="Search or start a new chat"
+          placeholder="Search leads, clients, projects..."
           className="w-full py-2 pl-10 pr-4 text-[14px] text-text-main bg-wa-panel border-0 rounded-lg focus:outline-none focus:ring-1 focus:ring-primary cursor-pointer placeholder-text-sub"
         />
       </div>

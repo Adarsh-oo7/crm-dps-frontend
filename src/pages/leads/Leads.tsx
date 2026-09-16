@@ -131,11 +131,11 @@ function fromLocalInput(value: string) {
   return Number.isNaN(d.getTime()) ? null : d.toISOString();
 }
 
-function waLink(phone: string | null) {
+function crmChatPath(phone: string | null) {
   if (!phone) return null;
   const digits = phone.replace(/\D/g, '');
   if (!digits) return null;
-  return `https://wa.me/${digits}`;
+  return `/whatsapp?phone=${digits}`;
 }
 
 function leadPayload(form: Partial<Lead>) {
@@ -534,10 +534,15 @@ export default function Leads() {
               <Phone size={14} />
             </a>
           )}
-          {waLink(row.phone) && (
-            <a href={waLink(row.phone)!} target="_blank" rel="noreferrer" className="p-1.5 rounded-full hover:bg-wa-hover text-primary" title="WhatsApp">
+          {crmChatPath(row.phone) && (
+            <button
+              type="button"
+              onClick={() => navigate(crmChatPath(row.phone)!)}
+              className="p-1.5 rounded-full hover:bg-wa-hover text-primary"
+              title="Open Chat"
+            >
               <MessageCircle size={14} />
-            </a>
+            </button>
           )}
         </div>
       ),
@@ -785,10 +790,14 @@ export default function Leads() {
                   <Phone size={16} className="text-primary" /> Call
                 </a>
               )}
-              {waLink(selectedLead.phone) && (
-                <a href={waLink(selectedLead.phone)!} target="_blank" rel="noreferrer" className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl bg-wa-panel text-xs text-text-main">
-                  <MessageCircle size={16} className="text-primary" /> WhatsApp
-                </a>
+              {crmChatPath(selectedLead.phone) && (
+                <button
+                  type="button"
+                  onClick={() => navigate(crmChatPath(selectedLead.phone)!)}
+                  className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl bg-wa-panel text-xs text-text-main"
+                >
+                  <MessageCircle size={16} className="text-primary" /> Open Chat
+                </button>
               )}
               {selectedLead.email && (
                 <a href={`mailto:${selectedLead.email}`} className="flex-1 flex flex-col items-center gap-1 py-2 rounded-xl bg-wa-panel text-xs text-text-main">
@@ -861,6 +870,22 @@ export default function Leads() {
                       <User size={14} className="text-wa-icon" />
                       {selectedLead.assigned_to_detail?.full_name || 'Unassigned'}
                     </p>
+                  </div>
+
+                  <div className="bg-wa-panel rounded-xl p-3 space-y-2">
+                    <p className="text-[11px] uppercase tracking-wide text-text-sub">Communication</p>
+                    <p className="text-sm font-medium">WhatsApp</p>
+                    {crmChatPath(selectedLead.phone) ? (
+                      <button
+                        type="button"
+                        onClick={() => navigate(crmChatPath(selectedLead.phone)!)}
+                        className="w-full py-2 text-sm font-semibold bg-primary text-[#111B21] rounded-lg"
+                      >
+                        Open Chat
+                      </button>
+                    ) : (
+                      <p className="text-xs text-text-sub">Add a phone number to open this lead in the WhatsApp inbox.</p>
+                    )}
                   </div>
 
                   {selectedLead.notes && (

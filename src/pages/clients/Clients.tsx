@@ -6,9 +6,10 @@ import { StatusBadge } from '../../components/shared/Badge';
 import UserAvatar from '../../components/shared/UserAvatar';
 import DateDisplay from '../../components/shared/DateDisplay';
 import ConfirmModal from '../../components/shared/ConfirmModal';
+import { useNavigate } from 'react-router-dom';
 import { 
   Plus, Search, Grid, List, X, Mail, Phone, Briefcase, 
-  FileText, PlusSquare, Upload, Trash2, Edit2, Globe
+  FileText, PlusSquare, Upload, Trash2, Edit2, Globe, MessageCircle
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -35,6 +36,7 @@ interface Client {
 
 export default function Clients() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -399,6 +401,25 @@ export default function Clients() {
                     </div>
 
                     <div className="space-y-3">
+                      <h3 className="font-bold text-sm text-white border-b pb-2">Communication</h3>
+                      <p className="text-sm text-text-sub">WhatsApp is a CRM channel for this client.</p>
+                      {contacts.find((c: { phone?: string }) => c.phone)?.phone ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            const phone = contacts.find((c: { phone?: string }) => c.phone)?.phone || '';
+                            navigate(`/whatsapp?phone=${phone.replace(/\D/g, '')}`);
+                          }}
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-primary text-[#111B21] text-sm font-semibold"
+                        >
+                          <MessageCircle size={14} /> Open Chat
+                        </button>
+                      ) : (
+                        <p className="text-xs text-text-sub">Add a contact phone number to open WhatsApp from the inbox.</p>
+                      )}
+                    </div>
+
+                    <div className="space-y-3">
                       <h3 className="font-bold text-sm text-white border-b pb-2">Company Information</h3>
                       {selectedClient.website && (
                         <div className="flex items-center space-x-2 text-sm">
@@ -509,6 +530,15 @@ export default function Clients() {
                                 {contact.phone && <span className="flex items-center"><Phone size={12} className="mr-1 shrink-0" />{contact.phone}</span>}
                               </div>
                             </div>
+                            {contact.phone && (
+                              <button
+                                type="button"
+                                onClick={() => navigate(`/whatsapp?phone=${String(contact.phone).replace(/\D/g, '')}`)}
+                                className="text-xs font-semibold text-primary"
+                              >
+                                Open Chat
+                              </button>
+                            )}
                           </div>
                         ))
                       )}

@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { 
   Users, FolderGit, DollarSign, Clock, ArrowUpRight, ArrowDownRight, 
-  ArrowRight, CheckCircle2, TrendingUp, AlertCircle, Zap, LogIn, LogOut
+  ArrowRight, CheckCircle2, TrendingUp, AlertCircle, Zap, LogIn, LogOut, MessageCircle
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { apiClient } from '../../api/client';
@@ -92,6 +92,59 @@ const formatAttendanceTime = (dateStr: string, timeStr: string | null) => {
     return timeStr;
   }
 };
+
+function WhatsAppDashboardWidget() {
+  const navigate = useNavigate();
+  const { data } = useQuery<{ unread_count?: number; inbound_count?: number }>({
+    queryKey: ['whatsapp-dashboard'],
+    queryFn: () => apiClient('/api/whatsapp/dashboard/').catch(() => ({ unread_count: 0, inbound_count: 0 })),
+    refetchInterval: 30000,
+  });
+  const { data: conversations = [] } = useQuery<{ id: number; unread_count?: number; last_message_at?: string }[]>({
+    queryKey: ['whatsapp-conversations-widget'],
+    queryFn: () => apiClient('/api/whatsapp/conversations/').then((rows) => (Array.isArray(rows) ? rows : [])).catch(() => []),
+    refetchInterval: 30000,
+  });
+  const unread = data?.unread_count ?? conversations.filter((row) => (row.unread_count || 0) > 0).length;
+  const today = new Date().toDateString();
+  const openCount = conversations.filter((row) => (row.unread_count || 0) > 0 || (row.last_message_at && new Date(row.last_message_at).toDateString() === today)).length;
+  const messagesToday = data?.inbound_count ?? 0;
+
+  return (
+    <div className="bg-bg-card border border-border-card rounded-2xl p-5 shadow-lg">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold text-text-sub uppercase tracking-wider">WhatsApp</p>
+          <p className="text-sm text-text-sub mt-1">CRM communication channel</p>
+        </div>
+        <div className="p-2.5 rounded-2xl border bg-primary/10 text-primary border-primary/25">
+          <MessageCircle className="w-5 h-5" />
+        </div>
+      </div>
+      <div className="grid grid-cols-3 gap-3 mt-4">
+        <div>
+          <p className="text-2xl font-bold text-white">{unread}</p>
+          <p className="text-xs text-text-sub">Unread</p>
+        </div>
+        <div>
+          <p className="text-2xl font-bold text-white">{openCount}</p>
+          <p className="text-xs text-text-sub">Open conversations</p>
+        </div>
+        <div>
+          <p className="text-2xl font-bold text-white">{messagesToday}</p>
+          <p className="text-xs text-text-sub">Messages today</p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => navigate('/whatsapp')}
+        className="mt-4 px-3 py-2 rounded-lg bg-primary text-[#111B21] text-sm font-semibold"
+      >
+        Open Inbox
+      </button>
+    </div>
+  );
+}
 
 export default function Dashboard() {
   const { user } = useAuthStore();
@@ -300,6 +353,8 @@ export default function Dashboard() {
           );
         })}
       </div>
+
+      <WhatsAppDashboardWidget />
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">

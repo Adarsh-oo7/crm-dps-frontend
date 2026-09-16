@@ -6,9 +6,38 @@ interface RequestOptions extends RequestInit {
   body?: any;
 }
 
+let refreshPromise: Promise<string | null> | null = null;
+
+function clearSession() {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('refresh_token');
+  localStorage.removeItem('user');
+}
+
+async function refreshAccessToken(): Promise<string | null> {
+  if (refreshPromise) return refreshPromise;
+  refreshPromise = (async () => {
+    const refresh = localStorage.getItem('refresh_token');
+    if (!refresh) return null;
+    const refreshResponse = await fetch(`${BASE_URL}/api/auth/refresh/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh }),
+    });
+    if (!refreshResponse.ok) return null;
+    const refreshData = await refreshResponse.json();
+    localStorage.setItem('access_token', refreshData.access);
+    if (refreshData.refresh) localStorage.setItem('refresh_token', refreshData.refresh);
+    return refreshData.access as string;
+  })().finally(() => {
+    refreshPromise = null;
+  });
+  return refreshPromise;
+}
+
 export async function apiClient(endpoint: string, options: RequestOptions = {}) {
   const { params, headers, body, ...customConfig } = options;
-  
+
   let url = `${BASE_URL}${endpoint}`;
   if (params) {
     const searchParams = new URLSearchParams();
@@ -17,18 +46,18 @@ export async function apiClient(endpoint: string, options: RequestOptions = {}) 
     });
     url += `?${searchParams.toString()}`;
   }
-  
+
   const token = localStorage.getItem('access_token');
   const defaultHeaders: Record<string, string> = {};
-  
+
   if (!(body instanceof FormData)) {
     defaultHeaders['Content-Type'] = 'application/json';
   }
-  
+
   if (token) {
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
-  
+
   const config: RequestInit = {
     method: options.method || 'GET',
     headers: {
@@ -48,38 +77,16 @@ export async function apiClient(endpoint: string, options: RequestOptions = {}) 
 
   let response = await fetch(url, config);
 
-  // If unauthorized, try to refresh token
   if (response.status === 401 && localStorage.getItem('refresh_token')) {
-    try {
-      const refreshResponse = await fetch(`${BASE_URL}/api/auth/refresh/`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh: localStorage.getItem('refresh_token') }),
-      });
-
-      if (refreshResponse.ok) {
-        const refreshData = await refreshResponse.json();
-        localStorage.setItem('access_token', refreshData.access);
-        if (refreshData.refresh) {
-          localStorage.setItem('refresh_token', refreshData.refresh);
-        }
-        // Retry original request
-        const retryHeaders = {
-          ...config.headers,
-          'Authorization': `Bearer ${refreshData.access}`,
-        };
-        response = await fetch(url, { ...config, headers: retryHeaders as HeadersInit });
-      } else {
-        // Refresh token failed, logout user
-        localStorage.removeItem('access_token');
-        localStorage.removeItem('refresh_token');
-        localStorage.removeItem('user');
-        window.location.href = '/login';
-      }
-    } catch (e) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
-      localStorage.removeItem('user');
+    const access = await refreshAccessToken();
+    if (access) {
+      const retryHeaders = {
+        ...config.headers,
+        Authorization: `Bearer ${access}`,
+      };
+      response = await fetch(url, { ...config, headers: retryHeaders as HeadersInit });
+    } else {
+      clearSession();
       window.location.href = '/login';
     }
   }
@@ -98,10 +105,16 @@ export async function apiClient(endpoint: string, options: RequestOptions = {}) 
 }
 
 export async function apiBlob(endpoint: string) {
-  const token = localStorage.getItem('access_token');
-  const response = await fetch(`${BASE_URL}${endpoint}`, {
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  });
+  const request = (token: string | null) =>
+    fetch(`${BASE_URL}${endpoint}`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+    });
+
+  let response = await request(localStorage.getItem('access_token'));
+  if (response.status === 401 && localStorage.getItem('refresh_token')) {
+    const access = await refreshAccessToken();
+    if (access) response = await request(access);
+  }
   if (!response.ok) {
     throw new Error('Could not load media');
   }

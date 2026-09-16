@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { CheckCircle2, Copy, Link2, MessageCircle, Plug, Send } from 'lucide-react';
 import { apiClient } from '../../api/client';
+import { useAuthStore } from '../../store/authStore';
 
 interface Integration {
   connected: boolean;
@@ -18,6 +19,11 @@ interface Integration {
   webhook_url: string;
   click_to_chat_url: string;
   inbound_count: number;
+  platform_label?: string;
+  is_on_biz_app?: boolean;
+  sync_status?: string;
+  quality_rating?: string;
+  business_id?: number | null;
 }
 
 declare global {
@@ -52,20 +58,27 @@ function loadFacebookSdk(appId: string) {
   });
 }
 
-export default function WhatsAppIntegration() {
+export default function WhatsAppIntegration({ embedded = false }: { embedded?: boolean }) {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'superadmin' || user?.role === 'admin';
   const queryClient = useQueryClient();
   const sessionRef = useRef<Record<string, unknown>>({});
   const [testPhone, setTestPhone] = useState('');
   const [testText, setTestText] = useState('Hello from DPS CRM');
+  const [businessId, setBusinessId] = useState('');
 
   const { data, isLoading } = useQuery<Integration>({
     queryKey: ['whatsapp-integration'],
     queryFn: () => apiClient('/api/whatsapp/integration/'),
   });
+  const { data: businesses = [] } = useQuery<{ id: number; name: string }[]>({
+    queryKey: ['whatsapp-businesses'],
+    queryFn: () => apiClient('/api/whatsapp/businesses/'),
+  });
 
   const connectMutation = useMutation({
-    mutationFn: (payload: { code: string; session: Record<string, unknown> }) =>
+    mutationFn: (payload: { code: string; session: Record<string, unknown>; business_id?: number }) =>
       apiClient('/api/whatsapp/connect/', { method: 'POST', body: payload }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['whatsapp-integration'] });
@@ -83,6 +96,16 @@ export default function WhatsAppIntegration() {
       if (res?.contact?.id) navigate(`/whatsapp`);
     },
     onError: (err: Error) => toast.error(err.message || 'Could not send test message'),
+  });
+
+  const disconnectMutation = useMutation({
+    mutationFn: () => apiClient('/api/whatsapp/disconnect/', { method: 'POST', body: {} }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['whatsapp-integration'] });
+      queryClient.invalidateQueries({ queryKey: ['whatsapp-status'] });
+      toast.success('WhatsApp disconnected. Chat history was kept.');
+    },
+    onError: (err: Error) => toast.error(err.message || 'Could not disconnect'),
   });
 
   useEffect(() => {
@@ -125,7 +148,7 @@ export default function WhatsAppIntegration() {
           toast.error('WhatsApp authorization was cancelled.');
           return;
         }
-        connectMutation.mutate({ code, session: sessionRef.current });
+        connectMutation.mutate({ code, session: sessionRef.current, business_id: businessId ? Number(businessId) : undefined });
       }, {
         config_id: data.meta_config_id,
         response_type: 'code',
@@ -143,18 +166,20 @@ export default function WhatsAppIntegration() {
   };
 
   return (
-    <div className="max-w-4xl space-y-6">
-      <Toaster position="top-right" />
+    <div className={embedded ? 'space-y-6' : 'max-w-4xl space-y-6'}>
+      {!embedded && <Toaster position="top-right" />}
+      {!embedded && (
       <div>
         <p className="text-xs font-semibold tracking-wide text-primary uppercase">Integrations</p>
         <h1 className="text-2xl font-bold text-white mt-1">WhatsApp Integration</h1>
-        <p className="text-sm text-text-sub mt-1">Connect a WhatsApp Business account with Meta Embedded Signup, then send and reply from the CRM inbox.</p>
+        <p className="text-sm text-text-sub mt-1">Connect a WhatsApp Business account, then send and reply from the CRM inbox.</p>
       </div>
+      )}
 
       <div className="bg-bg-card border border-border-card rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center gap-4 justify-between">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center">
-            <MessageCircle size={28} fill="currentColor" />
+          <div className="w-12 h-12 rounded-xl bg-primary/15 text-primary flex items-center justify-center">
+            <MessageCircle size={22} />
           </div>
           <div>
             <p className="text-sm text-text-sub">WhatsApp Business</p>
@@ -166,21 +191,57 @@ export default function WhatsAppIntegration() {
                 <p className="text-sm text-[#00A884] flex items-center gap-1 mt-1">
                   <CheckCircle2 size={14} /> Connected{data.verified_name ? ` · ${data.verified_name}` : ''}
                 </p>
+                {data.platform_label && (
+                  <p className="text-xs text-text-sub mt-1">
+                    {data.is_on_biz_app ? '📱 Business App + ☁️ Cloud API' : `☁️ ${data.platform_label}`}
+                    {data.sync_status ? ` · ${data.sync_status}` : ''}
+                  </p>
+                )}
               </>
             ) : (
               <p className="text-lg font-semibold">Not connected</p>
             )}
           </div>
         </div>
-        <button
-          type="button"
-          onClick={connectWhatsApp}
-          disabled={connectMutation.isPending}
-          className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-lg bg-[#1877F2] text-white font-semibold hover:bg-[#166fe0] disabled:opacity-60"
-        >
-          <Plug size={18} />
-          {connectMutation.isPending ? 'Connecting…' : 'Connect WhatsApp'}
-        </button>
+        <div className="flex flex-col sm:items-end gap-2">
+          {businesses.length > 0 && (
+            <select
+              value={businessId}
+              onChange={(e) => setBusinessId(e.target.value)}
+              className="h-10 px-3 rounded-lg bg-bg-main text-sm"
+            >
+              <option value="">Default CRM business</option>
+              {businesses.map((row) => (
+                <option key={row.id} value={row.id}>{row.name}</option>
+              ))}
+            </select>
+          )}
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={connectWhatsApp}
+              disabled={connectMutation.isPending}
+              className="inline-flex items-center justify-center gap-2 h-11 px-5 rounded-lg bg-[#1877F2] text-white font-semibold hover:bg-[#166fe0] disabled:opacity-60"
+            >
+              <Plug size={18} />
+              {connectMutation.isPending ? 'Connecting…' : 'Connect WhatsApp'}
+            </button>
+            {data?.connected && (
+              <button
+                type="button"
+                onClick={() => {
+                  if (window.confirm('Disconnect WhatsApp? Outbound messaging will stop. CRM chat history is kept.')) {
+                    disconnectMutation.mutate();
+                  }
+                }}
+                disabled={disconnectMutation.isPending}
+                className="h-11 px-4 rounded-lg bg-[#F15C6D]/15 text-[#F15C6D] font-semibold"
+              >
+                Disconnect
+              </button>
+            )}
+          </div>
+        </div>
       </div>
 
       {data?.connected && (
@@ -188,17 +249,19 @@ export default function WhatsAppIntegration() {
           <div className="bg-bg-card border border-border-card rounded-2xl p-5 space-y-3">
             <h2 className="font-semibold">Connected number</h2>
             <p className="text-3xl font-light text-white">{data.display_number}</p>
+            {isAdmin && (
             <dl className="text-sm text-text-sub space-y-1">
               <div className="flex justify-between gap-3"><dt>Phone number ID</dt><dd className="text-text-main font-mono text-xs">{data.phone_number_id}</dd></div>
               <div className="flex justify-between gap-3"><dt>WABA ID</dt><dd className="text-text-main font-mono text-xs">{data.waba_id}</dd></div>
               <div className="flex justify-between gap-3"><dt>Inbound messages</dt><dd className="text-text-main">{data.inbound_count}</dd></div>
             </dl>
+            )}
             <button
               type="button"
               onClick={() => navigate('/whatsapp')}
-              className="w-full h-10 rounded-lg bg-[#00A884] text-[#111B21] font-semibold"
+            className="w-full h-10 rounded-lg bg-primary text-[#111B21] font-semibold"
             >
-              Open WhatsApp inbox
+              Open inbox
             </button>
           </div>
 
@@ -241,6 +304,7 @@ export default function WhatsAppIntegration() {
         </div>
       )}
 
+      {isAdmin && (
       <div className="bg-bg-card border border-border-card rounded-2xl p-5 space-y-2 text-sm text-text-sub">
         <h2 className="font-semibold text-text-main flex items-center gap-2"><Link2 size={16} /> Meta Embedded Signup</h2>
         <ol className="list-decimal pl-5 space-y-1">
@@ -256,6 +320,7 @@ export default function WhatsAppIntegration() {
           </p>
         )}
       </div>
+      )}
     </div>
   );
 }
