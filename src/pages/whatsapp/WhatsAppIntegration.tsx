@@ -205,7 +205,7 @@ export default function WhatsAppIntegration() {
           <div className="bg-bg-card border border-border-card rounded-2xl p-5 space-y-3">
             <h2 className="font-semibold">Send a test message</h2>
             <p className="text-sm text-text-sub">
-              Enter the customer number (10 digits or with 91). If they already messaged {data.display_number}, this reply is free and lands on their WhatsApp.
+              If they already messaged {data.display_number}, this is a free reply. If they have not, WhatsApp sends your first text as a template (Meta billing required).
             </p>
             <input
               value={testPhone}

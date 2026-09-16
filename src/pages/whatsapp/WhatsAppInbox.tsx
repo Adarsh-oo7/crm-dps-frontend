@@ -43,6 +43,8 @@ interface WaStatus {
   click_to_chat_url?: string;
   profile_picture_url?: string;
   verified_name?: string;
+  billing_url?: string;
+  billing_blocked?: boolean;
 }
 
 const AVATAR_COLORS = ['#E17076', '#7BC862', '#6EC9CB', '#6BCBEF', '#E6BF7E', '#A695E7', '#EE7B4D', '#61CDBB'];
@@ -206,6 +208,7 @@ export default function WhatsAppInbox() {
   const [draft, setDraft] = useState('');
   const [composerOpen, setComposerOpen] = useState(false);
   const [newPhone, setNewPhone] = useState('');
+  const [newText, setNewText] = useState('Hello from DPS CRM');
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const [infoOpen, setInfoOpen] = useState(false);
   const [emojiOpen, setEmojiOpen] = useState(false);
@@ -261,6 +264,17 @@ export default function WhatsAppInbox() {
       refreshThread();
     },
     onError: (err: Error) => toast.error(err.message || 'Could not send file'),
+  });
+
+  const startMutation = useMutation({
+    mutationFn: () => apiClient('/api/whatsapp/send/', { method: 'POST', body: { to: newPhone, text: newText } }),
+    onSuccess: (res: { contact?: { id: number } }) => {
+      toast.success('First message sent');
+      setComposerOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
+      if (res?.contact?.id) setActiveId(res.contact.id);
+    },
+    onError: (err: Error) => toast.error(err.message || 'Could not send first message'),
   });
 
   const startLink = status?.click_to_chat_url || 'https://wa.me/919447845185';
@@ -542,7 +556,9 @@ export default function WhatsAppInbox() {
               <div className="flex justify-center mb-3">
                 <span className="max-w-md text-[12px] leading-4 bg-[#182229] text-[#8696A0] px-3 py-1.5 rounded-lg text-center">
                   Messages are end-to-end encrypted. Only people in this chat can read them.
-                  {sessionOpen ? ' You can reply freely for 24 hours.' : ` Ask them to WhatsApp ${formatPhone(businessNumber)} first.`}
+                  {sessionOpen
+                    ? ' You can reply freely for 24 hours.'
+                    : ' Send a first message here — WhatsApp delivers it as a template. After they reply, chat is free for 24 hours.'}
                 </span>
               </div>
               {grouped.map((group) => (
@@ -681,24 +697,38 @@ export default function WhatsAppInbox() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setComposerOpen(false)} />
           <div className="relative w-full max-w-md bg-[#202C33] rounded-xl p-5 space-y-3 border border-[#2A3942] shadow-2xl">
-            <h3 className="text-lg font-semibold">New chat</h3>
+            <h3 className="text-lg font-semibold">Message someone first</h3>
             <input
               value={newPhone}
               onChange={(e) => setNewPhone(e.target.value)}
               placeholder="9400355185"
               className="w-full bg-[#111B21] rounded-lg px-3 py-2.5 text-sm"
             />
+            <textarea
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
+              rows={3}
+              className="w-full bg-[#111B21] rounded-lg px-3 py-2.5 text-sm"
+            />
+            <p className="text-[13px] text-[#8696A0] leading-5">
+              WhatsApp only allows a first message as an approved template. After they reply, you can chat normally for 24 hours at no charge.
+            </p>
             <div className="flex justify-end gap-2 pt-1">
               <button type="button" onClick={() => setComposerOpen(false)} className="px-4 py-2 text-sm text-[#AEBAC1]">Close</button>
               <button
                 type="button"
+                disabled={startMutation.isPending || !looksLikePhone(newPhone) || !newText.trim()}
                 onClick={() => {
-                  if (looksLikePhone(newPhone) && openExistingOrCompose(newPhone)) return;
-                  copyStartLink();
+                  const existing = contacts.find((c) => sameNumber(c.wa_id, newPhone));
+                  if (existing?.session_open) {
+                    openExistingOrCompose(newPhone);
+                    return;
+                  }
+                  startMutation.mutate();
                 }}
-                className="px-4 py-2 text-sm font-semibold bg-[#00A884] text-[#111B21] rounded-full"
+                className="px-4 py-2 text-sm font-semibold bg-[#00A884] text-[#111B21] rounded-full disabled:opacity-50"
               >
-                {looksLikePhone(newPhone) ? 'Open chat' : 'Copy link'}
+                {startMutation.isPending ? 'Sending…' : 'Send first message'}
               </button>
             </div>
           </div>
