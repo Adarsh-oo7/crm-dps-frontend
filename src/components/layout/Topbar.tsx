@@ -52,7 +52,7 @@ export default function Topbar({ toggleSidebar }: { toggleSidebar: () => void })
   };
 
   return (
-    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-[60px] px-3 sm:px-4 bg-wa-header border-b border-border-card">
+    <header className="sticky top-0 z-30 flex items-center justify-between w-full h-[60px] shrink-0 px-3 sm:px-4 bg-wa-header border-b border-border-card">
       <button 
         onClick={toggleSidebar}
         className="p-2 mr-1 rounded-full text-wa-icon hover:bg-wa-hover hover:text-text-main lg:hidden transition-colors"

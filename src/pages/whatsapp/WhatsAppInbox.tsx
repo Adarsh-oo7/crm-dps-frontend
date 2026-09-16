@@ -263,7 +263,7 @@ export default function WhatsAppInbox() {
   const [leadId, setLeadId] = useState('');
   const [recording, setRecording] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
-  const bottomRef = useRef<HTMLDivElement>(null);
+  const threadRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -466,7 +466,9 @@ export default function WhatsAppInbox() {
   }, [approvedTemplates, selectedTemplate, requestedTemplate]);
 
   useEffect(() => {
-    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+    const el = threadRef.current;
+    if (!el) return;
+    el.scrollTop = el.scrollHeight;
   }, [messages.length, activeId]);
 
   const grouped = useMemo(() => {
@@ -729,7 +731,7 @@ export default function WhatsAppInbox() {
               </button>
             </div>
 
-            <div className="flex-1 min-h-0 overflow-y-auto px-4 py-4 space-y-1">
+            <div ref={threadRef} className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden px-4 py-4 space-y-1">
               <div className="flex justify-center mb-3">
                 <span className={`max-w-md text-xs leading-4 px-3 py-1.5 rounded-lg text-center border ${
                   sessionOpen ? 'bg-success/10 text-success border-success/20' : 'bg-danger/10 text-danger border-danger/20'
@@ -762,10 +764,9 @@ export default function WhatsAppInbox() {
                   ))}
                 </div>
               ))}
-              <div ref={bottomRef} />
             </div>
 
-            <div className="relative shrink-0 bg-bg-card border-t border-border-card">
+            <div className="relative shrink-0 bg-bg-card border-t border-border-card z-10">
               {emojiOpen && (
                 <div className="absolute bottom-full left-2 right-2 mb-2 bg-bg-card border border-border-card rounded-xl p-2 grid grid-cols-10 gap-1 max-h-48 overflow-y-auto shadow-2xl">
                   {EMOJIS.map((emoji) => (

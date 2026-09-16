@@ -15,6 +15,11 @@ export default function MainLayout() {
     checkAuth();
   }, [checkAuth]);
 
+  useEffect(() => {
+    document.documentElement.classList.toggle('wa-lock', isWhatsAppModule);
+    return () => document.documentElement.classList.remove('wa-lock');
+  }, [isWhatsAppModule]);
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center w-screen h-screen bg-bg-main">
@@ -31,21 +36,21 @@ export default function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-main text-text-main">
+    <div className={`${isWhatsAppModule ? 'h-dvh overflow-hidden' : 'min-h-screen'} bg-bg-main text-text-main`}>
       <GlobalSearch />
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       <div
-        className={`flex flex-col min-h-screen transition-all duration-300 ${
+        className={`flex flex-col transition-all duration-300 ${
           sidebarOpen ? 'lg:ml-[260px]' : 'lg:ml-20'
-        }`}
+        } ${isWhatsAppModule ? 'h-dvh overflow-hidden' : 'min-h-screen'}`}
       >
         <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />
         <main
-          className={`flex-1 ${
+          className={
             isWhatsAppModule
-              ? 'p-4 sm:p-5 min-h-0 overflow-hidden flex flex-col h-[calc(100dvh-60px)]'
-              : 'p-4 sm:p-6 overflow-x-hidden'
-          }`}
+              ? 'flex-1 min-h-0 overflow-hidden flex flex-col p-3 sm:p-4'
+              : 'flex-1 p-4 sm:p-6 overflow-x-hidden'
+          }
         >
           <Outlet />
         </main>
