@@ -31,6 +31,8 @@ interface WaStatus {
   display_number?: string;
   last_webhook_at?: string;
   inbound_count?: number;
+  free_mode?: boolean;
+  click_to_chat_url?: string;
   billing_blocked?: boolean;
   billing_url?: string;
   last_error?: string;
@@ -83,7 +85,6 @@ export default function WhatsAppInbox() {
   const [draft, setDraft] = useState('');
   const [composerOpen, setComposerOpen] = useState(false);
   const [newPhone, setNewPhone] = useState('');
-  const [newText, setNewText] = useState('Hello from Digital Product Solutions');
   const bottomRef = useRef<HTMLDivElement>(null);
 
   const { data: status } = useQuery<WaStatus>({
@@ -107,32 +108,15 @@ export default function WhatsAppInbox() {
 
   const sendMutation = useMutation({
     mutationFn: (text: string) => apiClient(`/api/whatsapp/conversations/${activeId}/`, { method: 'POST', body: { text } }),
-    onSuccess: (msg: WaMessage) => {
+    onSuccess: () => {
       setDraft('');
       queryClient.invalidateQueries({ queryKey: ['whatsapp-thread', activeId] });
       queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
-      if (msg.message_type === 'template') {
-        toast.success('Opening template sent. Free chat unlocks after they reply.');
-      }
     },
     onError: (err: Error) => toast.error(err.message || 'Could not send'),
   });
 
-  const startMutation = useMutation({
-    mutationFn: () => apiClient('/api/whatsapp/send/', { method: 'POST', body: { to: newPhone, text: newText } }),
-    onSuccess: (data: { contact: WaContact; message: WaMessage }) => {
-      setComposerOpen(false);
-      setNewPhone('');
-      setActiveId(data.contact.id);
-      queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
-      if (data.message?.message_type === 'template') {
-        toast.success('Template sent to WhatsApp. They must reply before free-form chat.');
-      } else {
-        toast.success('Message sent');
-      }
-    },
-    onError: (err: Error) => toast.error(err.message || 'Could not send'),
-  });
+  const startLink = status?.click_to_chat_url || 'https://wa.me/919447845185';
 
   const activeContact = thread?.contact || contacts.find((c) => c.id === activeId) || null;
   const messages = thread?.messages || [];
@@ -157,7 +141,7 @@ export default function WhatsAppInbox() {
 
   const onSend = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!draft.trim() || !activeId) return;
+    if (!sessionOpen || !draft.trim() || !activeId) return;
     sendMutation.mutate(draft.trim());
   };
 
@@ -184,20 +168,8 @@ export default function WhatsAppInbox() {
           </button>
         </div>
 
-        {status?.billing_blocked && (
-          <a
-            href={status.billing_url}
-            target="_blank"
-            rel="noreferrer"
-            className="px-4 py-2 text-[12px] bg-[#5C2E2E] text-[#FFD3D3] border-b border-[#2A3942] block"
-          >
-            Messages are not reaching phones: Meta needs a payment method on this WhatsApp Business account. Click to add billing, then send again.
-          </a>
-        )}
         <div className="px-4 py-2 text-[11px] bg-[#182229] text-[#8696A0] border-b border-[#2A3942]">
-          {status?.last_webhook_at
-            ? `Live · inbound ${status.inbound_count || 0}`
-            : 'Waiting for the first incoming WhatsApp. Message +91 94478 45185 from a customer phone to open a chat.'}
+          Free Cloud API: customer texts {status?.display_number || '+91 94478 45185'} first, then you reply here for 24 hours at no charge.
         </div>
 
         <div className="px-3 py-2 bg-[#111B21]">
@@ -259,8 +231,16 @@ export default function WhatsAppInbox() {
             </div>
             <h2 className="text-[28px] font-light text-[#E9EDEF]">Digital Product Solutions</h2>
             <p className="text-[#8696A0] mt-2 max-w-md text-[14px]">
-              This inbox is the WhatsApp for {status?.display_number || '+91 94478 45185'}. Chats will not appear on the phone app for this Cloud API number.
+              This inbox is WhatsApp for {status?.display_number || '+91 94478 45185'}. Share the chat link so the customer messages first — replies from here are free and do not need Meta billing.
             </p>
+            <a
+              href={status?.click_to_chat_url || 'https://wa.me/919447845185'}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-5 px-5 py-2 rounded-full bg-[#00A884] text-[#111B21] text-sm font-semibold"
+            >
+              Copy customer chat link
+            </a>
           </div>
         ) : (
           <>
@@ -282,7 +262,7 @@ export default function WhatsAppInbox() {
 
             {!sessionOpen && (
               <div className="px-4 py-2 text-[12px] bg-[#182229] text-[#FFD279] text-center">
-                No customer reply yet. Send uses an approved template until they message {status?.display_number || '+91 94478 45185'}. After they reply, type freely like WhatsApp.
+                Waiting for them to message {status?.display_number || '+91 94478 45185'}. Starting a chat yourself needs a paid Meta template. Share {status?.click_to_chat_url || 'https://wa.me/919447845185'} instead.
               </div>
             )}
 
@@ -329,16 +309,17 @@ export default function WhatsAppInbox() {
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    if (draft.trim() && activeId) sendMutation.mutate(draft.trim());
+                    if (sessionOpen && draft.trim() && activeId) sendMutation.mutate(draft.trim());
                   }
                 }}
                 rows={1}
-                placeholder={sessionOpen ? 'Type a message' : 'Send a template to start this chat'}
-                className="flex-1 max-h-32 resize-none bg-[#2A3942] border-0 rounded-lg px-4 py-2.5 text-[15px] text-[#E9EDEF] placeholder-[#8696A0]"
+                disabled={!sessionOpen}
+                placeholder={sessionOpen ? 'Type a message' : 'Waiting for their first message'}
+                className="flex-1 max-h-32 resize-none bg-[#2A3942] border-0 rounded-lg px-4 py-2.5 text-[15px] text-[#E9EDEF] placeholder-[#8696A0] disabled:opacity-50"
               />
               <button
                 type="submit"
-                disabled={!draft.trim() || sendMutation.isPending}
+                disabled={!sessionOpen || !draft.trim() || sendMutation.isPending}
                 className="w-11 h-11 rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center disabled:opacity-40"
               >
                 <Send size={18} />
@@ -351,38 +332,33 @@ export default function WhatsAppInbox() {
       {composerOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setComposerOpen(false)} />
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              startMutation.mutate();
-            }}
-            className="relative w-full max-w-md bg-[#202C33] rounded-xl p-5 space-y-3 border border-[#2A3942]"
-          >
-            <h3 className="text-lg font-semibold">New chat</h3>
+          <div className="relative w-full max-w-md bg-[#202C33] rounded-xl p-5 space-y-3 border border-[#2A3942]">
+            <h3 className="text-lg font-semibold">Start a free chat</h3>
             <p className="text-xs text-[#8696A0]">
-              First message is an approved WhatsApp template. After the customer replies to {status?.display_number || '+91 94478 45185'}, you can chat freely for 24 hours.
+              Meta Cloud API is free only after the customer messages {status?.display_number || '+91 94478 45185'}. Share this link. Their message opens a 24-hour free reply window in this inbox.
             </p>
             <input
-              required
-              value={newPhone}
-              onChange={(e) => setNewPhone(e.target.value)}
-              placeholder="9194XXXXXXXX"
-              className="w-full bg-[#111B21] rounded-lg px-3 py-2"
+              readOnly
+              value={startLink}
+              className="w-full bg-[#111B21] rounded-lg px-3 py-2 text-sm"
             />
-            <textarea
-              required
-              value={newText}
-              onChange={(e) => setNewText(e.target.value)}
-              rows={3}
-              className="w-full bg-[#111B21] rounded-lg px-3 py-2"
-            />
+            {newPhone && (
+              <p className="text-xs text-[#8696A0]">Ask {newPhone} to tap the link and send any message.</p>
+            )}
             <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setComposerOpen(false)} className="px-4 py-2 text-sm">Cancel</button>
-              <button type="submit" disabled={startMutation.isPending} className="px-4 py-2 text-sm font-semibold bg-[#00A884] text-[#111B21] rounded-full">
-                Send
+              <button type="button" onClick={() => setComposerOpen(false)} className="px-4 py-2 text-sm">Close</button>
+              <button
+                type="button"
+                onClick={async () => {
+                  await navigator.clipboard.writeText(startLink);
+                  toast.success('Chat link copied');
+                }}
+                className="px-4 py-2 text-sm font-semibold bg-[#00A884] text-[#111B21] rounded-full"
+              >
+                Copy link
               </button>
             </div>
-          </form>
+          </div>
         </div>
       )}
     </div>
