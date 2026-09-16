@@ -31,6 +31,11 @@
   --font-mono: "Segoe UI", ui-monospace, monospace;
 }
 
+html, body, #root {
+  height: 100%;
+  margin: 0;
+}
+
 @layer base {
   :root {
     color-scheme: dark;

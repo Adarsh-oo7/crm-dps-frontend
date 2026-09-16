@@ -35,13 +35,14 @@ export default function MainLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-bg-main text-text-main">
+    <div className={isWhatsAppInbox ? 'h-dvh overflow-hidden bg-bg-main text-text-main' : 'min-h-screen bg-bg-main text-text-main'}>
       <GlobalSearch />
       
       <Sidebar isOpen={sidebarOpen} setIsOpen={setSidebarOpen} />
       
       <div 
-        className={`flex flex-col min-h-screen transition-all duration-300 ease-in-out
+        className={`flex flex-col transition-all duration-300 ease-in-out
+          ${isWhatsAppInbox ? 'h-dvh overflow-hidden' : 'min-h-screen'}
           ${sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'}
         `}
       >
@@ -55,7 +56,7 @@ export default function MainLayout() {
           </button>
         )}
         <main className={isWhatsAppInbox
-          ? 'flex-1 overflow-hidden h-screen min-h-0'
+          ? 'flex-1 min-h-0 h-full overflow-hidden'
           : 'flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper'
         }>
           <Outlet />

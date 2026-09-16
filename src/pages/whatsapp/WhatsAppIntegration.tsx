@@ -78,7 +78,7 @@ export default function WhatsAppIntegration() {
   const testMutation = useMutation({
     mutationFn: () => apiClient('/api/whatsapp/send/', { method: 'POST', body: { to: testPhone, text: testText } }),
     onSuccess: (res: { contact?: { id: number } }) => {
-      toast.success('Test message saved in CRM');
+      toast.success('Test message sent to WhatsApp');
       queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
       if (res?.contact?.id) navigate(`/whatsapp`);
     },
@@ -205,12 +205,12 @@ export default function WhatsAppIntegration() {
           <div className="bg-bg-card border border-border-card rounded-2xl p-5 space-y-3">
             <h2 className="font-semibold">Send a test message</h2>
             <p className="text-sm text-text-sub">
-              First send any WhatsApp from the test phone to {data.display_number}. That message appears in the CRM. Then reply from the inbox so it arrives on WhatsApp.
+              Enter the customer number (10 digits or with 91). If they already messaged {data.display_number}, this reply is free and lands on their WhatsApp.
             </p>
             <input
               value={testPhone}
               onChange={(e) => setTestPhone(e.target.value)}
-              placeholder="9194XXXXXXXX"
+              placeholder="9400355185"
               className="w-full bg-wa-panel rounded-lg px-3 py-2"
             />
             <textarea
