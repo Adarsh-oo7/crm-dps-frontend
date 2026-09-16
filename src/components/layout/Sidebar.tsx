@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, UserSquare2, FolderGit, CheckSquare, 
   Clock, DollarSign, CalendarRange, TrendingUp, ShieldCheck, 
   Settings, Server, Globe, Package, ChevronLeft, 
-  ChevronRight, LogOut, BookOpen, MessageCircle
+  ChevronRight, LogOut, BookOpen, MessageCircle, Plug
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 
@@ -20,13 +20,14 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
   const { user, logout } = useAuthStore();
   const userRole = user?.role || 'developer';
   const location = useLocation();
-  const isWhatsApp = location.pathname.startsWith('/whatsapp');
+  const isWhatsAppInbox = location.pathname === '/whatsapp';
 
   const menuGroups = [
     {
       title: 'Chats',
       items: [
         { name: 'WhatsApp', path: '/whatsapp', icon: MessageCircle },
+        { name: 'WhatsApp Integration', path: '/whatsapp/integration', icon: Plug },
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
         { name: 'Leads', path: '/leads', icon: Users, roles: ['superadmin', 'admin', 'manager', 'marketer'] },
         { name: 'Clients', path: '/clients', icon: UserSquare2, roles: ['superadmin', 'admin', 'manager', 'support', 'finance'] },
@@ -119,7 +120,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
 
             return (
               <div key={groupIdx}>
-                {isOpen && !isWhatsApp && (
+                {isOpen && !isWhatsAppInbox && (
                   <h3 className="px-4 pt-3 pb-1 text-[11px] font-semibold text-primary tracking-wide">
                     {group.title}
                   </h3>
@@ -130,6 +131,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
                     <NavLink
                       key={itemIdx}
                       to={item.path}
+                      end={item.path === '/whatsapp'}
                       onClick={() => {
                         if (window.innerWidth < 1024) setIsOpen(false);
                       }}
@@ -152,7 +154,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
                           }`}>
                             <Icon className="w-[18px] h-[18px]" />
                           </div>
-                          {isOpen && !isWhatsApp && (
+                          {isOpen && !isWhatsAppInbox && (
                             <div className="min-w-0 flex-1">
                               <p className={`text-[15px] truncate ${isActive ? 'text-text-main font-medium' : 'text-text-main'}`}>
                                 {item.name}

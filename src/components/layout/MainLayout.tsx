@@ -7,17 +7,17 @@ import { useAuthStore } from '../../store/authStore';
 
 export default function MainLayout() {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
-  const [sidebarOpen, setSidebarOpen] = useState(() => !window.location.pathname.startsWith('/whatsapp'));
+  const [sidebarOpen, setSidebarOpen] = useState(() => window.location.pathname !== '/whatsapp');
   const location = useLocation();
-  const isWhatsApp = location.pathname.startsWith('/whatsapp');
+  const isWhatsAppInbox = location.pathname === '/whatsapp';
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
   useEffect(() => {
-    if (isWhatsApp) setSidebarOpen(false);
-  }, [isWhatsApp]);
+    if (isWhatsAppInbox) setSidebarOpen(false);
+  }, [isWhatsAppInbox]);
 
   if (isLoading) {
     return (
@@ -45,8 +45,8 @@ export default function MainLayout() {
           ${sidebarOpen ? 'lg:ml-[280px]' : 'lg:ml-20'}
         `}
       >
-        {!isWhatsApp && <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />}
-        {isWhatsApp && (
+        {!isWhatsAppInbox && <Topbar toggleSidebar={() => setSidebarOpen(!sidebarOpen)} />}
+        {isWhatsAppInbox && (
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="lg:hidden fixed top-3 left-3 z-50 p-2 rounded-full bg-[#202C33] text-[#AEBAC1]"
@@ -54,7 +54,7 @@ export default function MainLayout() {
             Menu
           </button>
         )}
-        <main className={isWhatsApp
+        <main className={isWhatsAppInbox
           ? 'flex-1 overflow-hidden h-screen min-h-0'
           : 'flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper'
         }>
