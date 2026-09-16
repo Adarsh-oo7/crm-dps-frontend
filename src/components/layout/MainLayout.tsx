@@ -7,7 +7,7 @@ import { useAuthStore } from '../../store/authStore';
 
 export default function MainLayout() {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(() => !window.location.pathname.startsWith('/whatsapp'));
   const location = useLocation();
   const isWhatsApp = location.pathname.startsWith('/whatsapp');
 
@@ -16,8 +16,8 @@ export default function MainLayout() {
   }, [checkAuth]);
 
   useEffect(() => {
-    checkAuth();
-  }, [checkAuth]);
+    if (isWhatsApp) setSidebarOpen(false);
+  }, [isWhatsApp]);
 
   if (isLoading) {
     return (
@@ -55,7 +55,7 @@ export default function MainLayout() {
           </button>
         )}
         <main className={isWhatsApp
-          ? 'flex-1 overflow-hidden h-screen'
+          ? 'flex-1 overflow-hidden h-screen min-h-0'
           : 'flex-1 p-4 sm:p-6 overflow-x-hidden wa-wallpaper'
         }>
           <Outlet />

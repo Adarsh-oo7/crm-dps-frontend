@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import { 
   LayoutDashboard, Users, UserSquare2, FolderGit, CheckSquare, 
   Clock, DollarSign, CalendarRange, TrendingUp, ShieldCheck, 
@@ -19,6 +19,8 @@ interface SidebarItem {
 export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
   const { user, logout } = useAuthStore();
   const userRole = user?.role || 'developer';
+  const location = useLocation();
+  const isWhatsApp = location.pathname.startsWith('/whatsapp');
 
   const menuGroups = [
     {
@@ -117,7 +119,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
 
             return (
               <div key={groupIdx}>
-                {isOpen && (
+                {isOpen && !isWhatsApp && (
                   <h3 className="px-4 pt-3 pb-1 text-[11px] font-semibold text-primary tracking-wide">
                     {group.title}
                   </h3>
@@ -150,7 +152,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
                           }`}>
                             <Icon className="w-[18px] h-[18px]" />
                           </div>
-                          {isOpen && (
+                          {isOpen && !isWhatsApp && (
                             <div className="min-w-0 flex-1">
                               <p className={`text-[15px] truncate ${isActive ? 'text-text-main font-medium' : 'text-text-main'}`}>
                                 {item.name}

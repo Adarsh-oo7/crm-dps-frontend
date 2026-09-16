@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { Search, Plus, Send, Check, CheckCheck, Smile, Paperclip, MoreVertical, ArrowLeft, MessageCircle, Clock } from 'lucide-react';
+import {
+  Search, Plus, Send, Check, CheckCheck, Smile, Paperclip, MoreVertical,
+  ArrowLeft, MessageCircle, Clock, Mic, Copy, Phone,
+} from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { apiClient } from '../../api/client';
 
@@ -33,9 +36,6 @@ interface WaStatus {
   inbound_count?: number;
   free_mode?: boolean;
   click_to_chat_url?: string;
-  billing_blocked?: boolean;
-  billing_url?: string;
-  last_error?: string;
 }
 
 function asList<T>(data: unknown): T[] {
@@ -52,6 +52,8 @@ function formatPhone(waId: string) {
 
 function initials(name: string, waId: string) {
   const source = (name || '').trim() || waId;
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
   return source.slice(0, 1).toUpperCase();
 }
 
@@ -62,6 +64,9 @@ function timeLabel(iso: string | null) {
   const now = new Date();
   const sameDay = d.toDateString() === now.toDateString();
   if (sameDay) return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const yesterday = new Date(now);
+  yesterday.setDate(now.getDate() - 1);
+  if (d.toDateString() === yesterday.toDateString()) return 'Yesterday';
   return d.toLocaleDateString([], { day: 'numeric', month: 'short' });
 }
 
@@ -71,11 +76,11 @@ function looksLikePhone(value: string) {
 }
 
 function StatusTicks({ status }: { status: string }) {
-  if (status === 'failed') return <span className="text-[11px] text-[#F15C6D] ml-1">!</span>;
-  if (status === 'read') return <CheckCheck size={14} className="text-[#53BDEB] ml-1" />;
-  if (status === 'delivered') return <CheckCheck size={14} className="text-[#8696A0] ml-1" />;
-  if (status === 'sent') return <Check size={14} className="text-[#8696A0] ml-1" />;
-  return <Clock size={12} className="text-[#8696A0] ml-1" />;
+  if (status === 'failed') return <span className="text-[12px] text-[#F15C6D] ml-1 leading-none">!</span>;
+  if (status === 'read') return <CheckCheck size={16} className="text-[#53BDEB] ml-0.5" />;
+  if (status === 'delivered') return <CheckCheck size={16} className="text-[#8696A0] ml-0.5" />;
+  if (status === 'sent') return <Check size={16} className="text-[#8696A0] ml-0.5" />;
+  return <Clock size={13} className="text-[#8696A0] ml-0.5" />;
 }
 
 export default function WhatsAppInbox() {
@@ -85,7 +90,9 @@ export default function WhatsAppInbox() {
   const [draft, setDraft] = useState('');
   const [composerOpen, setComposerOpen] = useState(false);
   const [newPhone, setNewPhone] = useState('');
+  const [filter, setFilter] = useState<'all' | 'unread'>('all');
   const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   const { data: status } = useQuery<WaStatus>({
     queryKey: ['whatsapp-status'],
@@ -112,11 +119,24 @@ export default function WhatsAppInbox() {
       setDraft('');
       queryClient.invalidateQueries({ queryKey: ['whatsapp-thread', activeId] });
       queryClient.invalidateQueries({ queryKey: ['whatsapp-conversations'] });
+      requestAnimationFrame(() => inputRef.current?.focus());
     },
     onError: (err: Error) => toast.error(err.message || 'Could not send'),
   });
 
   const startLink = status?.click_to_chat_url || 'https://wa.me/919447845185';
+  const businessNumber = status?.display_number || '+91 94478 45185';
+
+  const visibleContacts = useMemo(
+    () => (filter === 'unread' ? contacts.filter((c) => c.unread_count > 0) : contacts),
+    [contacts, filter],
+  );
+
+  useEffect(() => {
+    if (activeId == null && visibleContacts.length > 0) {
+      setActiveId(visibleContacts[0].id);
+    }
+  }, [visibleContacts, activeId]);
 
   const activeContact = thread?.contact || contacts.find((c) => c.id === activeId) || null;
   const messages = thread?.messages || [];
@@ -129,9 +149,15 @@ export default function WhatsAppInbox() {
   const grouped = useMemo(() => {
     const days: { label: string; items: WaMessage[] }[] = [];
     messages.forEach((msg) => {
-      const label = new Date(msg.timestamp).toDateString() === new Date().toDateString()
+      const when = new Date(msg.timestamp);
+      const today = new Date();
+      const yesterday = new Date();
+      yesterday.setDate(today.getDate() - 1);
+      const label = when.toDateString() === today.toDateString()
         ? 'Today'
-        : new Date(msg.timestamp).toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
+        : when.toDateString() === yesterday.toDateString()
+          ? 'Yesterday'
+          : when.toLocaleDateString([], { day: 'numeric', month: 'short', year: 'numeric' });
       const last = days[days.length - 1];
       if (!last || last.label !== label) days.push({ label, items: [msg] });
       else last.items.push(msg);
@@ -139,154 +165,187 @@ export default function WhatsAppInbox() {
     return days;
   }, [messages]);
 
-  const onSend = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!sessionOpen || !draft.trim() || !activeId) return;
+  const copyStartLink = async () => {
+    await navigator.clipboard.writeText(startLink);
+    toast.success('WhatsApp link copied');
+  };
+
+  const onSend = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (!draft.trim() || !activeId || sendMutation.isPending) return;
+    if (!sessionOpen) {
+      copyStartLink();
+      toast.error(`Ask them to message ${businessNumber} first. Then you can reply here for free.`);
+      return;
+    }
     sendMutation.mutate(draft.trim());
   };
 
-  const openNewChat = (phone = '') => {
-    setNewPhone(phone);
-    setComposerOpen(true);
-  };
-
   return (
-    <div className="flex h-full min-h-0 bg-[#0B141A] overflow-hidden">
-      <Toaster position="top-center" />
-      <aside className={`flex flex-col w-full max-w-full sm:max-w-[380px] sm:min-w-[320px] border-r border-[#2A3942] bg-[#111B21] ${activeId ? 'hidden sm:flex' : 'flex'} h-full`}>
+    <div className="flex h-full min-h-0 bg-[#0B141A] overflow-hidden text-[#E9EDEF]">
+      <Toaster position="top-center" toastOptions={{ style: { background: '#202C33', color: '#E9EDEF' } }} />
+
+      <aside className={`flex flex-col w-full sm:w-[410px] sm:min-w-[360px] sm:max-w-[410px] border-r border-[#2A3942] bg-[#111B21] ${activeId ? 'hidden sm:flex' : 'flex'} h-full`}>
         <div className="h-[60px] px-4 flex items-center justify-between bg-[#202C33] shrink-0">
-          <div>
-            <p className="text-[16px] font-semibold text-[#E9EDEF]">WhatsApp</p>
-            <p className="text-[12px] text-[#8696A0]">{status?.display_number || '+91 94478 45185'}</p>
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-10 h-10 rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center shrink-0">
+              <MessageCircle size={20} fill="currentColor" />
+            </div>
+            <div className="min-w-0">
+              <p className="text-[16px] font-semibold leading-tight">WhatsApp</p>
+              <p className="text-[12px] text-[#8696A0] truncate">{businessNumber}</p>
+            </div>
           </div>
           <button
-            onClick={() => openNewChat(looksLikePhone(search) ? search : '')}
+            onClick={() => {
+              setNewPhone(looksLikePhone(search) ? search : '');
+              setComposerOpen(true);
+            }}
             className="p-2 rounded-full text-[#AEBAC1] hover:bg-[#2A3942]"
             title="New chat"
           >
-            <Plus size={20} />
+            <Plus size={22} />
           </button>
         </div>
 
-        <div className="px-4 py-2 text-[11px] bg-[#182229] text-[#8696A0] border-b border-[#2A3942]">
-          Free Cloud API: customer texts {status?.display_number || '+91 94478 45185'} first, then you reply here for 24 hours at no charge.
-        </div>
-
-        <div className="px-3 py-2 bg-[#111B21]">
+        <div className="px-3 pt-2 pb-1 bg-[#111B21]">
           <div className="relative">
-            <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8696A0]" />
+            <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8696A0]" />
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && looksLikePhone(search) && contacts.length === 0) {
-                  openNewChat(search);
+                if (e.key === 'Enter' && looksLikePhone(search)) {
+                  setNewPhone(search);
+                  setComposerOpen(true);
                 }
               }}
               placeholder="Search or start a new chat"
-              className="w-full bg-[#202C33] border-0 rounded-lg py-2 pl-9 pr-3 text-[14px] text-[#E9EDEF] placeholder-[#8696A0]"
+              className="w-full bg-[#202C33] border-0 rounded-lg py-[9px] pl-10 pr-3 text-[14px] text-[#E9EDEF] placeholder-[#8696A0]"
             />
+          </div>
+          <div className="flex gap-2 mt-2 mb-1">
+            {(['all', 'unread'] as const).map((key) => (
+              <button
+                key={key}
+                onClick={() => setFilter(key)}
+                className={`px-3 py-1 rounded-full text-[13px] capitalize ${
+                  filter === key ? 'bg-[#00A884]/20 text-[#00A884]' : 'bg-[#202C33] text-[#8696A0]'
+                }`}
+              >
+                {key}
+              </button>
+            ))}
           </div>
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {contacts.length === 0 && (
-            <div className="px-6 py-16 text-center text-[#8696A0] text-sm">
-              No chats yet. When someone messages {status?.display_number || '+91 94478 45185'}, it appears here like WhatsApp Web.
+          {visibleContacts.length === 0 && (
+            <div className="px-8 py-16 text-center text-[#8696A0] text-sm">
+              No chats yet. When someone messages {businessNumber}, the thread opens here.
             </div>
           )}
-          {contacts.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setActiveId(c.id)}
-              className={`w-full flex items-center gap-3 px-3 py-3 text-left border-b border-[#222D34] hover:bg-[#202C33] ${activeId === c.id ? 'bg-[#2A3942]' : ''}`}
-            >
-              <div className="w-12 h-12 rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center font-semibold shrink-0">
-                {initials(c.profile_name, c.wa_id)}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex items-center justify-between gap-2">
-                  <p className="text-[16px] text-[#E9EDEF] truncate">{c.profile_name || formatPhone(c.wa_id)}</p>
-                  <span className="text-[12px] text-[#8696A0] shrink-0">{timeLabel(c.last_message_at)}</span>
+          {visibleContacts.map((c) => {
+            const selected = activeId === c.id;
+            return (
+              <button
+                key={c.id}
+                onClick={() => setActiveId(c.id)}
+                className={`w-full flex items-center gap-3 px-3 py-[11px] text-left hover:bg-[#202C33] ${selected ? 'bg-[#2A3942]' : ''}`}
+              >
+                <div className="w-[49px] h-[49px] rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center font-semibold shrink-0 text-[18px]">
+                  {initials(c.profile_name, c.wa_id)}
                 </div>
-                <div className="flex items-center justify-between gap-2 mt-0.5">
-                  <p className="text-[13px] text-[#8696A0] truncate">{c.last_message_preview || formatPhone(c.wa_id)}</p>
-                  {c.unread_count > 0 && (
-                    <span className="min-w-5 h-5 px-1.5 rounded-full bg-[#00A884] text-[#111B21] text-[11px] font-bold flex items-center justify-center">
-                      {c.unread_count}
+                <div className="min-w-0 flex-1 border-b border-[#222D34] pb-[10px]">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[17px] text-[#E9EDEF] truncate">{c.profile_name || formatPhone(c.wa_id)}</p>
+                    <span className={`text-[12px] shrink-0 ${c.unread_count ? 'text-[#00A884]' : 'text-[#8696A0]'}`}>
+                      {timeLabel(c.last_message_at)}
                     </span>
-                  )}
+                  </div>
+                  <div className="flex items-center justify-between gap-2 mt-0.5">
+                    <p className="text-[14px] text-[#8696A0] truncate">{c.last_message_preview || formatPhone(c.wa_id)}</p>
+                    {c.unread_count > 0 && (
+                      <span className="min-w-5 h-5 px-1.5 rounded-full bg-[#00A884] text-[#111B21] text-[11px] font-bold flex items-center justify-center">
+                        {c.unread_count}
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </button>
-          ))}
+              </button>
+            );
+          })}
         </div>
       </aside>
 
-      <section className={`flex-1 min-w-0 flex-col ${activeId ? 'flex' : 'hidden sm:flex'} h-full`}>
+      <section className={`flex-1 min-w-0 flex-col ${activeId ? 'flex' : 'hidden sm:flex'} h-full bg-[#0B141A]`}>
         {!activeContact ? (
-          <div className="flex-1 flex flex-col items-center justify-center bg-[#222E35] text-center px-8">
-            <div className="w-20 h-20 rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center mb-5">
-              <MessageCircle size={40} fill="currentColor" />
+          <div className="flex-1 flex flex-col items-center justify-center bg-[#222E35] text-center px-8 border-b-[6px] border-[#00A884]">
+            <div className="w-[280px] h-[180px] rounded-3xl bg-[#00A884]/10 flex items-center justify-center mb-8">
+              <MessageCircle size={72} className="text-[#00A884]" />
             </div>
-            <h2 className="text-[28px] font-light text-[#E9EDEF]">Digital Product Solutions</h2>
-            <p className="text-[#8696A0] mt-2 max-w-md text-[14px]">
-              This inbox is WhatsApp for {status?.display_number || '+91 94478 45185'}. Share the chat link so the customer messages first — replies from here are free and do not need Meta billing.
+            <h2 className="text-[32px] font-light text-[#E9EDEF]">Digital Product Solutions</h2>
+            <p className="text-[#8696A0] mt-3 max-w-lg text-[14px] leading-6">
+              WhatsApp Business inbox for {businessNumber}. Ask a customer to send the first message, then reply here like WhatsApp Web — free for 24 hours.
             </p>
-            <a
-              href={status?.click_to_chat_url || 'https://wa.me/919447845185'}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-5 px-5 py-2 rounded-full bg-[#00A884] text-[#111B21] text-sm font-semibold"
+            <button
+              onClick={copyStartLink}
+              className="mt-6 px-5 py-2.5 rounded-full bg-[#00A884] text-[#111B21] text-sm font-semibold"
             >
-              Copy customer chat link
-            </a>
+              Copy chat link
+            </button>
           </div>
         ) : (
           <>
             <div className="h-[60px] px-3 sm:px-4 flex items-center gap-3 bg-[#202C33] shrink-0">
               <button className="sm:hidden p-2 text-[#AEBAC1]" onClick={() => setActiveId(null)}>
-                <ArrowLeft size={20} />
+                <ArrowLeft size={22} />
               </button>
               <div className="w-10 h-10 rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center font-semibold">
                 {initials(activeContact.profile_name, activeContact.wa_id)}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-[16px] text-[#E9EDEF] truncate">{activeContact.profile_name || formatPhone(activeContact.wa_id)}</p>
-                <p className="text-[12px] text-[#8696A0] truncate">
-                  {sessionOpen ? 'Online · 24-hour chat open' : formatPhone(activeContact.wa_id)}
+                <p className="text-[16px] font-medium truncate">{activeContact.profile_name || formatPhone(activeContact.wa_id)}</p>
+                <p className="text-[13px] text-[#8696A0] truncate">
+                  {sessionOpen ? 'click here for contact info' : formatPhone(activeContact.wa_id)}
                 </p>
               </div>
+              <button
+                type="button"
+                onClick={copyStartLink}
+                className="p-2 rounded-full text-[#AEBAC1] hover:bg-[#2A3942]"
+                title="Copy customer chat link"
+              >
+                <Copy size={18} />
+              </button>
+              <Phone size={18} className="text-[#AEBAC1] hidden sm:block" />
               <MoreVertical size={18} className="text-[#AEBAC1]" />
             </div>
 
-            {!sessionOpen && (
-              <div className="px-4 py-2 text-[12px] bg-[#182229] text-[#FFD279] text-center">
-                Waiting for them to message {status?.display_number || '+91 94478 45185'}. Starting a chat yourself needs a paid Meta template. Share {status?.click_to_chat_url || 'https://wa.me/919447845185'} instead.
+            <div className="flex-1 overflow-y-auto px-4 sm:px-[8%] py-4 space-y-1 wa-wallpaper">
+              <div className="flex justify-center mb-3">
+                <span className="max-w-md text-[12px] leading-4 bg-[#182229] text-[#FFD279] px-3 py-1.5 rounded-lg text-center">
+                  {sessionOpen
+                    ? 'Messages are end-to-end encrypted. You can reply freely for 24 hours.'
+                    : `They have not messaged ${businessNumber} yet. Share the chat link — after they text you, type here like WhatsApp.`}
+                </span>
               </div>
-            )}
-
-            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-4 space-y-3 wa-wallpaper">
               {grouped.map((group) => (
-                <div key={group.label} className="space-y-2">
-                  <div className="flex justify-center">
-                    <span className="text-[12px] bg-[#182229] text-[#8696A0] px-3 py-1 rounded-lg">{group.label}</span>
+                <div key={group.label} className="space-y-1">
+                  <div className="flex justify-center my-3">
+                    <span className="text-[12.5px] bg-[#182229] text-[#8696A0] px-3 py-[5px] rounded-lg shadow-sm">{group.label}</span>
                   </div>
                   {group.items.map((msg) => (
-                    <div key={msg.id} className={`flex ${msg.direction === 'out' ? 'justify-end' : 'justify-start'}`}>
-                      <div
-                        className={`max-w-[85%] sm:max-w-[65%] px-2.5 py-1.5 rounded-lg text-[14.2px] leading-5 ${
-                          msg.direction === 'out'
-                            ? 'bg-[#005C4B] text-[#E9EDEF] rounded-tr-none'
-                            : 'bg-[#202C33] text-[#E9EDEF] rounded-tl-none'
-                        }`}
-                      >
+                    <div key={msg.id} className={`flex ${msg.direction === 'out' ? 'justify-end' : 'justify-start'} px-1`}>
+                      <div className={`max-w-[85%] sm:max-w-[65%] px-[9px] pt-[6px] pb-[4px] ${
+                        msg.direction === 'out' ? 'wa-bubble-out' : 'wa-bubble-in'
+                      }`}>
                         {msg.message_type !== 'text' && (
-                          <p className="text-[11px] uppercase text-[#8696A0] mb-0.5">{msg.message_type}</p>
+                          <p className="text-[11px] uppercase tracking-wide text-[#8696A0] mb-0.5">{msg.message_type}</p>
                         )}
-                        <p className="whitespace-pre-wrap break-words">{msg.text || ' '}</p>
-                        <div className="flex items-center justify-end gap-0.5 mt-0.5">
-                          <span className="text-[11px] text-[#8696A0]">{timeLabel(msg.timestamp)}</span>
+                        <p className="whitespace-pre-wrap break-words text-[14.2px] leading-[19px]">{msg.text || ' '}</p>
+                        <div className="flex items-center justify-end gap-1 mt-[2px] relative top-[1px]">
+                          <span className="text-[11px] text-[#ffffff99]">{timeLabel(msg.timestamp)}</span>
                           {msg.direction === 'out' && <StatusTicks status={msg.status} />}
                         </div>
                         {msg.error_message && (
@@ -300,29 +359,33 @@ export default function WhatsAppInbox() {
               <div ref={bottomRef} />
             </div>
 
-            <form onSubmit={onSend} className="px-3 py-2 bg-[#202C33] flex items-end gap-2 shrink-0">
-              <button type="button" className="p-2 text-[#AEBAC1] hidden sm:inline-flex"><Smile size={22} /></button>
-              <button type="button" className="p-2 text-[#AEBAC1] hidden sm:inline-flex"><Paperclip size={22} /></button>
+            <form onSubmit={onSend} className="px-2 sm:px-4 py-2 bg-[#202C33] flex items-end gap-2 shrink-0">
+              <button type="button" className="p-2 text-[#AEBAC1] hover:bg-[#2A3942] rounded-full"><Smile size={24} /></button>
+              <button type="button" className="p-2 text-[#AEBAC1] hover:bg-[#2A3942] rounded-full hidden sm:inline-flex"><Paperclip size={22} /></button>
               <textarea
+                ref={inputRef}
                 value={draft}
-                onChange={(e) => setDraft(e.target.value)}
+                onChange={(e) => {
+                  setDraft(e.target.value);
+                  e.target.style.height = 'auto';
+                  e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+                }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();
-                    if (sessionOpen && draft.trim() && activeId) sendMutation.mutate(draft.trim());
+                    onSend();
                   }
                 }}
                 rows={1}
-                disabled={!sessionOpen}
-                placeholder={sessionOpen ? 'Type a message' : 'Waiting for their first message'}
-                className="flex-1 max-h-32 resize-none bg-[#2A3942] border-0 rounded-lg px-4 py-2.5 text-[15px] text-[#E9EDEF] placeholder-[#8696A0] disabled:opacity-50"
+                placeholder="Type a message"
+                className="flex-1 max-h-[120px] resize-none bg-[#2A3942] border-0 rounded-lg px-4 py-[11px] text-[15px] text-[#E9EDEF] placeholder-[#8696A0] leading-[20px]"
               />
               <button
                 type="submit"
-                disabled={!sessionOpen || !draft.trim() || sendMutation.isPending}
-                className="w-11 h-11 rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center disabled:opacity-40"
+                disabled={!draft.trim() || sendMutation.isPending}
+                className="w-[46px] h-[46px] rounded-full bg-[#00A884] text-[#111B21] flex items-center justify-center disabled:opacity-40 shrink-0"
               >
-                <Send size={18} />
+                {draft.trim() ? <Send size={20} /> : <Mic size={20} />}
               </button>
             </form>
           </>
@@ -332,27 +395,18 @@ export default function WhatsAppInbox() {
       {composerOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/60" onClick={() => setComposerOpen(false)} />
-          <div className="relative w-full max-w-md bg-[#202C33] rounded-xl p-5 space-y-3 border border-[#2A3942]">
-            <h3 className="text-lg font-semibold">Start a free chat</h3>
-            <p className="text-xs text-[#8696A0]">
-              Meta Cloud API is free only after the customer messages {status?.display_number || '+91 94478 45185'}. Share this link. Their message opens a 24-hour free reply window in this inbox.
+          <div className="relative w-full max-w-md bg-[#202C33] rounded-xl p-5 space-y-3 border border-[#2A3942] shadow-2xl">
+            <h3 className="text-lg font-semibold">New chat</h3>
+            <p className="text-[13px] text-[#8696A0] leading-5">
+              Free Cloud API cannot start a chat. Share this link so they message {businessNumber}. Their text opens a 24-hour free reply window.
             </p>
-            <input
-              readOnly
-              value={startLink}
-              className="w-full bg-[#111B21] rounded-lg px-3 py-2 text-sm"
-            />
-            {newPhone && (
-              <p className="text-xs text-[#8696A0]">Ask {newPhone} to tap the link and send any message.</p>
-            )}
-            <div className="flex justify-end gap-2">
-              <button type="button" onClick={() => setComposerOpen(false)} className="px-4 py-2 text-sm">Close</button>
+            <input readOnly value={startLink} className="w-full bg-[#111B21] rounded-lg px-3 py-2.5 text-sm" />
+            {newPhone && <p className="text-xs text-[#8696A0]">Ask {newPhone} to open the link and send any message.</p>}
+            <div className="flex justify-end gap-2 pt-1">
+              <button type="button" onClick={() => setComposerOpen(false)} className="px-4 py-2 text-sm text-[#AEBAC1]">Close</button>
               <button
                 type="button"
-                onClick={async () => {
-                  await navigator.clipboard.writeText(startLink);
-                  toast.success('Chat link copied');
-                }}
+                onClick={copyStartLink}
                 className="px-4 py-2 text-sm font-semibold bg-[#00A884] text-[#111B21] rounded-full"
               >
                 Copy link
