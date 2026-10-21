@@ -222,10 +222,7 @@ export default function GamingHub() {
           createBill.mutate();
         }}
       >
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm font-semibold text-white">Create a bill</p>
-          <p className="text-xs text-text-sub">By <span className="text-white font-semibold">{user?.full_name || 'You'}</span></p>
-        </div>
+        <p className="text-sm font-semibold text-white">Create a bill</p>
         <div className="grid sm:grid-cols-2 gap-3">
           <input required value={form.customer_name} onChange={(event) => setForm({ ...form, customer_name: event.target.value })} placeholder="Customer name" className="bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm" />
           <input required value={form.delivery_location} onChange={(event) => setForm({ ...form, delivery_location: event.target.value })} placeholder="Delivery location" className="bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm" />
@@ -253,6 +250,9 @@ export default function GamingHub() {
         <button type="submit" disabled={createBill.isPending} className="px-4 py-2 rounded-lg bg-primary text-[#111B21] text-sm font-semibold disabled:opacity-50">
           Create Gaming Hub bill
         </button>
+        <p className="border-t border-border-card pt-3 text-center text-xs text-text-sub">
+          By <span className="font-semibold text-white">{user?.full_name || 'You'}</span>
+        </p>
       </form>
 
       <div className="bg-bg-card border border-border-card rounded-2xl overflow-hidden">
