@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../api/client';
+import { useAuthStore } from '../../store/authStore';
 import toast from 'react-hot-toast';
 
 type Gear = { id: number; name: string; kind: string; quantity: number; daily_rate: string; notes: string };
@@ -31,6 +32,7 @@ type Rental = {
   balance: string;
   collected: string;
   pdf_file: string;
+  created_by_name: string;
 };
 
 function money(value: string | number, currency = 'INR') {
@@ -144,6 +146,7 @@ const emptyLine = (): Line => ({ description: '', quantity: 1, days: 1, rate_per
 
 export default function GamingHub() {
   const queryClient = useQueryClient();
+  const user = useAuthStore((state) => state.user);
   const { data: rentals = [] } = useQuery<Rental[]>({
     queryKey: ['rentals'],
     queryFn: () => apiClient('/api/finance/rentals/'),
@@ -153,21 +156,6 @@ export default function GamingHub() {
     queryFn: () => apiClient('/api/finance/projects/'),
   });
   const hub = projects.find((row) => row.name === 'DPS Gaming Hub');
-  const [projectId, setProjectId] = useState<number | ''>('');
-  const selectedId = projectId || hub?.id || '';
-  const selected = projects.find((row) => row.id === selectedId);
-  const isHub = !selected || selected.name === 'DPS Gaming Hub';
-  const { data: clients = [] } = useQuery<{ id: number; company_name: string }[]>({
-    queryKey: ['clients-for-bills'],
-    queryFn: () => apiClient('/api/clients/'),
-    enabled: !isHub,
-  });
-  const [agency, setAgency] = useState({
-    client: '',
-    invoice_date: '',
-    due_date: '',
-    lines: [{ description: '', quantity: 1, unit_price: 0 }],
-  });
   const [form, setForm] = useState({
     customer_name: '',
     delivery_location: '',
@@ -184,7 +172,7 @@ export default function GamingHub() {
   const [collectAmount, setCollectAmount] = useState('');
 
   const createBill = useMutation({
-    mutationFn: () => apiClient('/api/finance/rentals/', { method: 'POST', body: { ...form, project: selectedId } }),
+    mutationFn: () => apiClient('/api/finance/rentals/', { method: 'POST', body: form }),
     onSuccess: () => {
       toast.success('Client bill created');
       setForm({ ...form, customer_name: '', delivery_location: '' });
@@ -193,30 +181,6 @@ export default function GamingHub() {
       queryClient.invalidateQueries({ queryKey: ['finance-summary'] });
     },
     onError: (err: Error) => toast.error(err.message || 'Bill was not created'),
-  });
-
-  const createAgency = useMutation({
-    mutationFn: async () => {
-      const created = await apiClient('/api/finance/invoices/', {
-        method: 'POST',
-        body: {
-          client: agency.client,
-          project: selectedId,
-          invoice_date: agency.invoice_date,
-          due_date: agency.due_date,
-          currency: 'INR',
-          line_items: agency.lines,
-        },
-      });
-      return apiClient(`/api/finance/invoices/${(created as { id: number }).id}/send/`, { method: 'PATCH' });
-    },
-    onSuccess: () => {
-      toast.success('Agency invoice created for this project');
-      queryClient.invalidateQueries({ queryKey: ['invoices'] });
-      queryClient.invalidateQueries({ queryKey: ['project-money'] });
-      queryClient.invalidateQueries({ queryKey: ['finance-summary'] });
-    },
-    onError: (err: Error) => toast.error(err.message || 'Invoice was not created'),
   });
 
   const collect = useMutation({
@@ -255,30 +219,13 @@ export default function GamingHub() {
         className="bg-bg-card border border-border-card rounded-2xl p-4 space-y-3"
         onSubmit={(event) => {
           event.preventDefault();
-          if (isHub) createBill.mutate();
-          else createAgency.mutate();
+          createBill.mutate();
         }}
       >
-        <p className="text-sm font-semibold text-white">Create a bill</p>
-        <label className="block text-xs text-text-sub">Project
-          <select
-            required
-            value={selectedId}
-            onChange={(event) => setProjectId(Number(event.target.value))}
-            className="mt-1 w-full min-w-0 bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm text-text-main [color-scheme:dark]"
-          >
-            {projects.map((row) => (
-              <option key={row.id} value={row.id}>{row.name}{row.name === 'DPS Gaming Hub' ? ' · rental estimate' : ' · agency invoice'}</option>
-            ))}
-          </select>
-        </label>
-        <p className="text-xs text-text-sub">
-          {isHub
-            ? 'DPS Gaming Hub uses its own rental estimate, with the Gaming Hub logo.'
-            : 'This project uses the agency invoice. The Gaming Hub layout stays on DPS Gaming Hub only.'}
-        </p>
-        {isHub ? (
-        <>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="text-sm font-semibold text-white">Create a bill</p>
+          <p className="text-xs text-text-sub">By <span className="text-white font-semibold">{user?.full_name || 'You'}</span></p>
+        </div>
         <div className="grid sm:grid-cols-2 gap-3">
           <input required value={form.customer_name} onChange={(event) => setForm({ ...form, customer_name: event.target.value })} placeholder="Customer name" className="bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm" />
           <input required value={form.delivery_location} onChange={(event) => setForm({ ...form, delivery_location: event.target.value })} placeholder="Delivery location" className="bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm" />
@@ -306,46 +253,6 @@ export default function GamingHub() {
         <button type="submit" disabled={createBill.isPending} className="px-4 py-2 rounded-lg bg-primary text-[#111B21] text-sm font-semibold disabled:opacity-50">
           Create Gaming Hub bill
         </button>
-        </>
-        ) : (
-          <div className="space-y-3">
-            <select required value={agency.client} onChange={(event) => setAgency({ ...agency, client: event.target.value })} className="w-full min-w-0 bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm [color-scheme:dark]">
-              <option value="">Select client</option>
-              {(Array.isArray(clients) ? clients : []).map((client) => (
-                <option key={client.id} value={client.id}>{client.company_name}</option>
-              ))}
-            </select>
-            <div className="grid sm:grid-cols-2 gap-3">
-              <label className="text-xs text-text-sub">Invoice date
-                <input required type="date" value={agency.invoice_date} onChange={(event) => setAgency({ ...agency, invoice_date: event.target.value })} className="mt-1 w-full bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm text-text-main" />
-              </label>
-              <label className="text-xs text-text-sub">Due date
-                <input required type="date" value={agency.due_date} onChange={(event) => setAgency({ ...agency, due_date: event.target.value })} className="mt-1 w-full bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm text-text-main" />
-              </label>
-            </div>
-            {agency.lines.map((line, index) => (
-              <div key={index} className="grid grid-cols-12 gap-2">
-                <input required value={line.description} onChange={(event) => {
-                  const lines = agency.lines.map((item, itemIndex) => itemIndex === index ? { ...item, description: event.target.value } : item);
-                  setAgency({ ...agency, lines });
-                }} placeholder="Description" className="col-span-6 bg-bg-main border border-border-card rounded-lg px-2 py-2 text-sm" />
-                <input type="number" min="1" value={line.quantity} onChange={(event) => {
-                  const lines = agency.lines.map((item, itemIndex) => itemIndex === index ? { ...item, quantity: Number(event.target.value) } : item);
-                  setAgency({ ...agency, lines });
-                }} className="col-span-2 bg-bg-main border border-border-card rounded-lg px-2 py-2 text-sm" />
-                <input type="number" min="0" value={line.unit_price} onChange={(event) => {
-                  const lines = agency.lines.map((item, itemIndex) => itemIndex === index ? { ...item, unit_price: Number(event.target.value) } : item);
-                  setAgency({ ...agency, lines });
-                }} className="col-span-3 bg-bg-main border border-border-card rounded-lg px-2 py-2 text-sm" />
-                <button type="button" onClick={() => setAgency({ ...agency, lines: agency.lines.filter((_, itemIndex) => itemIndex !== index) })} className="col-span-1 text-text-sub">×</button>
-              </div>
-            ))}
-            <button type="button" onClick={() => setAgency({ ...agency, lines: [...agency.lines, { description: '', quantity: 1, unit_price: 0 }] })} className="text-xs text-primary font-semibold">Add line</button>
-            <button type="submit" disabled={createAgency.isPending} className="block px-4 py-2 rounded-lg bg-primary text-[#111B21] text-sm font-semibold disabled:opacity-50">
-              Create agency invoice
-            </button>
-          </div>
-        )}
       </form>
 
       <div className="bg-bg-card border border-border-card rounded-2xl overflow-hidden">
@@ -355,6 +262,7 @@ export default function GamingHub() {
               <tr>
                 <th className="p-3">Bill</th>
                 <th className="p-3">Customer</th>
+                <th className="p-3">By</th>
                 <th className="p-3">Total</th>
                 <th className="p-3">Collected</th>
                 <th className="p-3">Status</th>
@@ -369,6 +277,7 @@ export default function GamingHub() {
                     <p className="text-xs text-text-sub">{row.start_date} to {row.end_date}</p>
                   </td>
                   <td className="p-3 break-words">{row.customer_name}<p className="text-xs text-text-sub">{row.delivery_location}</p></td>
+                  <td className="p-3 break-words">{row.created_by_name || '—'}</td>
                   <td className="p-3">{money(row.subtotal)}</td>
                   <td className="p-3">{money(row.collected)}</td>
                   <td className="p-3 text-xs">{row.status}</td>
