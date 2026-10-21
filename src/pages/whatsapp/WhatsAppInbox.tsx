@@ -600,7 +600,11 @@ export default function WhatsAppInbox() {
   ) : null;
 
   return (
-    <div className="flex h-full min-h-0 w-full overflow-hidden rounded-2xl border border-border-card bg-bg-card">
+    <div className={`grid h-full min-h-0 w-full overflow-hidden rounded-2xl border border-border-card bg-bg-card ${
+      activeContact
+        ? 'grid-cols-1 md:grid-cols-[minmax(170px,26%)_minmax(0,1fr)] lg:grid-cols-[minmax(160px,24%)_minmax(0,1fr)_minmax(200px,32%)]'
+        : 'grid-cols-1 md:grid-cols-[minmax(240px,340px)_minmax(0,1fr)]'
+    }`}>
       <Toaster position="top-right" toastOptions={{ style: { background: '#202C33', color: '#E9EDEF', border: '1px solid #2A3942' } }} />
       <input
         ref={fileRef}
@@ -613,7 +617,7 @@ export default function WhatsAppInbox() {
         }}
       />
 
-      <aside className={`flex flex-col w-full md:w-[clamp(220px,28%,320px)] border-r border-border-card bg-bg-card ${activeId ? 'hidden md:flex' : 'flex'} h-full min-h-0 min-w-0 shrink-0`}>
+      <aside className={`flex flex-col min-w-0 overflow-hidden border-r border-border-card bg-bg-card ${activeId ? 'hidden md:flex' : 'flex'} h-full min-h-0`}>
         <div className="px-3 pt-3 pb-2 shrink-0 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold">Conversations</p>
@@ -841,7 +845,7 @@ export default function WhatsAppInbox() {
                     }}
                     rows={1}
                     placeholder={recording ? 'Recording…' : sessionOpen ? 'Type a message...' : 'Choose a template, then type a message'}
-                    className="flex-1 max-h-[120px] resize-none bg-bg-main border border-border-card rounded-lg px-3 py-2.5 text-sm"
+                    className="flex-1 min-w-0 max-h-[120px] resize-none bg-bg-main border border-border-card rounded-lg px-3 py-2.5 text-sm"
                   />
                   {draft.trim() ? (
                     <button type="submit" disabled={busy || (!sessionOpen && !selectedTemplate)} className="h-10 px-3 rounded-lg bg-primary text-[#111B21] flex items-center justify-center disabled:opacity-40 shrink-0">
@@ -860,7 +864,7 @@ export default function WhatsAppInbox() {
       </section>
 
       {activeContact && (
-        <aside className="hidden lg:flex w-[clamp(240px,30%,360px)] min-w-0 max-w-[360px] shrink flex-col border-l border-border-card h-full min-h-0 overflow-hidden bg-bg-main">
+        <aside className="hidden lg:flex min-w-0 w-full flex-col border-l border-border-card h-full min-h-0 overflow-hidden bg-bg-main">
           {customerPanel}
         </aside>
       )}

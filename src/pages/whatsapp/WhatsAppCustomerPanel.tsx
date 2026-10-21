@@ -100,8 +100,8 @@ export default function WhatsAppCustomerPanel({
         )}
       </div>
 
-      <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
-        <div className="bg-bg-card border border-border-card rounded-2xl p-4">
+      <div className="flex-1 min-h-0 min-w-0 overflow-x-hidden overflow-y-auto p-4 space-y-4">
+        <div className="bg-bg-card border border-border-card rounded-2xl p-4 min-w-0 overflow-hidden">
           <p className="text-lg font-semibold text-white leading-tight break-words">{name}</p>
           <p className="text-sm text-text-sub mt-1 break-all">{phone}</p>
           <p className="text-xs text-text-sub mt-2">WhatsApp contact</p>
@@ -116,7 +116,7 @@ export default function WhatsAppCustomerPanel({
         </div>
 
         {linked ? (
-          <div className="bg-bg-card border border-border-card rounded-2xl p-4 space-y-3 text-sm">
+          <div className="bg-bg-card border border-border-card rounded-2xl p-4 space-y-3 text-sm min-w-0 overflow-hidden">
             <div>
               <p className="text-[11px] uppercase tracking-wide text-text-sub">Status</p>
               <p className="font-medium mt-0.5">{contact.client ? 'Active Client' : status}</p>
@@ -127,7 +127,7 @@ export default function WhatsAppCustomerPanel({
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-wide text-text-sub">Assigned to</p>
-              <p className="font-medium mt-0.5">{assigned}</p>
+              <p className="font-medium mt-0.5 break-words">{assigned}</p>
             </div>
             {tags.length > 0 && (
               <div>
@@ -176,11 +176,11 @@ export default function WhatsAppCustomerPanel({
           </div>
         )}
 
-        <div className="bg-bg-card border border-border-card rounded-2xl p-4 space-y-3">
+        <div className="bg-bg-card border border-border-card rounded-2xl p-4 space-y-3 min-w-0 overflow-hidden">
           <p className="text-[11px] uppercase tracking-wide text-text-sub">Link existing</p>
-          <label className="block min-w-0 space-y-1.5">
+          <label className="grid grid-cols-[minmax(0,1fr)] min-w-0 gap-1.5">
             <span className="text-xs text-text-sub">Lead</span>
-            <select value={leadId} onChange={(e) => setLeadId(e.target.value)} className="w-full min-w-0 max-w-full bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card [color-scheme:dark]">
+            <select value={leadId} onChange={(e) => setLeadId(e.target.value)} className="w-full min-w-0 max-w-full truncate bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card [color-scheme:dark]">
               <option value="">Select lead</option>
               {leads.map((row) => (
                 <option key={row.id} value={row.id}>{row.company_name}{row.contact_person ? ` · ${row.contact_person}` : ''}</option>
@@ -190,9 +190,9 @@ export default function WhatsAppCustomerPanel({
               Link lead
             </button>
           </label>
-          <label className="block min-w-0 space-y-1.5">
+          <label className="grid grid-cols-[minmax(0,1fr)] min-w-0 gap-1.5">
             <span className="text-xs text-text-sub">Client</span>
-            <select value={clientId} onChange={(e) => setClientId(e.target.value)} className="w-full min-w-0 max-w-full bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card [color-scheme:dark]">
+            <select value={clientId} onChange={(e) => setClientId(e.target.value)} className="w-full min-w-0 max-w-full truncate bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card [color-scheme:dark]">
               <option value="">Select client</option>
               {clients.map((row) => (
                 <option key={row.id} value={row.id}>{row.company_name}</option>
@@ -204,7 +204,7 @@ export default function WhatsAppCustomerPanel({
           </label>
         </div>
 
-        <div className="bg-bg-card border border-border-card rounded-2xl p-4">
+        <div className="bg-bg-card border border-border-card rounded-2xl p-4 min-w-0 overflow-hidden">
           <p className="text-[11px] uppercase tracking-wide text-text-sub mb-2">Notes</p>
           <textarea
             value={notes}
