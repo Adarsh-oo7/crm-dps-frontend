@@ -3,7 +3,8 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, Loader2, ArrowLeft, KeyRound, MessageCircle } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, Loader2, ArrowLeft, KeyRound } from 'lucide-react';
+import logoWordmark from '../../assets/logo-wordmark.png';
 import { useAuthStore } from '../../store/authStore';
 import toast, { Toaster } from 'react-hot-toast';
 
@@ -87,12 +88,12 @@ export default function Login() {
       <div className="relative z-10 flex min-h-screen items-start justify-center px-4 pt-16 sm:pt-24">
         <div className="w-full max-w-[460px] bg-bg-card rounded-sm shadow-2xl px-8 py-10 sm:px-12">
           <div className="flex flex-col items-center mb-8">
-            <div className="flex items-center justify-center w-16 h-16 rounded-full bg-primary text-[#111B21] mb-4">
-              <MessageCircle size={32} fill="currentColor" />
+            <div className="mb-5 inline-flex rounded-xl bg-white px-4 py-3">
+              <img src={logoWordmark} alt="Digital Product" className="h-11 w-auto" />
             </div>
-            <h1 className="text-[28px] font-light text-text-main tracking-tight">DPS Agency OS</h1>
-            <p className="text-[14px] text-text-sub mt-1 text-center">
-              Use DPS OS on your computer. Simple, reliable, private.
+            <h1 className="text-[28px] font-light text-text-main tracking-tight">DPS OS</h1>
+            <p className="mt-1 text-center text-[14px] text-text-sub">
+              The pages you see match your role.
             </p>
           </div>
 

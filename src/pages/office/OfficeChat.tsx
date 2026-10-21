@@ -103,7 +103,7 @@ export default function OfficeChat() {
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ block: 'end' });
-  }, [selected, thread?.messages.length]);
+  }, [selected, threadQuery.data?.messages.length]);
 
   const rooms = roomsQuery.data?.rooms || [];
   const canMonitor = !!roomsQuery.data?.can_monitor;

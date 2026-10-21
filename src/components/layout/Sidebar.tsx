@@ -4,8 +4,9 @@ import {
   LayoutDashboard, Users, UserSquare2, FolderGit, CheckSquare, Contact,
   Clock, DollarSign, CalendarRange, TrendingUp, ShieldCheck,
   Settings, Server, Globe, Package, ChevronLeft,
-  ChevronRight, LogOut, BookOpen, MessageCircle, MessagesSquare, Building2,
+  ChevronRight, LogOut,   BookOpen, MessageCircle, MessagesSquare,
 } from 'lucide-react';
+import logoMark from '../../assets/logo-mark.png';
 import { useAuthStore } from '../../store/authStore';
 import { can, deskFor, type ModuleKey } from '../../access';
 
@@ -86,12 +87,10 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
       >
         <div className="flex items-center justify-between h-[60px] px-3 border-b border-border-card shrink-0">
           <div className="flex items-center gap-3 min-w-0 overflow-hidden">
-            <div className="flex items-center justify-center w-10 h-10 rounded-xl bg-primary text-[#111B21] shrink-0">
-              <Building2 size={20} />
-            </div>
+            <img src={logoMark} alt="" className="h-10 w-10 shrink-0 rounded-xl bg-white object-contain p-1" />
             {isOpen && (
               <div className="min-w-0">
-                <p className="text-[13px] font-bold text-text-main leading-tight">DPS</p>
+                <p className="text-[13px] font-bold text-text-main leading-tight">DPS OS</p>
                 <p className="text-[11px] text-text-sub leading-tight truncate">{deskFor(userRole).name}</p>
               </div>
             )}
