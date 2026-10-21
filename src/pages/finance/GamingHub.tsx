@@ -144,6 +144,13 @@ function Stat({ label, value }: { label: string; value: string }) {
 
 const emptyLine = (): Line => ({ description: '', quantity: 1, days: 1, rate_per_day: 0 });
 
+function bookingDays(start: string, end: string) {
+  if (!start || !end) return null;
+  const span = Math.round((Date.parse(end) - Date.parse(start)) / 86400000);
+  if (Number.isNaN(span) || span < 0) return null;
+  return span >= 1 ? span : 1;
+}
+
 export default function GamingHub() {
   const queryClient = useQueryClient();
   const user = useAuthStore((state) => state.user);
@@ -200,6 +207,7 @@ export default function GamingHub() {
   });
 
   const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
+  const days = bookingDays(form.start_date, form.end_date);
 
   return (
     <div className="space-y-4">
@@ -233,6 +241,12 @@ export default function GamingHub() {
             <input required type="date" value={form.end_date} onChange={(event) => setForm({ ...form, end_date: event.target.value })} className="mt-1 w-full bg-bg-main border border-border-card rounded-lg px-3 py-2 text-sm text-text-main" />
           </label>
         </div>
+        {days != null && (
+          <p className="text-xs text-text-sub">
+            <span className="font-semibold text-white">{days} {days === 1 ? 'day' : 'days'}</span>
+            {' '}· each day is 24 hours, so 22 Oct to 23 Oct is 1 day
+          </p>
+        )}
         <div className="space-y-2">
           {form.lines.map((line, index) => (
             <div key={index} className="grid grid-cols-12 gap-2">
