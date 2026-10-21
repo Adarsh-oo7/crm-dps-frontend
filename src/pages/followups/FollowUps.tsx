@@ -52,7 +52,7 @@ export default function FollowUps() {
   // Queries
   const { data: followups = [], isLoading } = useQuery<FollowUp[]>({
     queryKey: ['followups', activeTab],
-    queryFn: () => apiClient(`/api/followups/${activeTab === 'today' ? 'today' : activeTab === 'upcoming' ? 'upcoming' : activeTab === 'overdue' ? 'overdue' : ''}/`)
+    queryFn: () => apiClient(activeTab === 'completed' ? '/api/followups/?status=Completed' : `/api/followups/${activeTab}/`)
   });
 
   const { data: members = [] } = useQuery<Member[]>({

@@ -1,18 +1,19 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutDashboard, Users, UserSquare2, FolderGit, CheckSquare,
+  LayoutDashboard, Users, UserSquare2, FolderGit, CheckSquare, Contact,
   Clock, DollarSign, CalendarRange, TrendingUp, ShieldCheck,
   Settings, Server, Globe, Package, ChevronLeft,
-  ChevronRight, LogOut, BookOpen, MessageCircle, Building2,
+  ChevronRight, LogOut, BookOpen, MessageCircle, MessagesSquare, Building2,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
+import { can, deskFor, type ModuleKey } from '../../access';
 
 interface SidebarItem {
   name: string;
   path: string;
   icon: React.ComponentType<{ className?: string }>;
-  roles?: string[];
+  module?: ModuleKey;
 }
 
 export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (open: boolean) => void }) {
@@ -24,45 +25,45 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
       title: 'CRM',
       items: [
         { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
-        { name: 'Leads', path: '/leads', icon: Users, roles: ['superadmin', 'admin', 'manager', 'marketer'] },
-        { name: 'Clients', path: '/clients', icon: UserSquare2, roles: ['superadmin', 'admin', 'manager', 'support', 'finance'] },
-        { name: 'Projects', path: '/projects', icon: FolderGit, roles: ['superadmin', 'admin', 'manager', 'developer', 'designer'] },
-        { name: 'Tasks', path: '/tasks', icon: CheckSquare },
-        { name: 'Follow-ups', path: '/followups', icon: Clock, roles: ['superadmin', 'admin', 'manager', 'support'] },
-        { name: 'Team', path: '/team', icon: CalendarRange },
-        { name: 'Billing', path: '/finance', icon: DollarSign, roles: ['superadmin', 'admin', 'finance'] },
-        { name: 'Reports', path: '/reports', icon: ShieldCheck, roles: ['superadmin', 'admin', 'manager', 'finance'] },
+        { name: 'People', path: '/people', icon: Contact, module: 'people' },
+        { name: 'Leads', path: '/leads', icon: Users, module: 'leads' },
+        { name: 'Clients', path: '/clients', icon: UserSquare2, module: 'clients' },
+        { name: 'Projects', path: '/projects', icon: FolderGit, module: 'projects' },
+        { name: 'Tasks', path: '/tasks', icon: CheckSquare, module: 'tasks' },
+        { name: 'Follow-ups', path: '/followups', icon: Clock, module: 'followups' },
+        { name: 'Team', path: '/team', icon: CalendarRange, module: 'team' },
+        { name: 'Billing', path: '/finance', icon: DollarSign, module: 'billing' },
+        { name: 'Reports', path: '/reports', icon: ShieldCheck, module: 'reports' },
       ] as SidebarItem[],
     },
     {
       title: 'Communication',
       items: [
-        { name: 'WhatsApp', path: '/whatsapp', icon: MessageCircle },
+        { name: 'Office', path: '/office', icon: MessagesSquare, module: 'office' },
+        { name: 'WhatsApp', path: '/whatsapp', icon: MessageCircle, module: 'whatsapp' },
       ] as SidebarItem[],
     },
     {
       title: 'Operations',
       items: [
-        { name: 'Marketing', path: '/marketing', icon: TrendingUp, roles: ['superadmin', 'admin', 'marketer'] },
-        { name: 'SEO', path: '/seo', icon: Globe, roles: ['superadmin', 'admin', 'marketer'] },
-        { name: 'Products', path: '/products', icon: Package, roles: ['superadmin', 'admin', 'developer', 'designer'] },
-        { name: 'Servers', path: '/infrastructure', icon: Server, roles: ['superadmin', 'admin'] },
-        { name: 'Knowledge', path: '/knowledge', icon: BookOpen },
+        { name: 'Marketing', path: '/marketing', icon: TrendingUp, module: 'marketing' },
+        { name: 'SEO', path: '/seo', icon: Globe, module: 'seo' },
+        { name: 'Products', path: '/products', icon: Package, module: 'products' },
+        { name: 'Servers', path: '/infrastructure', icon: Server, module: 'servers' },
+        { name: 'Knowledge', path: '/knowledge', icon: BookOpen, module: 'knowledge' },
       ] as SidebarItem[],
     },
     {
       title: 'System',
       items: [
-        { name: 'Settings', path: '/settings', icon: Settings, roles: ['superadmin', 'admin'] },
+        { name: 'Settings', path: '/settings', icon: Settings, module: 'settings' },
       ] as SidebarItem[],
     },
   ];
 
   const checkRoleAccess = (item: SidebarItem) => {
-    if (!item.roles) return true;
-    if (item.roles.includes(userRole)) return true;
-    const permName = item.name.toLowerCase().replace(/\s+/g, '').replace(/[^a-z0-9]/g, '');
-    return (user?.custom_permissions || []).includes(permName);
+    if (!item.module) return true;
+    return can(user, item.module);
   };
 
   const initials = user?.full_name
@@ -91,7 +92,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
             {isOpen && (
               <div className="min-w-0">
                 <p className="text-[13px] font-bold text-text-main leading-tight">DPS</p>
-                <p className="text-[11px] text-text-sub leading-tight">Agency OS</p>
+                <p className="text-[11px] text-text-sub leading-tight truncate">{deskFor(userRole).name}</p>
               </div>
             )}
           </div>
@@ -149,7 +150,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
               </div>
               <div className="min-w-0">
                 <p className="text-sm font-medium truncate">{user?.full_name || 'User'}</p>
-                <p className="text-[11px] text-text-sub capitalize truncate">{userRole}</p>
+                <p className="text-[11px] text-text-sub capitalize truncate">{user?.desk?.name || userRole}</p>
               </div>
             </div>
           )}

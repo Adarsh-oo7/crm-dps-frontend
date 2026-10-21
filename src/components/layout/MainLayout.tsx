@@ -9,7 +9,7 @@ export default function MainLayout() {
   const { isAuthenticated, isLoading, checkAuth } = useAuthStore();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const location = useLocation();
-  const isWhatsAppModule = location.pathname === '/whatsapp' || location.pathname.startsWith('/whatsapp/');
+  const isWhatsAppModule = location.pathname === '/whatsapp' || location.pathname.startsWith('/whatsapp/') || location.pathname === '/office' || location.pathname.startsWith('/office/');
 
   useEffect(() => {
     checkAuth();

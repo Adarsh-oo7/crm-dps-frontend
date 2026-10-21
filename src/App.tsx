@@ -19,11 +19,14 @@ import Reports from './pages/reports/Reports';
 import SettingsPage from './pages/settings/Settings';
 import Profile from './pages/profile/Profile';
 import Notifications from './pages/notifications/Notifications';
+import PeopleDesk from './pages/desks/PeopleDesk';
+import RequireModule from './components/auth/RequireModule';
 import WhatsAppInbox from './pages/whatsapp/WhatsAppInbox';
 import WhatsAppModule from './pages/whatsapp/WhatsAppModule';
 import WhatsAppTemplates from './pages/whatsapp/WhatsAppTemplates';
 import WhatsAppContactsPage from './pages/whatsapp/WhatsAppContactsPage';
 import WhatsAppSettings from './pages/whatsapp/WhatsAppSettings';
+import OfficeChat from './pages/office/OfficeChat';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 
@@ -52,8 +55,10 @@ function App() {
           <Route path="/" element={<MainLayout />}>
             <Route index element={<Navigate to="/dashboard" replace />} />
             <Route path="dashboard" element={<Dashboard />} />
+            <Route path="people" element={<RequireModule module="people"><PeopleDesk /></RequireModule>} />
+            <Route path="office" element={<RequireModule module="office"><OfficeChat /></RequireModule>} />
 
-            <Route path="whatsapp" element={<WhatsAppModule />}>
+            <Route path="whatsapp" element={<RequireModule module="whatsapp"><WhatsAppModule /></RequireModule>}>
               <Route index element={<WhatsAppInbox />} />
               <Route path="contacts" element={<WhatsAppContactsPage />} />
               <Route path="templates" element={<WhatsAppTemplates />} />
@@ -68,20 +73,20 @@ function App() {
             <Route path="whatsapp/sync" element={<Navigate to="/whatsapp/settings" replace />} />
             <Route path="whatsapp/provider" element={<Navigate to="/whatsapp/settings" replace />} />
 
-            <Route path="leads" element={<Leads />} />
-            <Route path="clients" element={<Clients />} />
-            <Route path="projects" element={<Projects />} />
-            <Route path="tasks" element={<Tasks />} />
-            <Route path="followups" element={<FollowUps />} />
-            <Route path="finance" element={<Finance />} />
-            <Route path="team" element={<Team />} />
-            <Route path="marketing" element={<Marketing />} />
-            <Route path="seo" element={<SEO />} />
-            <Route path="infrastructure" element={<Infrastructure />} />
-            <Route path="knowledge" element={<Knowledge />} />
-            <Route path="products" element={<Products />} />
-            <Route path="reports" element={<Reports />} />
-            <Route path="settings" element={<SettingsPage />} />
+            <Route path="leads" element={<RequireModule module="leads"><Leads /></RequireModule>} />
+            <Route path="clients" element={<RequireModule module="clients"><Clients /></RequireModule>} />
+            <Route path="projects" element={<RequireModule module="projects"><Projects /></RequireModule>} />
+            <Route path="tasks" element={<RequireModule module="tasks"><Tasks /></RequireModule>} />
+            <Route path="followups" element={<RequireModule module="followups"><FollowUps /></RequireModule>} />
+            <Route path="finance" element={<RequireModule module="billing"><Finance /></RequireModule>} />
+            <Route path="team" element={<RequireModule module="team"><Team /></RequireModule>} />
+            <Route path="marketing" element={<RequireModule module="marketing"><Marketing /></RequireModule>} />
+            <Route path="seo" element={<RequireModule module="seo"><SEO /></RequireModule>} />
+            <Route path="infrastructure" element={<RequireModule module="servers"><Infrastructure /></RequireModule>} />
+            <Route path="knowledge" element={<RequireModule module="knowledge"><Knowledge /></RequireModule>} />
+            <Route path="products" element={<RequireModule module="products"><Products /></RequireModule>} />
+            <Route path="reports" element={<RequireModule module="reports"><Reports /></RequireModule>} />
+            <Route path="settings" element={<RequireModule module="settings"><SettingsPage /></RequireModule>} />
             <Route path="profile" element={<Profile />} />
             <Route path="notifications" element={<Notifications />} />
           </Route>

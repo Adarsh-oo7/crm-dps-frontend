@@ -6,6 +6,9 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { apiClient } from '../../api/client';
+import { can, deskFor } from '../../access';
+import PeopleDesk from '../desks/PeopleDesk';
+import MoneyDesk from '../desks/MoneyDesk';
 import { StatusBadge } from '../../components/shared/Badge';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
@@ -155,36 +158,51 @@ export default function Dashboard() {
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   // Queries
+  const showLeads = can(user, 'leads');
+  const showProjects = can(user, 'projects');
+  const showBilling = can(user, 'billing');
+  const showFollowups = can(user, 'followups');
+  const showWhatsApp = can(user, 'whatsapp');
+  const desk = user?.desk || deskFor(user?.role);
+
   const { data: summary } = useQuery<DashboardSummary>({
     queryKey: ['dashboard-summary'],
     queryFn: () => apiClient('/api/dashboard/summary/'),
     refetchInterval: 60000,
+    enabled: user?.role !== 'hr' && user?.role !== 'finance',
   });
 
   const { data: salesReport } = useQuery<SalesReport>({
     queryKey: ['reports-sales'],
     queryFn: () => apiClient('/api/reports/sales/'),
+    enabled: showLeads,
   });
 
   const { data: projectsReport } = useQuery<ProjectsReport>({
     queryKey: ['reports-projects'],
     queryFn: () => apiClient('/api/reports/projects/'),
+    enabled: showProjects,
   });
 
   const { data: todayFollowups = [] } = useQuery<FollowUp[]>({
     queryKey: ['today-followups'],
     queryFn: () => apiClient('/api/followups/today/'),
     refetchInterval: 60000,
+    enabled: showFollowups,
   });
+
+  const homeIsDesk = user?.role === 'hr' || user?.role === 'finance';
 
   const { data: todayTasks = [] } = useQuery<Task[]>({
     queryKey: ['today-tasks'],
     queryFn: () => apiClient('/api/tasks/today/'),
+    enabled: !homeIsDesk,
   });
 
   const { data: myAttendance = [] } = useQuery<AttendanceRecord[]>({
     queryKey: ['my-attendance'],
     queryFn: () => apiClient('/api/team/attendance/my/'),
+    enabled: !homeIsDesk,
   });
 
   // Check if checked in today
@@ -216,8 +234,11 @@ export default function Dashboard() {
     onSettled: () => setIsCheckingOut(false)
   });
 
+  if (user?.role === 'hr') return <PeopleDesk />;
+  if (user?.role === 'finance') return <MoneyDesk />;
+
   const stats = [
-    {
+    showLeads && {
       name: 'Total Leads',
       value: summary?.leads_count ?? '—',
       sub: `${summary?.hot_leads_count ?? 0} hot leads`,
@@ -226,7 +247,7 @@ export default function Dashboard() {
       color: 'bg-primary/10 text-primary border-primary/25',
       onClick: () => navigate('/leads'),
     },
-    {
+    showProjects && {
       name: 'Active Projects',
       value: summary?.active_projects_count ?? '—',
       sub: `${projectsReport?.overdue_milestones_count ?? 0} overdue milestones`,
@@ -235,7 +256,7 @@ export default function Dashboard() {
       color: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
       onClick: () => navigate('/projects'),
     },
-    {
+    showBilling && {
       name: 'Revenue (MTD)',
       value: summary ? formatCurrency(summary.revenue_this_month) : '—',
       sub: `${formatCurrency(summary?.profit_this_month ?? 0)} profit`,
@@ -244,7 +265,7 @@ export default function Dashboard() {
       color: 'bg-success/100/10 text-green-400 border-green-500/20',
       onClick: () => navigate('/finance'),
     },
-    {
+    showFollowups && {
       name: "Today's Follow-ups",
       value: summary?.today_followups_count ?? '—',
       sub: `${todayFollowups.filter(f => f.status === 'Pending').length} pending`,
@@ -253,7 +274,15 @@ export default function Dashboard() {
       color: 'bg-warning/100/10 text-amber-400 border-amber-500/20',
       onClick: () => navigate('/followups'),
     },
-  ];
+  ].filter(Boolean) as {
+    name: string;
+    value: string | number;
+    sub: string;
+    positive: boolean;
+    icon: typeof Users;
+    color: string;
+    onClick: () => void;
+  }[];
 
   const statusOrder = ['New', 'Contacted', 'Meeting Scheduled', 'Proposal Sent', 'Negotiation', 'Won'];
   const statusMap = Object.fromEntries((salesReport?.leads_by_status || []).map(s => [s.status, s.count]));
@@ -269,10 +298,11 @@ export default function Dashboard() {
       {/* Welcome header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
         <div>
+          <p className="text-[11px] font-bold uppercase tracking-wider text-primary">{desk.name}</p>
           <h1 className="text-xl md:text-2xl font-extrabold text-white tracking-tight">
-            Welcome back, {user?.full_name?.split(' ')[0] || 'User'}! 👋
+            {user?.full_name?.split(' ')[0] || 'Welcome'}
           </h1>
-          <p className="text-xs md:text-sm text-text-sub">Here's what's happening with DPS today.</p>
+          <p className="text-xs md:text-sm text-text-sub">{desk.blurb}</p>
         </div>
         
         <div className="flex flex-wrap items-center gap-3">
@@ -318,6 +348,11 @@ export default function Dashboard() {
               {summary.hot_leads_count} Hot Lead{summary.hot_leads_count > 1 ? 's' : ''} Alert
             </div>
           ) : null}
+          {can(user, 'people') && (
+            <button type="button" onClick={() => navigate('/people')} className="text-2xs font-bold text-primary bg-bg-card border border-border-card px-3 py-1.5 rounded-2xl">
+              People desk
+            </button>
+          )}
           <div className="text-2xs font-semibold text-text-sub bg-bg-card border border-border-card px-3 py-1.5 rounded-2xl shadow-lg capitalize">
             {user?.role}
           </div>
@@ -354,7 +389,7 @@ export default function Dashboard() {
         })}
       </div>
 
-      <WhatsAppDashboardWidget />
+      {showWhatsApp && <WhatsAppDashboardWidget />}
 
       {/* Main Content Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
@@ -362,8 +397,7 @@ export default function Dashboard() {
         <div className="lg:col-span-2 space-y-6">
           {/* Charts */}
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-            {/* Lead Pipeline Funnel */}
-            <div className="bg-bg-card p-5 rounded-2xl border border-border-card shadow-lg">
+            {showLeads && <div className="bg-bg-card p-5 rounded-2xl border border-border-card shadow-lg">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Lead Pipeline</h3>
                 <button onClick={() => navigate('/leads')} className="text-xs text-primary font-bold hover:underline flex items-center">
@@ -397,10 +431,9 @@ export default function Dashboard() {
                   </div>
                 )}
               </div>
-            </div>
+            </div>}
 
-            {/* Project Status Breakdown */}
-            <div className="bg-bg-card p-5 rounded-2xl border border-border-card shadow-lg">
+            {showProjects && <div className="bg-bg-card p-5 rounded-2xl border border-border-card shadow-lg">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-white uppercase tracking-wider">Project Status</h3>
                 <button onClick={() => navigate('/projects')} className="text-xs text-primary font-bold hover:underline flex items-center">
@@ -434,7 +467,7 @@ export default function Dashboard() {
                   <span>{projectsReport.overdue_milestones_count} Overdue Milestone{projectsReport.overdue_milestones_count > 1 ? 's' : ''}</span>
                 </div>
               ) : null}
-            </div>
+            </div>}
           </div>
 
           {/* My Tasks for Today */}
@@ -478,8 +511,7 @@ export default function Dashboard() {
 
         {/* Right Sidebar */}
         <div className="space-y-6">
-          {/* Today's Follow-ups */}
-          <div className="bg-bg-card p-5 rounded-2xl border border-border-card shadow-lg">
+          {showFollowups && <div className="bg-bg-card p-5 rounded-2xl border border-border-card shadow-lg">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-white uppercase tracking-wider">Today's Follow-ups</h3>
               <button onClick={() => navigate('/followups')} className="text-xs text-primary font-bold hover:underline">
@@ -509,7 +541,7 @@ export default function Dashboard() {
                 ))}
               </div>
             )}
-          </div>
+          </div>}
         </div>
       </div>
     </div>

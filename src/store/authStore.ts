@@ -6,7 +6,7 @@ export interface UserProfile {
   email: string;
   full_name: string;
   phone: string;
-  role: 'superadmin' | 'admin' | 'manager' | 'developer' | 'designer' | 'marketer' | 'support' | 'finance';
+  role: 'superadmin' | 'admin' | 'manager' | 'hr' | 'developer' | 'designer' | 'marketer' | 'support' | 'finance';
   department: string;
   avatar: string | null;
   is_active: boolean;
@@ -14,6 +14,8 @@ export interface UserProfile {
   whatsapp_number: string;
   notification_preferences: Record<string, any>;
   custom_permissions: string[];
+  modules?: string[];
+  desk?: { role: string; name: string; blurb: string };
 }
 
 interface LoginResponse {

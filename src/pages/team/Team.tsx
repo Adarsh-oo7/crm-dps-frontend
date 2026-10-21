@@ -77,7 +77,7 @@ const formatAttendanceTime = (dateStr: string, timeStr: string | null) => {
 export default function Team() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
-  const isAdminOrManager = ['superadmin', 'admin', 'manager'].includes(user?.role || '');
+  const isAdminOrManager = ['superadmin', 'admin', 'manager', 'hr'].includes(user?.role || '') || (user?.modules || user?.custom_permissions || []).includes('people');
   const [activeTab, setActiveTab] = useState<'members' | 'attendance' | 'leaves' | 'logs'>('members');
   
   // Modals & Forms States
@@ -944,6 +944,7 @@ export default function Team() {
                       <option value="superadmin">Super Admin / Founder</option>
                       <option value="admin">Admin</option>
                       <option value="manager">Manager</option>
+                      <option value="hr">HR</option>
                       <option value="developer">Developer</option>
                       <option value="designer">Designer</option>
                       <option value="marketer">Marketer</option>
@@ -979,7 +980,7 @@ export default function Team() {
                 <div className="space-y-2 border-t pt-3">
                   <span className="text-xs font-bold text-text-sub uppercase tracking-wider block">Custom Access Capabilities</span>
                   <div className="grid grid-cols-2 gap-2 max-h-36 overflow-y-auto p-2 bg-bg-main rounded-lg border border-border-card">
-                    {['leads', 'clients', 'projects', 'finance', 'team', 'marketing', 'seo', 'infrastructure', 'products', 'reports', 'settings'].map(cap => (
+                    {['leads', 'clients', 'projects', 'tasks', 'followups', 'team', 'people', 'billing', 'reports', 'whatsapp', 'office', 'marketing', 'seo', 'products', 'servers', 'knowledge', 'settings'].map(cap => (
                       <label key={cap} className="flex items-center space-x-2 text-xs font-semibold text-text-sub capitalize cursor-pointer">
                         <input
                           type="checkbox"
