@@ -76,6 +76,7 @@ export default function OfficeChat() {
   const [target, setTarget] = useState('');
   const [note, setNote] = useState('');
   const [showList, setShowList] = useState(true);
+  const [personQuery, setPersonQuery] = useState('');
   const endRef = useRef<HTMLDivElement>(null);
 
   const roomsQuery = useQuery<{ can_monitor: boolean; rooms: Room[] }>({
@@ -94,7 +95,6 @@ export default function OfficeChat() {
   const directory = useQuery<Directory>({
     queryKey: ['office-directory'],
     queryFn: () => apiClient('/api/office/directory/'),
-    enabled: composer !== null,
   });
 
   useEffect(() => {
@@ -164,11 +164,16 @@ export default function OfficeChat() {
 
   const choices = useMemo(() => {
     if (!directory.data || !composer) return [];
-    if (composer === 'direct' || composer === 'handover') return directory.data.people.map((person) => ({ id: person.id, label: `${person.name} · ${person.role}` }));
-    if (composer === 'project') return directory.data.projects.map((project) => ({ id: project.id, label: project.name }));
-    if (composer === 'deal') return directory.data.deals.map((deal) => ({ id: deal.id, label: deal.name }));
-    return [];
-  }, [composer, directory.data]);
+    const needle = personQuery.trim().toLowerCase();
+    const rows = composer === 'direct' || composer === 'handover'
+      ? directory.data.people.map((person) => ({ id: person.id, label: `${person.name} · ${person.role}` }))
+      : composer === 'project'
+        ? directory.data.projects.map((project) => ({ id: project.id, label: project.name }))
+        : composer === 'deal'
+          ? directory.data.deals.map((deal) => ({ id: deal.id, label: deal.name }))
+          : [];
+    return needle ? rows.filter((row) => row.label.toLowerCase().includes(needle)) : rows;
+  }, [composer, directory.data, personQuery]);
 
   return (
     <div className="relative flex h-full min-h-0 flex-1 overflow-hidden rounded-2xl border border-border-card bg-[#0B141A]">
@@ -204,7 +209,7 @@ export default function OfficeChat() {
           </div>
           <div className="mt-3 grid grid-cols-5 gap-1">
             {(['direct', 'project', 'deal', 'handover', 'office'] as Kind[]).map((kind) => (
-              <button key={kind} type="button" onClick={() => setComposer(kind)} className="rounded-lg bg-[#202C33] py-1.5 text-[10px] font-bold text-text-main">
+              <button key={kind} type="button" onClick={() => { setPersonQuery(''); setTarget(''); setComposer(kind); }} className="rounded-lg bg-[#202C33] py-1.5 text-[10px] font-bold text-text-main">
                 {KIND_LABEL[kind]}
               </button>
             ))}
@@ -315,10 +320,31 @@ export default function OfficeChat() {
             {composer === 'office' ? (
               <input value={target} onChange={(event) => setTarget(event.target.value)} placeholder="Thread name" className="mt-3 w-full rounded-lg bg-[#2A3942] px-3 py-2 text-sm text-white outline-none" />
             ) : (
-              <select value={target} onChange={(event) => setTarget(event.target.value)} className="mt-3 w-full rounded-lg bg-[#2A3942] px-3 py-2 text-sm text-white outline-none">
-                <option value="">Choose</option>
-                {choices.map((choice) => <option key={choice.id} value={choice.id}>{choice.label}</option>)}
-              </select>
+              <>
+                <input
+                  value={personQuery}
+                  onChange={(event) => setPersonQuery(event.target.value)}
+                  placeholder={composer === 'direct' || composer === 'handover' ? 'Search a person' : 'Search'}
+                  className="mt-3 w-full rounded-lg bg-[#2A3942] px-3 py-2 text-sm text-white outline-none"
+                />
+                <div className="mt-2 max-h-52 overflow-y-auto rounded-lg bg-[#0B141A]">
+                  {directory.isLoading && <p className="px-3 py-3 text-sm text-text-sub">Loading…</p>}
+                  {directory.isError && <p className="px-3 py-3 text-sm text-red-300">People could not be loaded. Refresh and try again.</p>}
+                  {!directory.isLoading && !directory.isError && choices.length === 0 && (
+                    <p className="px-3 py-3 text-sm text-text-sub">No matches. Try another name.</p>
+                  )}
+                  {choices.map((choice) => (
+                    <button
+                      key={choice.id}
+                      type="button"
+                      onClick={() => setTarget(String(choice.id))}
+                      className={`block w-full border-b border-border-card/40 px-3 py-2.5 text-left text-sm text-white ${String(choice.id) === target ? 'bg-primary/20' : 'hover:bg-[#202C33]'}`}
+                    >
+                      {choice.label}
+                    </button>
+                  ))}
+                </div>
+              </>
             )}
             {(composer === 'direct' || composer === 'handover' || composer === 'office') && (
               <textarea
