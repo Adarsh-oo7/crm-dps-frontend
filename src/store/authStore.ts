@@ -6,7 +6,7 @@ export interface UserProfile {
   email: string;
   full_name: string;
   phone: string;
-  role: 'superadmin' | 'admin' | 'manager' | 'hr' | 'developer' | 'designer' | 'marketer' | 'support' | 'finance';
+  role: 'superadmin' | 'admin' | 'manager' | 'hr' | 'developer' | 'designer' | 'marketer' | 'support' | 'finance' | 'intern';
   department: string;
   avatar: string | null;
   is_active: boolean;

@@ -27,6 +27,7 @@ import WhatsAppTemplates from './pages/whatsapp/WhatsAppTemplates';
 import WhatsAppContactsPage from './pages/whatsapp/WhatsAppContactsPage';
 import WhatsAppSettings from './pages/whatsapp/WhatsAppSettings';
 import OfficeChat from './pages/office/OfficeChat';
+import Interns from './pages/interns/Interns';
 import { useEffect } from 'react';
 import { useAuthStore } from './store/authStore';
 
@@ -79,6 +80,7 @@ function App() {
             <Route path="tasks" element={<RequireModule module="tasks"><Tasks /></RequireModule>} />
             <Route path="followups" element={<RequireModule module="followups"><FollowUps /></RequireModule>} />
             <Route path="finance" element={<RequireModule module="billing"><Finance /></RequireModule>} />
+            <Route path="interns" element={<RequireModule module="interns"><Interns /></RequireModule>} />
             <Route path="team" element={<RequireModule module="team"><Team /></RequireModule>} />
             <Route path="marketing" element={<RequireModule module="marketing"><Marketing /></RequireModule>} />
             <Route path="seo" element={<RequireModule module="seo"><SEO /></RequireModule>} />

@@ -950,6 +950,7 @@ export default function Team() {
                       <option value="marketer">Marketer</option>
                       <option value="support">Support</option>
                       <option value="finance">Finance</option>
+                      <option value="intern">Tester intern</option>
                     </select>
                   </div>
                   <div className="space-y-1">

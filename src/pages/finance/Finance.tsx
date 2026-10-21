@@ -12,6 +12,7 @@ import {
   Layers, AlertCircle, ShoppingBag, X
 } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
+import GamingHub, { ProjectMoney } from './GamingHub';
 
 interface Invoice {
   id: number;
@@ -57,7 +58,7 @@ export default function Finance() {
   const { user } = useAuthStore();
   const queryClient = useQueryClient();
   const isAdminOrFinance = ['superadmin', 'admin', 'finance'].includes(user?.role || '');
-  const [activeTab, setActiveTab] = useState<'overview' | 'invoices' | 'proposals' | 'expenses'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'projects' | 'gaming' | 'invoices' | 'proposals' | 'expenses'>('overview');
 
   const base_url = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
@@ -237,6 +238,20 @@ export default function Finance() {
             P&L Overview
           </button>
           <button
+            onClick={() => setActiveTab('projects')}
+            className={`pb-4 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap
+              ${activeTab === 'projects' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
+          >
+            Projects
+          </button>
+          <button
+            onClick={() => setActiveTab('gaming')}
+            className={`pb-4 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap
+              ${activeTab === 'gaming' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
+          >
+            Gaming Hub
+          </button>
+          <button
             onClick={() => setActiveTab('invoices')}
             className={`pb-4 text-xs sm:text-sm font-bold border-b-2 transition-all flex items-center gap-2 whitespace-nowrap
               ${activeTab === 'invoices' ? 'border-primary text-primary' : 'border-transparent text-text-sub hover:text-white'}`}
@@ -321,6 +336,9 @@ export default function Finance() {
             </div>
           </div>
         )}
+
+        {activeTab === 'projects' && <ProjectMoney />}
+        {activeTab === 'gaming' && <GamingHub />}
 
         {activeTab === 'invoices' && (
           <div className="space-y-4">
@@ -782,7 +800,12 @@ export default function Finance() {
               <form 
                 onSubmit={(e) => {
                   e.preventDefault();
-                  createExpenseMutation.mutate(expenseForm);
+                  createExpenseMutation.mutate({
+                    ...expenseForm,
+                    project: expenseForm.project || null,
+                    client: expenseForm.client || null,
+                    currency: expenseForm.category === 'Purchase' ? 'INR' : 'USD',
+                  });
                 }} 
                 className="space-y-4"
               >
@@ -798,7 +821,20 @@ export default function Finance() {
                     <option value="Marketing">Marketing / Ad Spend</option>
                     <option value="Salary">Developer Payroll / Contractor</option>
                     <option value="Office">Office Rent & Utilities</option>
+                    <option value="Purchase">Purchase / gear bought</option>
+                    <option value="Equipment">Equipment</option>
                     <option value="Other">Other Expenses</option>
+                  </select>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-3xs font-bold text-text-sub uppercase">Project</label>
+                  <select
+                    value={expenseForm.project}
+                    onChange={(e) => setExpenseForm({...expenseForm, project: e.target.value})}
+                    className="w-full px-3 py-2 text-xs bg-bg-main border border-border-card rounded-2xl text-white focus:outline-none"
+                  >
+                    <option value="">No project</option>
+                    {projects.map((p: any) => <option key={p.id} value={p.id}>{p.name}</option>)}
                   </select>
                 </div>
 

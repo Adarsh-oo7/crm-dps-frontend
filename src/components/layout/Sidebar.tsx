@@ -4,7 +4,7 @@ import {
   LayoutDashboard, Users, UserSquare2, FolderGit, CheckSquare, Contact,
   Clock, DollarSign, CalendarRange, TrendingUp, ShieldCheck,
   Settings, Server, Globe, Package, ChevronLeft,
-  ChevronRight, LogOut,   BookOpen, MessageCircle, MessagesSquare,
+  ChevronRight, LogOut,   BookOpen, MessageCircle, MessagesSquare, GraduationCap,
 } from 'lucide-react';
 import logoMark from '../../assets/logo-mark.png';
 import { useAuthStore } from '../../store/authStore';
@@ -33,6 +33,7 @@ export default function Sidebar({ isOpen, setIsOpen }: { isOpen: boolean; setIsO
         { name: 'Tasks', path: '/tasks', icon: CheckSquare, module: 'tasks' },
         { name: 'Follow-ups', path: '/followups', icon: Clock, module: 'followups' },
         { name: 'Team', path: '/team', icon: CalendarRange, module: 'team' },
+        { name: 'Interns', path: '/interns', icon: GraduationCap, module: 'interns' },
         { name: 'Billing', path: '/finance', icon: DollarSign, module: 'billing' },
         { name: 'Reports', path: '/reports', icon: ShieldCheck, module: 'reports' },
       ] as SidebarItem[],

@@ -18,6 +18,7 @@ export const ALL_MODULES = [
   'knowledge',
   'settings',
   'office',
+  'interns',
 ] as const;
 
 export type ModuleKey = (typeof ALL_MODULES)[number];
@@ -30,13 +31,14 @@ const ALIASES: Record<string, ModuleKey> = {
 const ROLE_MODULES: Record<string, readonly ModuleKey[]> = {
   superadmin: ALL_MODULES,
   admin: ALL_MODULES,
-  manager: ['leads', 'clients', 'projects', 'tasks', 'followups', 'team', 'people', 'reports', 'whatsapp', 'knowledge', 'office'],
-  hr: ['tasks', 'team', 'people', 'knowledge', 'office'],
+  manager: ['leads', 'clients', 'projects', 'tasks', 'followups', 'team', 'people', 'reports', 'whatsapp', 'knowledge', 'office', 'interns'],
+  hr: ['tasks', 'team', 'people', 'knowledge', 'office', 'interns'],
   finance: ['clients', 'tasks', 'team', 'billing', 'reports', 'knowledge', 'office'],
   developer: ['projects', 'tasks', 'products', 'whatsapp', 'knowledge', 'team', 'office'],
   designer: ['projects', 'tasks', 'products', 'whatsapp', 'knowledge', 'team', 'office'],
   marketer: ['leads', 'tasks', 'followups', 'marketing', 'seo', 'whatsapp', 'knowledge', 'team', 'office'],
   support: ['clients', 'tasks', 'followups', 'whatsapp', 'knowledge', 'team', 'office'],
+  intern: ['tasks', 'team', 'knowledge', 'office', 'interns'],
 };
 
 export const DESKS: Record<string, { name: string; blurb: string }> = {
@@ -49,6 +51,7 @@ export const DESKS: Record<string, { name: string; blurb: string }> = {
   designer: { name: 'Build desk', blurb: 'Punch in, then finish the tasks that are due today.' },
   marketer: { name: 'Growth desk', blurb: 'Today’s leads, follow-ups, and campaigns.' },
   support: { name: 'Care desk', blurb: 'Clients who are waiting, and the next follow-up.' },
+  intern: { name: 'Test desk', blurb: 'Sign in like staff, test the app, and file what you found.' },
 };
 
 export function deskFor(role?: string) {

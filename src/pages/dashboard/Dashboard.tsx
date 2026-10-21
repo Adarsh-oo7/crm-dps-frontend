@@ -10,7 +10,7 @@ import { can, deskFor } from '../../access';
 import PeopleDesk from '../desks/PeopleDesk';
 import MoneyDesk from '../desks/MoneyDesk';
 import { StatusBadge } from '../../components/shared/Badge';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
 interface DashboardSummary {
@@ -234,6 +234,7 @@ export default function Dashboard() {
     onSettled: () => setIsCheckingOut(false)
   });
 
+  if (user?.role === 'intern') return <Navigate to="/interns" replace />;
   if (user?.role === 'hr') return <PeopleDesk />;
   if (user?.role === 'finance') return <MoneyDesk />;
 
