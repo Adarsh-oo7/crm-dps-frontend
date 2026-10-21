@@ -212,10 +212,10 @@ function MediaBubble({ message }: { message: WaMessage }) {
       <div>
         {url ? (
           <a href={url} target="_blank" rel="noreferrer">
-            <img src={url} alt="" className="max-w-[260px] max-h-[320px] rounded-lg object-cover mb-1" />
+            <img src={url} alt="" className="w-full max-w-[260px] max-h-[320px] rounded-lg object-cover mb-1" />
           </a>
         ) : (
-          <div className="w-[220px] h-[160px] rounded-lg bg-black/20 mb-1" />
+          <p className="text-sm text-[#8696A0] mb-1">Photo</p>
         )}
         {message.text && message.text !== 'Photo' && (
           <p className="whitespace-pre-wrap break-words text-[14.2px] leading-[19px]">{message.text}</p>
@@ -226,14 +226,14 @@ function MediaBubble({ message }: { message: WaMessage }) {
 
   if (message.message_type === 'video') {
     return url ? (
-      <video src={url} controls className="max-w-[260px] rounded-lg mb-1" />
+      <video src={url} controls className="w-full max-w-[260px] rounded-lg mb-1" />
     ) : (
       <p className="text-sm text-[#8696A0]">Video</p>
     );
   }
 
   if (message.message_type === 'audio') {
-    return url ? <audio src={url} controls className="max-w-[240px]" /> : <p className="text-sm">Voice message</p>;
+    return url ? <audio src={url} controls className="w-full max-w-[240px]" /> : <p className="text-sm">Voice message</p>;
   }
 
   return url ? (
@@ -613,7 +613,7 @@ export default function WhatsAppInbox() {
         }}
       />
 
-      <aside className={`flex flex-col w-full md:w-[300px] lg:w-[320px] border-r border-border-card bg-bg-card ${activeId ? 'hidden md:flex' : 'flex'} h-full min-h-0 shrink-0`}>
+      <aside className={`flex flex-col w-full md:w-[clamp(220px,28%,320px)] border-r border-border-card bg-bg-card ${activeId ? 'hidden md:flex' : 'flex'} h-full min-h-0 min-w-0 shrink-0`}>
         <div className="px-3 pt-3 pb-2 shrink-0 space-y-2">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold">Conversations</p>
@@ -726,7 +726,7 @@ export default function WhatsAppInbox() {
               <button type="button" onClick={startCall} className="p-2 rounded-lg text-text-sub hover:bg-bg-main" title="Call">
                 <Phone size={16} />
               </button>
-              <button type="button" onClick={() => setInfoOpen(true)} className="xl:hidden p-2 rounded-lg text-text-sub hover:bg-bg-main" title="Customer">
+              <button type="button" onClick={() => setInfoOpen(true)} className="lg:hidden p-2 rounded-lg text-text-sub hover:bg-bg-main" title="Customer">
                 <MoreVertical size={16} />
               </button>
             </div>
@@ -748,7 +748,7 @@ export default function WhatsAppInbox() {
                   </div>
                   {group.items.map((msg) => (
                     <div key={msg.id} className={`flex ${msg.direction === 'out' ? 'justify-end' : 'justify-start'} px-1`}>
-                      <div className={`max-w-[85%] sm:max-w-[70%] px-3 py-2 text-sm ${
+                      <div className={`max-w-[min(85%,420px)] min-w-0 overflow-hidden px-3 py-2 text-sm ${
                         msg.direction === 'out' ? 'wa-bubble-out' : 'wa-bubble-in'
                       }`}>
                         <MediaBubble message={msg} />
@@ -860,13 +860,13 @@ export default function WhatsAppInbox() {
       </section>
 
       {activeContact && (
-        <aside className="hidden xl:flex w-[320px] min-w-[300px] flex-col border-l border-border-card h-full bg-bg-main">
+        <aside className="hidden lg:flex w-[clamp(240px,30%,360px)] min-w-0 max-w-[360px] shrink flex-col border-l border-border-card h-full min-h-0 overflow-hidden bg-bg-main">
           {customerPanel}
         </aside>
       )}
 
       {infoOpen && activeContact && (
-        <div className="xl:hidden fixed inset-0 z-50">
+        <div className="lg:hidden fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/60" onClick={() => setInfoOpen(false)} />
           <div className="absolute inset-y-0 right-0 w-full max-w-sm bg-bg-card border-l border-border-card shadow-2xl">
             {customerPanel}

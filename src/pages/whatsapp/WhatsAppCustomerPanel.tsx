@@ -87,14 +87,14 @@ export default function WhatsAppCustomerPanel({
   const tags = (linkedClient?.tags || linkedLead?.tags || contact.tags || []).filter(Boolean);
 
   return (
-    <div className="flex flex-col h-full min-h-0 bg-bg-main">
+    <div className="flex flex-col h-full min-h-0 min-w-0 overflow-hidden bg-bg-main">
       <div className="px-4 py-3 border-b border-border-card flex items-start justify-between gap-2 shrink-0">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-wider text-text-sub">CRM</p>
           <h3 className="text-base font-semibold text-text-main">Customer</h3>
         </div>
         {onClose && (
-          <button type="button" onClick={onClose} className="p-1 rounded-lg text-text-sub hover:bg-bg-card xl:hidden">
+          <button type="button" onClick={onClose} className="p-1 rounded-lg text-text-sub hover:bg-bg-card lg:hidden">
             <X size={16} />
           </button>
         )}
@@ -102,8 +102,8 @@ export default function WhatsAppCustomerPanel({
 
       <div className="flex-1 min-h-0 overflow-y-auto p-4 space-y-4">
         <div className="bg-bg-card border border-border-card rounded-2xl p-4">
-          <p className="text-lg font-semibold text-white leading-tight">{name}</p>
-          <p className="text-sm text-text-sub mt-1">{phone}</p>
+          <p className="text-lg font-semibold text-white leading-tight break-words">{name}</p>
+          <p className="text-sm text-text-sub mt-1 break-all">{phone}</p>
           <p className="text-xs text-text-sub mt-2">WhatsApp contact</p>
         </div>
 
@@ -123,7 +123,7 @@ export default function WhatsAppCustomerPanel({
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-wide text-text-sub">Company</p>
-              <p className="font-medium mt-0.5">{company}</p>
+              <p className="font-medium mt-0.5 break-words">{company}</p>
             </div>
             <div>
               <p className="text-[11px] uppercase tracking-wide text-text-sub">Assigned to</p>
@@ -142,7 +142,7 @@ export default function WhatsAppCustomerPanel({
             {(linkedLead?.notes || linkedClient?.notes) && (
               <div>
                 <p className="text-[11px] uppercase tracking-wide text-text-sub">CRM notes</p>
-                <p className="text-text-sub mt-1 whitespace-pre-wrap">{linkedLead?.notes || linkedClient?.notes}</p>
+                <p className="text-text-sub mt-1 whitespace-pre-wrap break-words">{linkedLead?.notes || linkedClient?.notes}</p>
               </div>
             )}
             <div className="flex flex-wrap gap-2 pt-1">
@@ -178,28 +178,30 @@ export default function WhatsAppCustomerPanel({
 
         <div className="bg-bg-card border border-border-card rounded-2xl p-4 space-y-3">
           <p className="text-[11px] uppercase tracking-wide text-text-sub">Link existing</p>
-          <div className="flex gap-2">
-            <select value={leadId} onChange={(e) => setLeadId(e.target.value)} className="flex-1 bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card">
+          <label className="block min-w-0 space-y-1.5">
+            <span className="text-xs text-text-sub">Lead</span>
+            <select value={leadId} onChange={(e) => setLeadId(e.target.value)} className="w-full min-w-0 max-w-full bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card [color-scheme:dark]">
               <option value="">Select lead</option>
               {leads.map((row) => (
                 <option key={row.id} value={row.id}>{row.company_name}{row.contact_person ? ` · ${row.contact_person}` : ''}</option>
               ))}
             </select>
-            <button type="button" disabled={!leadId || linking} onClick={onLinkLead} className="px-3 py-2 rounded-lg bg-bg-main border border-border-card text-sm disabled:opacity-50">
-              Link
+            <button type="button" disabled={!leadId || linking} onClick={onLinkLead} className="w-full px-3 py-2 rounded-lg bg-bg-main border border-border-card text-sm disabled:opacity-50">
+              Link lead
             </button>
-          </div>
-          <div className="flex gap-2">
-            <select value={clientId} onChange={(e) => setClientId(e.target.value)} className="flex-1 bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card">
+          </label>
+          <label className="block min-w-0 space-y-1.5">
+            <span className="text-xs text-text-sub">Client</span>
+            <select value={clientId} onChange={(e) => setClientId(e.target.value)} className="w-full min-w-0 max-w-full bg-bg-main rounded-lg px-2 py-2 text-sm border border-border-card [color-scheme:dark]">
               <option value="">Select client</option>
               {clients.map((row) => (
                 <option key={row.id} value={row.id}>{row.company_name}</option>
               ))}
             </select>
-            <button type="button" disabled={!clientId || linking} onClick={onLinkClient} className="px-3 py-2 rounded-lg bg-bg-main border border-border-card text-sm disabled:opacity-50">
-              Link
+            <button type="button" disabled={!clientId || linking} onClick={onLinkClient} className="w-full px-3 py-2 rounded-lg bg-bg-main border border-border-card text-sm disabled:opacity-50">
+              Link client
             </button>
-          </div>
+          </label>
         </div>
 
         <div className="bg-bg-card border border-border-card rounded-2xl p-4">
@@ -209,7 +211,7 @@ export default function WhatsAppCustomerPanel({
             onChange={(e) => setNotes(e.target.value)}
             rows={4}
             placeholder="Needs website quotation…"
-            className="w-full bg-bg-main rounded-lg px-3 py-2 text-sm border border-border-card"
+            className="w-full min-w-0 max-w-full bg-bg-main rounded-lg px-3 py-2 text-sm border border-border-card"
           />
           <button type="button" onClick={onSaveNotes} className="mt-2 px-3 py-1.5 rounded-lg border border-border-card text-sm">
             Save notes

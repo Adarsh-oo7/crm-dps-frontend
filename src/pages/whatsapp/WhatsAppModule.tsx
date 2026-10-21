@@ -32,7 +32,7 @@ export default function WhatsAppModule() {
           <p className="text-xs text-text-sub">Communication inbox for your CRM</p>
         </div>
         <div
-          className={`text-xs font-semibold px-3 py-1 rounded-full border shrink-0 ${
+          className={`max-w-full truncate text-xs font-semibold px-3 py-1 rounded-full border ${
             data?.configured
               ? 'text-success border-success/30 bg-success/10'
               : 'text-text-sub border-border-card bg-bg-card'
