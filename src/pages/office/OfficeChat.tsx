@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useEffect, useMemo, useState, type FormEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 import { apiClient } from '../../api/client';
@@ -76,6 +76,7 @@ export default function OfficeChat() {
   const [target, setTarget] = useState('');
   const [note, setNote] = useState('');
   const [showList, setShowList] = useState(true);
+  const endRef = useRef<HTMLDivElement>(null);
 
   const roomsQuery = useQuery<{ can_monitor: boolean; rooms: Room[] }>({
     queryKey: ['office-rooms', filter, scope],
@@ -99,6 +100,10 @@ export default function OfficeChat() {
   useEffect(() => {
     if (selected) setShowList(false);
   }, [selected]);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ block: 'end' });
+  }, [selected, thread?.messages.length]);
 
   const rooms = roomsQuery.data?.rooms || [];
   const canMonitor = !!roomsQuery.data?.can_monitor;
@@ -140,11 +145,14 @@ export default function OfficeChat() {
   function submitNew(event: FormEvent) {
     event.preventDefault();
     if (!composer) return;
+    if (composer === 'handover' && !note.trim()) return;
+    if (composer === 'office' && !target.trim()) return;
+    if (composer !== 'office' && !target) return;
     if (composer === 'direct') openRoom.mutate({ kind: 'direct', user_id: Number(target), text: note });
     if (composer === 'project') openRoom.mutate({ kind: 'project', project_id: Number(target) });
     if (composer === 'deal') openRoom.mutate({ kind: 'deal', lead_id: Number(target) });
     if (composer === 'handover') openRoom.mutate({ kind: 'handover', user_id: Number(target), text: note });
-    if (composer === 'office') openRoom.mutate({ kind: 'office', title: target, text: note });
+    if (composer === 'office') openRoom.mutate({ kind: 'office', title: target.trim(), text: note });
   }
 
   function onSend(event: FormEvent) {
@@ -163,7 +171,7 @@ export default function OfficeChat() {
   }, [composer, directory.data]);
 
   return (
-    <div className="relative flex h-full min-h-0 overflow-hidden rounded-2xl border border-border-card bg-[#0B141A]">
+    <div className="relative flex h-full min-h-0 flex-1 overflow-hidden rounded-2xl border border-border-card bg-[#0B141A]">
       <Toaster position="top-right" />
       <aside className={`${showList || !selected ? 'flex' : 'hidden'} md:flex w-full md:w-[320px] shrink-0 flex-col border-r border-border-card bg-[#111B21]`}>
         <div className="px-3 pt-3 pb-2">
@@ -194,8 +202,8 @@ export default function OfficeChat() {
               </button>
             ))}
           </div>
-          <div className="mt-3 grid grid-cols-4 gap-1">
-            {(['direct', 'project', 'deal', 'handover'] as Kind[]).map((kind) => (
+          <div className="mt-3 grid grid-cols-5 gap-1">
+            {(['direct', 'project', 'deal', 'handover', 'office'] as Kind[]).map((kind) => (
               <button key={kind} type="button" onClick={() => setComposer(kind)} className="rounded-lg bg-[#202C33] py-1.5 text-[10px] font-bold text-text-main">
                 {KIND_LABEL[kind]}
               </button>
@@ -203,7 +211,8 @@ export default function OfficeChat() {
           </div>
         </div>
         <div className="flex-1 overflow-y-auto">
-          {rooms.length === 0 && <p className="px-4 py-8 text-sm text-text-sub">No chats yet. Start with a person, a project, a deal, or a handover.</p>}
+          {roomsQuery.isError && <p className="px-4 py-6 text-sm text-red-300">Chats could not load. Pull the page again in a moment.</p>}
+          {!roomsQuery.isError && rooms.length === 0 && <p className="px-4 py-8 text-sm text-text-sub">No chats yet. Start with a person, a project, a deal, or a handover.</p>}
           {rooms.map((room) => (
             <button
               key={room.id}
@@ -233,7 +242,7 @@ export default function OfficeChat() {
         </div>
       </aside>
 
-      <section className={`${!showList && selected ? 'flex' : 'hidden'} md:flex min-w-0 flex-1 flex-col bg-[#0B141A]`}>
+      <section className={`${!showList && selected ? 'flex' : 'hidden'} md:flex min-h-0 min-w-0 flex-1 flex-col bg-[#0B141A]`}>
         {!active ? (
           <div className="flex flex-1 items-center justify-center px-6 text-center">
             <div>
@@ -267,7 +276,7 @@ export default function OfficeChat() {
                 </div>
               </div>
             )}
-            <div className="flex-1 space-y-2 overflow-y-auto px-3 py-4">
+            <div className="min-h-0 flex-1 space-y-2 overflow-y-auto px-3 py-4">
               {(thread?.messages || []).map((message) => {
                 const mine = message.sender_id === user?.id;
                 if (message.kind === 'system') {
@@ -283,7 +292,9 @@ export default function OfficeChat() {
                   </div>
                 );
               })}
+              <div ref={endRef} />
             </div>
+            {threadQuery.isError && <p className="px-3 py-2 text-xs text-red-300">This thread did not load.</p>}
             <form onSubmit={onSend} className="flex gap-2 border-t border-border-card bg-[#202C33] p-2">
               <input
                 value={draft}
@@ -319,7 +330,13 @@ export default function OfficeChat() {
             )}
             <div className="mt-4 flex justify-end gap-2">
               <button type="button" onClick={() => setComposer(null)} className="rounded-lg px-3 py-2 text-sm text-text-sub">Cancel</button>
-              <button type="submit" disabled={openRoom.isPending} className="rounded-lg bg-primary px-3 py-2 text-sm font-bold text-[#111B21]">Open</button>
+              <button
+                type="submit"
+                disabled={openRoom.isPending || (composer === 'office' ? !target.trim() : !target) || (composer === 'handover' && !note.trim())}
+                className="rounded-lg bg-primary px-3 py-2 text-sm font-bold text-[#111B21] disabled:opacity-50"
+              >
+                Open
+              </button>
             </div>
           </form>
         </div>
