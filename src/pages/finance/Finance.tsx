@@ -716,7 +716,7 @@ export default function Finance() {
                 onSubmit={(e) => {
                   e.preventDefault();
                   if (payInvoiceId) {
-                    payInvoiceMutation.mutate({ id: payInvoiceId, body: paymentForm });
+                    payInvoiceMutation.mutate({ id: payInvoiceId, body: { ...paymentForm, invoice: payInvoiceId } });
                   }
                 }} 
                 className="space-y-4"
