@@ -171,6 +171,7 @@ export default function GamingHub() {
     advance_amount: '500',
     lines: [
       { description: 'PS5 Console (DualSense included)', quantity: 1, days: 1, rate_per_day: 1000 },
+      { description: 'Extra DualSense Controller', quantity: 1, days: 1, rate_per_day: 150 },
       { description: 'TV / Monitor', quantity: 1, days: 1, rate_per_day: 0 },
       { description: 'UPS 1250v', quantity: 1, days: 1, rate_per_day: 150 },
     ] as Line[],
