@@ -10,7 +10,7 @@ import { can, deskFor } from '../../access';
 import PeopleDesk from '../desks/PeopleDesk';
 import MoneyDesk from '../desks/MoneyDesk';
 import { StatusBadge } from '../../components/shared/Badge';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, Link } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
 interface DashboardSummary {
@@ -234,6 +234,13 @@ export default function Dashboard() {
     onSettled: () => setIsCheckingOut(false)
   });
 
+  const isAdmin = user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'manager';
+  const { data: automationStatus } = useQuery<{ email_automation_enabled: boolean; note: string }>({
+    queryKey: ['automation-status'],
+    queryFn: () => apiClient('/api/notifications/automation-status/'),
+    enabled: isAdmin
+  });
+
   if (user?.role === 'intern') return <Navigate to="/interns" replace />;
   if (user?.role === 'hr') return <PeopleDesk />;
   if (user?.role === 'finance') return <MoneyDesk />;
@@ -295,6 +302,24 @@ export default function Dashboard() {
   return (
     <div className="space-y-6">
       <Toaster position="top-right" />
+
+      {/* Notice for Admins when Email Automation is OFF */}
+      {isAdmin && automationStatus && !automationStatus.email_automation_enabled && (
+        <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-3.5 px-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-rose-200 text-xs shadow-md">
+          <div className="flex items-center gap-2.5">
+            <AlertCircle size={18} className="text-rose-400 shrink-0" />
+            <span>
+              <strong className="text-rose-300">NOTE: Email Automation is Turned OFF.</strong> Automated reminder emails, EOD summaries, and digests are paused.
+            </span>
+          </div>
+          <Link
+            to="/settings"
+            className="px-3 py-1 rounded-lg bg-rose-500/20 hover:bg-rose-500/30 text-rose-200 border border-rose-500/30 font-semibold transition-colors shrink-0 text-center"
+          >
+            Manage in Settings →
+          </Link>
+        </div>
+      )}
 
       {/* Welcome header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">

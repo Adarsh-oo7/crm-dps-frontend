@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '../../api/client';
+import { useAuthStore } from '../../store/authStore';
 import { 
   Bell, Check, CheckCheck, Clock, CheckSquare, Users, 
-  Briefcase, DollarSign, Settings, ChevronRight, Inbox
+  Briefcase, DollarSign, Settings, ChevronRight, Inbox,
+  AlertTriangle, Power
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
@@ -21,9 +23,28 @@ interface Notification {
 }
 
 export default function Notifications() {
+  const { user } = useAuthStore();
+  const isAdmin = user?.role === 'superadmin' || user?.role === 'admin' || user?.role === 'manager';
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const [filter, setFilter] = useState<'all' | 'unread'>('all');
+
+  // Query global email automation status
+  const { data: automationStatus } = useQuery<{ email_automation_enabled: boolean; note: string }>({
+    queryKey: ['automation-status'],
+    queryFn: () => apiClient('/api/notifications/automation-status/')
+  });
+
+  // Toggle automation mutation
+  const toggleMutation = useMutation({
+    mutationFn: (vars: { enabled: boolean }) =>
+      apiClient('/api/notifications/toggle-automation/', { method: 'POST', body: vars }),
+    onSuccess: (data: any) => {
+      queryClient.invalidateQueries({ queryKey: ['automation-status'] });
+      toast.success(data.detail || 'Email automation status updated');
+    },
+    onError: (err: any) => toast.error(err.message || 'Failed to update status')
+  });
 
   // Query notifications
   const { data: notifications = [], isLoading } = useQuery<Notification[]>({
@@ -109,6 +130,35 @@ export default function Notifications() {
           </button>
         )}
       </div>
+
+      {/* Persistent Note Banner when Email Automation is OFF */}
+      {automationStatus && !automationStatus.email_automation_enabled && (
+        <div className="bg-rose-500/10 border border-rose-500/30 rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 text-rose-200 shadow-md">
+          <div className="flex items-start gap-3">
+            <div className="p-2 rounded-xl bg-rose-500/20 text-rose-400 shrink-0 mt-0.5">
+              <AlertTriangle size={20} />
+            </div>
+            <div>
+              <p className="font-bold text-sm text-rose-300">
+                NOTE: Automated Emails are Currently TURNED OFF
+              </p>
+              <p className="text-xs text-rose-200/90 mt-0.5">
+                Automated reminder emails (morning punch-in, tasks, follow-ups) and report digests are paused by the administrator. In-app notifications will continue to appear normally.
+              </p>
+            </div>
+          </div>
+          {isAdmin && (
+            <button
+              onClick={() => toggleMutation.mutate({ enabled: true })}
+              disabled={toggleMutation.isPending}
+              className="px-4 py-2 text-xs font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl transition-colors shrink-0 flex items-center gap-1.5 cursor-pointer disabled:opacity-50 shadow"
+            >
+              <Power size={14} />
+              Turn Back ON
+            </button>
+          )}
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex border-b border-border-card">
